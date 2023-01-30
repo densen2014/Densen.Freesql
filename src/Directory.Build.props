@@ -1,0 +1,32 @@
+<Project>
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <IsPackable>true</IsPackable>
+        <Version>7.1.1</Version>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Copyright>DensenInformatica</Copyright>
+        <RepositoryType>git</RepositoryType>
+        <Authors>Alex Chow</Authors>
+        <Company>Densen Informatica</Company>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/densen2014/Densen.Freesql</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/densen2014/Densen.Freesql</RepositoryUrl>
+        <AssemblyOriginatorKeyFile>..\keys\Longbow.Utility.snk</AssemblyOriginatorKeyFile>
+        <SignAssembly>True</SignAssembly>
+        <IsPackable>true</IsPackable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageIcon>logo.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <NoWarn>1701;1702;1705;1591</NoWarn> 
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    
+	<ItemGroup>
+        <None Include="..\..\logo.png" Pack="true" PackagePath="" />
+        <None Include="README.md" Pack="true" PackagePath="" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,84 @@
+﻿@typeparam TItem
+@inherits BootstrapComponentBase
+@namespace Densen.Components
+
+<Table @ref="mainTable"
+       TItem="TItem"
+       IsPagination="true"
+       IsStriped="true"
+       IsBordered="true"
+       IsDetails="true"
+       AutoGenerateColumns="true"
+       ShowSearch="true"
+       ShowEmpty="true"
+       SearchMode="SearchMode.Popup"
+       ShowToolbar="true"
+       ShowExtendButtons="true"
+       DataService="DataService"
+       OnAddAsync="@OnAddAsync"
+       OnQueryAsync="@OnQueryAsync"
+       OnSaveAsync="OnSaveAsync"
+       OnDeleteAsync="OnDeleteAsync"
+       DoubleClickToEdit="@DoubleClickToEdit"
+       IsMultipleSelect="true"
+       ShowLineNo="true"
+       IsExcel="@IsExcel"
+       ShowDetailRow="_ => true"
+       ShowCardView="true"
+       ShowColumnList="true"
+       ShowFooter="true"
+       ScrollingDialogContent="true"
+       EditDialogIsDraggable="true"
+       EditDialogSize="Size.ExtraLarge"
+       EditDialogShowMaximizeButton="true"
+       ShowExportButton
+       OnExportAsync="ExportAsync"
+       PageItemsSource="new int[] {10, 20, 50, 100, 200, 500, 1000 }">
+
+
+    <TableToolbarTemplate>
+        <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="自由编辑" OnClick="@IsExcelToggle" />
+        <TableToolbarButton TItem="TItem" Color="Color.Secondary" Text="导入" IsAsync OnClick="@ImportExcel" />
+        <TableToolbarButton TItem="TItem" Color="Color.Danger" Text="清空" IsAsync OnClick="EmptyAll" />
+        <TableToolbarButton TItem="TItem" Color="Color.Success" Text="模板" IsAsync OnClick="Export模板Async" />
+    </TableToolbarTemplate>
+
+
+    <ExportButtonDropdownTemplate>
+        <h6 class="dropdown-header">当前页数据</h6>
+        <div class="dropdown-item" @onclick="_=>ExportExcelAsync(mainTable.Rows)">
+            <i class="fas fa-file-excel"></i>
+            <span>Excel</span>
+        </div>
+        <div class="dropdown-item" @onclick="_=>ExportWordAsync(mainTable.Rows)">
+            <i class="fas fa-file-word"></i>
+            <span>Word</span>
+        </div>
+        <div class="dropdown-item" @onclick="_=>ExportHtmlAsync(mainTable.Rows)">
+            <i class="fa-brands fa-html5"></i>
+            <span>Html</span>
+        </div>
+        <div class="dropdown-item" @onclick="_=>ExportPDFAsync(mainTable.Rows)">
+            <i class="fas fa-file-pdf"></i>
+            <span>PDF</span>
+        </div>
+        <div class="dropdown-divider"></div>
+        <h6 class="dropdown-header">全部数据</h6>
+        <div class="dropdown-item" @onclick="_=>ExportExcelAsync(GetAllItems())">
+            <i class="fas fa-file-excel"></i>
+            <span>Excel</span>
+        </div>
+        <div class="dropdown-item" @onclick="_=>ExportWordAsync(GetAllItems())">
+            <i class="fas fa-file-word"></i>
+            <span>Word</span>
+        </div>
+        <div class="dropdown-item" @onclick="_=>ExportHtmlAsync(GetAllItems())">
+            <i class="fa-brands fa-html5"></i>
+            <span>Html</span>
+        </div>
+        <div class="dropdown-item" @onclick="_=>ExportPDFAsync(GetAllItems())">
+            <i class="fas fa-file-pdf"></i>
+            <span>PDF</span>
+        </div>
+    </ExportButtonDropdownTemplate>
+</Table>

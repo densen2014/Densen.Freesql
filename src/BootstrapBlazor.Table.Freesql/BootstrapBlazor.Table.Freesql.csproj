@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <Description>BootstrapBlazor 的 Table 扩展</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageTags>Table with Freesql for BootstrapBlazor</PackageTags>
+		<AssemblyName>BootstrapBlazor.Table.Freesql</AssemblyName>
+		<RootNamespace>Densen.Components</RootNamespace> 
+    </PropertyGroup>
+    
+    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.10" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+        <ProjectReference Include="..\BootstrapBlazor.DataAcces.FreeSql\Densen.Extensions.Freesql.BootstrapBlazor.csproj" />
+        <ProjectReference Include="..\BootstrapBlazor.Table.ImportExportsService\BootstrapBlazor.Table.ImportExportsService.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <PackageReference Include="Densen.FreeSql.Extensions.BootstrapBlazor" Version="7.*" />
+		<PackageReference Include="BootstrapBlazor.Table.ImportExportsService" Version="7.*" />
+	</ItemGroup>
+
+</Project>
