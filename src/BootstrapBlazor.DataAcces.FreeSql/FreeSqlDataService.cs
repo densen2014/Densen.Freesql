@@ -162,7 +162,7 @@ namespace Densen.DataAcces.FreeSql
         /// <param name="TotalCount"></param> 
         /// <param name="fsql"></param>
         /// <param name="WhereCascade">附加查询条件使用and结合</param>
-        /// <param name="IncludeByPropertyNames">附加IncludeByPropertyName查询条件</param>
+        /// <param name="IncludeByPropertyNames">附加IncludeByPropertyName查询条件, 单项可逗号隔开附加查询条件的第二个参数 then，可以进行二次查询前的修饰工作. (暂时只支持一个then附加)</param>
         /// <param name="LeftJoinString">左联查询，使用原生sql语法，LeftJoin("type b on b.id = a.id")</param>
         /// <param name="OrderByPropertyName">强制排序,但是手动排序优先</param>
         /// <param name="WhereCascadeOr">附加查询条件使用or结合</param>
@@ -216,7 +216,15 @@ namespace Densen.DataAcces.FreeSql
                     {
                         foreach (var item in IncludeByPropertyNames)
                         {
-                            fsql_select = fsql_select.IncludeByPropertyName(item);
+                            if (item.IndexOf (",") != -1 && item.Split(",").Length >1)
+                            {
+                                var t1s= item.Split (",");
+                                fsql_select = fsql_select.IncludeByPropertyName(t1s[0], then => then.IncludeByPropertyName(t1s[1]));
+                            }
+                            else
+                            {
+                                fsql_select = fsql_select.IncludeByPropertyName(item);
+                            }
                         }
                     }
                     if (isSerach)
