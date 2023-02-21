@@ -180,7 +180,11 @@ namespace System.Linq.Expressions
         {
             ParameterExpression parameter = Expression.Parameter(typeof(T), "p");
             MemberExpression member = Expression.PropertyOrField(parameter, propertyName);
-            MethodInfo method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+            MethodInfo? method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+            if (method == null)
+            {
+                throw new Exception("方法不存在");
+            }
             ConstantExpression constant = Expression.Constant(propertyValue, typeof(string));
             return Expression.Lambda<Func<T, bool>>(Expression.Call(member, method, constant), parameter);
         }
@@ -196,7 +200,11 @@ namespace System.Linq.Expressions
         {
             ParameterExpression parameter = Expression.Parameter(typeof(T), "p");
             MemberExpression member = Expression.PropertyOrField(parameter, propertyName);
-            MethodInfo method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+            MethodInfo? method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+            if (method == null)
+            {
+                throw new Exception("方法不存在");
+            }
             ConstantExpression constant = Expression.Constant(propertyValue, typeof(string));
             return Expression.Lambda<Func<T, bool>>(Expression.Not(Expression.Call(member, method, constant)), parameter);
         }

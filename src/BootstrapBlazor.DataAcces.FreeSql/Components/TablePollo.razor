@@ -1,0 +1,243 @@
+﻿@typeparam TItem
+@typeparam ItemDetails
+@typeparam ItemDetailsII
+@inherits TbPolloBase
+@namespace AmeBlazor.Components
+@using AME
+
+<Table TItem="TItem" @ref="@mainTable"
+       IsStriped="@IsStriped"
+       IsBordered="@IsBordered"
+       IsPagination="@IsPagination"
+       IsDetails="typeof(ItemDetails).Name != nameof(NullClass)"
+       PageItemsSource="@PageItemsSource"
+       IsAutoRefresh="@IsAutoRefresh"
+       AutoRefreshInterval="@AutoRefreshInterval"
+       AutoGenerateColumns="@AutoGenerateColumns"
+       DataService="@DataService"
+       OnAddAsync="@OnAddAsync"
+       OnQueryAsync="@OnQueryAsync"
+       OnSaveAsync="@OnSaveAsync"
+       OnDeleteAsync="@OnDeleteAsync"
+       DoubleClickToEdit="@DoubleClickToEdit"
+       IsMultipleSelect="@IsMultipleSelect"
+       IsTracking="@IsTracking"
+       IsExcel="@IsExcel"
+       EditMode="@EditMode"
+       HeaderStyle="@HeaderStyle"
+       TableSize="@TableSize"
+       AllowResizing="@AllowResizing"
+       ShowLineNo="@ShowLineNo"
+       ShowSkeleton="@ShowSkeleton"
+       ShowToolbar="@ShowToolbar"
+       ShowDefaultButtons="@ShowDefaultButtons"
+       ShowExtendButtons="@ShowExtendButtons"
+       ShowSearch="@ShowSearch"
+       ShowDetailRow="@ShowDetailRow"
+       ShowFooter="@ShowFooter"
+       ShowColumnList="@ShowColumnList"
+       ShowRefresh="@ShowRefresh"
+       Items="@Items"
+       ShowCardView="@ShowCardView"
+       Height="@Height"
+       IsFixedHeader="@IsFixedHeader"
+       ScrollMode="ScrollMode"
+       RowHeight="RowHeight"
+       RenderMode="RenderMode"
+       ScrollingDialogContent="true"
+       EditDialogIsDraggable="true"
+       EditDialogItemsPerRow="EditDialogItemsPerRow"
+       EditDialogRowType="EditDialogRowType"
+       EditDialogLabelAlign="EditDialogLabelAlign"
+       EditDialogSize="EditDialogSize"
+       EditDialogShowMaximizeButton="EditDialogShowMaximizeButton"
+       ShowExportButton=ShowExportButton
+       ExportButtonIcon=@ExportButtonIcon
+       OnExportAsync="ExportAsync">
+
+    <TableToolbarTemplate>
+        @if (ShowDefaultButtons)
+        {
+            <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="自由编辑" OnClick="@IsExcelToggle" />
+        }
+        @if (Excel导入.HasDelegate)
+        {
+            <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="@Excel导入文本" IsAsync OnClick="@ImportExcel" />
+        }
+        @if (导入.HasDelegate)
+        {
+            <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="@导入文本" IsAsync OnClick="@ImportItems" />
+        }
+        @if (导入II.HasDelegate)
+        {
+            <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="@导入II文本" IsAsync OnClick="@ImportItemsII" />
+        }
+        @if (执行添加.HasDelegate)
+        {
+            <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="@执行添加文本" IsAsync OnClick="@执行添加Cmd" />
+        }
+        @if (ShowExportExcelButtons || 导出.HasDelegate)
+        {
+            <TableToolbarButton TItem="TItem" Color="Color.Success" Text="@导出文本" IsAsync OnClickCallback="@ExportExcelAsync" />
+            if (ShowExportMoreButtons)
+            {
+                <TableToolbarButton TItem="TItem" Color="Color.Success" Text="PDF" IsAsync OnClickCallback="@ExportPDFAsync" />
+                <TableToolbarButton TItem="TItem" Color="Color.Success" Text="Word" IsAsync OnClickCallback="@ExportWordAsync" />
+                <TableToolbarButton TItem="TItem" Color="Color.Success" Text="Html" IsAsync OnClickCallback="@ExportHtmlAsync" />
+            }
+        }
+        @if (ShowToolbarType == ShowToolbarType.打印)
+        {
+            <TableToolbarButton TItem="TItem" Color="Color.Success" Text="@打印文本" IsAsync OnClickCallback="@PrintPreview" />
+        }
+        @if (批量执行 != null)
+        {
+            <TableToolbarButton TItem="TItem" Color="Color.Secondary" Text="@批量按钮文字" IsAsync OnClickCallback="@批量执行" />
+        }
+        @if (升级.HasDelegate)
+        {
+            <TableToolbarButton TItem="TItem" Color="Color.Secondary" Text="@升级按钮文字" IsAsync OnClickCallback="@升级Cmd" />
+        }
+        @if (升级II.HasDelegate)
+        {
+            <TableToolbarButton TItem="TItem" Color="Color.Secondary" Text="@升级按钮II文字" IsAsync OnClickCallback="@升级IICmd" />
+        }
+        @if (!string.IsNullOrEmpty(新窗口打开Url))
+        {
+            <TableToolbarButton TItem="TItem" Color="Color.Secondary" Text="@新窗口打开文字" IsAsync OnClick="@新窗口打开" />
+        }
+        @if (!string.IsNullOrEmpty(查找文本I))
+        {
+            <TableToolbarButton TItem="TItem" Color="Color.Secondary" Text="@查找文本I文字" IsAsync OnClick="@查找文本Icmd" />
+        }
+    </TableToolbarTemplate>
+
+    <TableColumns>
+        @if (ShowDetailRowType == ShowDetailRowType.弹窗)
+        {
+            @RenderTableColumn(context)
+        }
+        else if (ShowDetailRowType == ShowDetailRowType.图片列)
+        {
+            @RenderTableColumnPhotoUrl(context)
+        }
+        @if (TableImgFields != null && TableImgFields.Any())
+        {
+            foreach (var item in TableImgFields)
+            {
+                @RenderTableImgColumn(context, item)
+            }
+        }
+        @if (TableImgField != null)
+        {
+            @RenderTableImgColumn(context)
+        }
+    </TableColumns>
+
+    <DetailRowTemplate>
+        @if (ShowDetailRowType == ShowDetailRowType.选项卡)
+        {
+            <Tab>
+                <TabItem Text="@DetailRowsName1">
+                    @RenderTableDetailRow(context)
+                </TabItem>
+                <TabItem Text="@DetailRowsName2">
+                    @RenderTableDetailRow(context, TableDetailRowType.选项卡2)
+                </TabItem>
+            </Tab>
+        }
+        else
+        {
+            @RenderTableDetailRow(context)
+        }
+    </DetailRowTemplate>
+
+    <TableFooter Context="context1">
+        @if (!string.IsNullOrEmpty(FooterText))
+        {
+            <TableFooterCell colspan="@Footercolspan1" Text="@FooterText" />
+        }
+        @if (!string.IsNullOrEmpty(FooterText2))
+        {
+            <TableFooterCell colspan="@Footercolspan2" Text="@FooterText2" />
+        }
+        @if (!string.IsNullOrEmpty(FooterText3))
+        {
+            <TableFooterCell colspan="@Footercolspan3" Text="@FooterText3" />
+        }
+        @if (!string.IsNullOrEmpty(FooterTotal))
+        {
+            <TableFooterCell colspan="@FootercolspanTotal" Text="@FooterTotal" />
+        }
+    </TableFooter>
+
+
+    <ExportButtonDropdownTemplate>
+        <h6 class="dropdown-header">当前页数据</h6>
+        <div class="dropdown-item" @onclick="_=>ExportExcelAsync(mainTable!.Rows)">
+            <i class="fas fa-file-excel"></i>
+            <span>Excel</span>
+        </div>
+        <div class="dropdown-item" @onclick="_=>ExportWordAsync(mainTable!.Rows)">
+            <i class="fas fa-file-word"></i>
+            <span>Word</span>
+        </div>
+        <div class="dropdown-item" @onclick="_=>ExportHtmlAsync(mainTable!.Rows)">
+            <i class="fa-brands fa-html5"></i>
+            <span>Html</span>
+        </div>
+        <div class="dropdown-item" @onclick="_=>ExportPDFAsync(mainTable!.Rows)">
+            <i class="fas fa-file-pdf"></i>
+            <span>PDF</span>
+        </div>
+        <div class="dropdown-divider"></div>
+        <h6 class="dropdown-header">全部数据</h6>
+        <div class="dropdown-item" @onclick="_=>ExportExcelAsync(GetAllItems())">
+            <i class="fas fa-file-excel"></i>
+            <span>Excel</span>
+        </div>
+        <div class="dropdown-item" @onclick="_=>ExportWordAsync(GetAllItems())">
+            <i class="fas fa-file-word"></i>
+            <span>Word</span>
+        </div>
+        <div class="dropdown-item" @onclick="_=>ExportHtmlAsync(GetAllItems())">
+            <i class="fa-brands fa-html5"></i>
+            <span>Html</span>
+        </div>
+        <div class="dropdown-item" @onclick="_=>ExportPDFAsync(GetAllItems())">
+            <i class="fas fa-file-pdf"></i>
+            <span>PDF</span>
+        </div>
+    </ExportButtonDropdownTemplate>
+
+</Table>
+
+@if (ShowDetailRowType == ShowDetailRowType.弹窗)
+{
+    <Modal @ref="ExtraLargeModal">
+        <ModalDialog Size="Size.Large" Title="子项目" IsDraggable="true">
+            <BodyTemplate>
+
+                <TablePollo @ref="@detalisTable"
+                            TItem="@ItemDetails"
+                            ItemDetails="ItemDetailsII"
+                            ItemDetailsII="NullClass"
+                            Field="@(FieldD??Field)"
+                            FieldValue="@SelectOneItem!.GetIdentityKey(Field)"
+                            IsBordered="false"
+                            ShowToolbar="@ShowToolbar"
+                            ShowDefaultButtons="@ShowDefaultButtons"
+                            ShowExtendButtons="@ShowExtendButtons"
+                            ShowSearch="@ShowSearch"
+                            DoubleClickToEdit="@DoubleClickToEdit"
+                            TableSize="@TableSize"
+                            HeaderStyle="@HeaderStyle"
+                            ShowLineNo="@ShowLineNo"
+                            ShowSkeleton="@ShowSkeleton"
+                            ShowRefresh="@ShowRefresh" />
+
+            </BodyTemplate>
+
+        </ModalDialog>
+    </Modal>
+}

@@ -16,7 +16,9 @@ namespace Densen.Service
             Excel,
             Pdf,
             Word,
-            Html
+            Html,
+            MiniExcel,
+            MiniWord,
         }
 
         public async Task<string> Export<T>(string filePath, List<T>? items = null, ExportType exportType = ExportType.Excel) where T : class, new()
@@ -38,6 +40,16 @@ namespace Densen.Service
                     items = items ?? new List<T>();
                     var resultHtml = await exporterHtml.ExportListByTemplate(filePath + ".html", items);
                     return resultHtml.FileName;
+                //case ExportType.MiniExcel:
+                //    var exporterHtml = new HtmlExporter();
+                //    items = items ?? new List<T>();
+                //    var resultHtml = await exporterHtml.ExportListByTemplate(filePath + ".html", items);
+                //    return resultHtml.FileName;
+                //case ExportType.MiniWord:
+                //    var exporterHtml = new HtmlExporter();
+                //    items = items ?? new List<T>();
+                //    var resultHtml = await exporterHtml.ExportListByTemplate(filePath + ".html", items);
+                //    return resultHtml.FileName;
                 default:
                     IExporter exporter = new ExcelExporter();
                     items = items ?? new List<T>();
