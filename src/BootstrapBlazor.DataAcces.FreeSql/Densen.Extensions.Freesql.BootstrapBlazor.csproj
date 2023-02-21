@@ -17,7 +17,6 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\Densen.Extensions\Blazor\Densen.Extensions.BootstrapBlazor.csproj" />
 	  <ProjectReference Include="..\BootstrapBlazor.Table.ImportExportsService\BootstrapBlazor.Table.ImportExportsService.csproj" />
-	</ItemGroup>
-
+	</ItemGroup> 
 
 </Project>

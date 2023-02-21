@@ -8,11 +8,11 @@ using AME;
 using BootstrapBlazor.Components;
 using Densen.DataAcces.FreeSql;
 using Densen.Service;
-using DocumentFormat.OpenXml.Spreadsheet;
 using FreeSql.Internal.Model;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq.Expressions;
 using static AME.EnumsExtensions;
 using static Densen.Service.ImportExportsService;
@@ -23,7 +23,7 @@ namespace AmeBlazor.Components;
 /// <summary>
 /// TablePollo 组件基类
 /// </summary>
-public partial class TbPolloBase : BootstrapComponentBase 
+public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
 {
     //[Inject]
     //protected Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostEnvironment { get; set; }
@@ -43,10 +43,6 @@ public partial class TbPolloBase : BootstrapComponentBase
 
     [Inject]
     [NotNull]
-    protected ImportExportsService? ImportExportService { get; set; }
-
-    [Inject]
-    [NotNull]
     protected DialogService? DialogService { get; set; }
 
     [Inject]
@@ -58,7 +54,7 @@ public partial class TbPolloBase : BootstrapComponentBase
     /// </summary>
     [Inject]
     [NotNull]
-    protected IJSRuntime? JsRuntime { get; set; }
+    protected IJSRuntime? JS { get; set; }
 
     /// <summary>
     /// 动态附加查询条件, 主键字段名称
@@ -237,6 +233,11 @@ public partial class TbPolloBase : BootstrapComponentBase
     [Parameter] public string? FooterTotal { get; set; }
 
     /// <summary>
+    /// 使用 MiniExcel 库导出,默认为 true
+    /// </summary>
+    [Parameter] public bool UseMiniExcel { get; set; } = true;
+
+    /// <summary>
     /// 级联保存字段名
     /// </summary>
     [Parameter] public string? SaveManyChildsPropertyName { get; set; }
@@ -257,6 +258,20 @@ public partial class TbPolloBase : BootstrapComponentBase
     /// </summary>
     [Parameter]
     public bool ShowExportMoreButtons { get; set; } = true;
+
+    /// <summary>
+    /// 获得/设置 导出到流或者文件 默认为 true 流
+    /// </summary>
+    [Parameter]
+    public bool ExportToStream { get; set; } = true;
+
+
+    /// <summary>
+    /// 获得/设置 导出的本机路径 默认为空
+    /// </summary>
+    [Parameter]
+    public string? ExportBasePath { get; set; }
+
     #endregion
 
     #region 继承bb table的设置
@@ -540,12 +555,36 @@ public partial class TbPolloBase : BootstrapComponentBase
 
     #endregion
 
+    public IJSObjectReference? module;
+
     protected override void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
         if (!firstRender) return;
     }
-     
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            if (firstRender)
+            {
+                module = await JS!.InvokeAsync<IJSObjectReference>("import", "./_content/Densen.Extensions.BootstrapBlazor/download.js" + "?v=" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
+            }
+        }
+        catch
+        {
+        }
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (module is not null)
+        {
+            await module.DisposeAsync();
+        }
+    }
+
 }
 
 /// <summary>
@@ -613,7 +652,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
     [Parameter] public EventCallback<TItem> AfterSaveAsync { get; set; }
 
     Table<TItem>? mainTable;
-    
+
     TablePollo<ItemDetails, ItemDetailsII, NullClass>? detalisTable;
 
     public IEnumerable<TItem>? ItemsCache { get; set; }
@@ -624,9 +663,9 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
         if (ShowDetailRowS)
             ShowDetailRow = _ => true;
 
-        if(PageItemsSourceStart!=null && PageItemsSourceStart < PageItemsSource.FirstOrDefault())
+        if (PageItemsSourceStart != null && PageItemsSourceStart < PageItemsSource.FirstOrDefault())
         {
-            PageItemsSource=PageItemsSource.Append(PageItemsSourceStart.Value).OrderBy(a=>a).ToList();
+            PageItemsSource = PageItemsSource.Append(PageItemsSourceStart.Value).OrderBy(a => a).ToList();
         }
 
     }
@@ -639,7 +678,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
         System.Console.WriteLine($"TablePollo OnAfterRender=> Field: {Field}, FieldValue: {FieldValue}");
     }
 
-    
+
     //protected Task<TItem> OnAddAsync() => Task.FromResult(new TItem());
     public Task<TItem> OnAddAsync()
     {
@@ -700,7 +739,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
     {
         await mainTable!.QueryAsync();
     }
-    
+
     /// <summary>
     /// 附加复杂查询条件
     /// </summary>
@@ -745,7 +784,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
     /// <returns></returns>
     private RenderFragment RenderTableImgColumn(TItem model, TableImgField? tableImgField = null) => builder =>
       {
-          tableImgField = tableImgField ?? TableImgField?? new TableImgField();
+          tableImgField = tableImgField ?? TableImgField ?? new TableImgField();
           var fieldExpresson = GetExpression(model, tableImgField.Field, tableImgField.FieldType);
           builder.OpenComponent(0, typeof(TableColumn<,>).MakeGenericType(typeof(TItem), tableImgField.FieldType));
           builder.AddAttribute(1, "FieldExpression", fieldExpresson);
@@ -884,8 +923,9 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
         {
             //第二选项卡
             builder.OpenComponent<TablePollo<ItemDetailsII, NullClass, NullClass>>(0);
-            if (FieldII != null && FieldII != Field) { 
-                _Field=FieldII ?? Field;
+            if (FieldII != null && FieldII != Field)
+            {
+                _Field = FieldII ?? Field;
                 _FieldValue = model.GetIdentityKey(FieldII);
             }
             _Field = FieldIID ?? Field;
@@ -894,14 +934,14 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
         else if (ShowDetailRowType == ShowDetailRowType.表内明细II)
         {
             builder.OpenComponent<TablePollo<ItemDetails, ItemDetailsII, NullClass>>(0);
-            _Field = FieldD ?? Field; 
+            _Field = FieldD ?? Field;
         }
         else
         {
-            builder.OpenComponent<TablePollo<ItemDetails, NullClass, NullClass>>(0); 
+            builder.OpenComponent<TablePollo<ItemDetails, NullClass, NullClass>>(0);
             _Field = FieldD ?? Field;
         }
-        builder.AddAttribute(0, nameof(Field), _Field) ;
+        builder.AddAttribute(0, nameof(Field), _Field);
         if (IsDebug) ToastService.Success($"展开详情行 {_Field} : _FieldValue");
         builder.AddAttribute(1, nameof(FieldValue), _FieldValue);
         builder.AddAttribute(2, nameof(IsBordered), true);
@@ -926,7 +966,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
         builder.AddAttribute(13, nameof(ShowSkeleton), ShowSkeleton);
         builder.AddAttribute(14, nameof(ShowRefresh), ShowRefresh);
         builder.AddAttribute(15, nameof(IncludeByPropertyNames), SubIncludeByPropertyNames);
-        if (SubTableImgFields!=null) builder.AddAttribute(16, nameof(TableImgFields), SubTableImgFields);
+        if (SubTableImgFields != null) builder.AddAttribute(16, nameof(TableImgFields), SubTableImgFields);
         if (SubTableImgField != null) builder.AddAttribute(17, nameof(TableImgField), SubTableImgField);
         if (SubRenderMode != null) builder.AddAttribute(18, nameof(RenderMode), SubRenderMode);
         if (ibstring != null) builder.AddAttribute(19, nameof(ibstring), ibstring);
@@ -1111,16 +1151,16 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
         }
         return ret;
     }
-    
-    private async Task<bool> ExportExcelAsync(IEnumerable<TItem>? items) =>await ExportAutoAsync(items, ExportType.Excel);
-    private async Task<bool> ExportPDFAsync(IEnumerable<TItem>? items) =>await ExportAutoAsync(items, ExportType.Pdf);
-    private async Task<bool> ExportWordAsync(IEnumerable<TItem>? items) =>await ExportAutoAsync(items, ExportType.Word);
-    private async Task<bool> ExportHtmlAsync(IEnumerable<TItem>? items) =>await ExportAutoAsync(items, ExportType.Html);
-    private async Task<bool> ExportAutoAsync(IEnumerable<TItem>? items, ExportType exportType = ExportType.Excel)
+
+    private async Task<bool> ExportExcelAsync(IEnumerable<TItem>? items) => await ExportAutoAsync(items, UseMiniExcel ? ExportType.MiniExcel : ExportType.Excel);
+    private async Task<bool> ExportPDFAsync(IEnumerable<TItem>? items) => await ExportAutoAsync(items, ExportType.Pdf);
+    private async Task<bool> ExportWordAsync(IEnumerable<TItem>? items) => await ExportAutoAsync(items, ExportType.Word);
+    private async Task<bool> ExportHtmlAsync(IEnumerable<TItem>? items) => await ExportAutoAsync(items, ExportType.Html);
+    private async Task<bool> ExportAutoAsync(IEnumerable<TItem>? items, ExportType exportType = ExportType.MiniExcel)
     {
-        if (!导出.HasDelegate && (items == null || !items.Any()) && (ItemsCache == null || !ItemsCache.Any ()))
+        if (!导出.HasDelegate && (items == null || !items.Any()) && (ItemsCache == null || !ItemsCache.Any()))
         {
-            await ToastService.Error("提示","无数据可导出");
+            await ToastService.Error("提示", "无数据可导出");
             return false;
         }
         var option = new ToastOption()
@@ -1155,31 +1195,52 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
         return true;
 
     }
-    
+
     private async Task MockDownLoadAsync()
     {
         // 此处模拟打包下载数据耗时 5 秒
         await Task.Delay(TimeSpan.FromSeconds(5));
     }
 
-    private async Task Export(List<TItem>? items = null, ExportType exportType = ExportType.Excel)
+    public virtual async Task Export(List<TItem>? items = null, ExportType exportType = ExportType.Excel)
     {
         try
         {
             var fileName = items == null ? "模板" : typeof(TItem).Name;
-            if (items == null || !items.Any()) items = ItemsCache?.ToList();
-            //var fullName = Path.Combine(CurrentRootReal, "Temp", fileName);
-            //fullName = await ImportExportService.Export(fullName, items, exportType);
-            //fileName = (new System.IO.FileInfo(fullName)).Name;
-            //ToastService?.Success("提示", fileName + "已生成");
 
-            ////下载后清除文件
-            //NavigationManager.NavigateTo($"uploads/{公共.appSetting.DSIDsin}/Temp/{fileName}", true);
-            //_ = Task.Run(() =>
-            //{
-            //    Thread.Sleep(5000);
-            //    System.IO.File.Delete(fullName);
-            //});
+            if (ExportBasePath != null)
+            {
+                if (Directory.Exists(ExportBasePath) == false)
+                    Directory.CreateDirectory(ExportBasePath);
+
+                fileName = Path.Combine(ExportBasePath, fileName);
+            }
+
+            if (items == null || !items.Any()) items = ItemsCache?.ToList();
+
+            var memoryStream = new MemoryStream();
+            if (ExportToStream)
+            {
+                var res = await Export2Stream(items, exportType, fileName: fileName);
+                if (res.Stream == null)
+                {
+                    ToastService?.Error("提示", "导出失败,请检查数据");
+                    return;
+                }
+                memoryStream = (MemoryStream)res.Stream;
+                fileName = res.FileName;
+            }
+            else
+            {
+                fileName = await ImportExportsService.Export(fileName, items, exportType);
+                ToastService?.Success("提示", Path.GetFileName(fileName) + "已生成");
+                using FileStream source = File.Open(fileName, FileMode.Open);
+                source.CopyTo(memoryStream);
+            }
+
+            using var streamRef = new DotNetStreamReference(stream: memoryStream);
+
+            await module!.InvokeVoidAsync("downloadFileFromStream", Path.GetFileName(fileName), streamRef);
 
         }
         catch (Exception e)
@@ -1194,7 +1255,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
     {
         if (升级.HasDelegate)
         {
-            await 升级.InvokeAsync((items,true));
+            await 升级.InvokeAsync((items, true));
             await mainTable!.QueryAsync();
             ToastService?.Success($"{升级按钮文字}成功", $"{升级按钮文字}成功,请检查数据");
         }
@@ -1211,7 +1272,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
 
     public Task PrintPreview(IEnumerable<TItem> item)
     {
-        JsRuntime.InvokeAsync<object>(
+        JS.InvokeAsync<object>(
         "toolsFunctions.printpreview", 100
         );
         return Task.CompletedTask;
@@ -1223,7 +1284,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
             ToastService?.Error("提示", "Url为空!");
             return Task.CompletedTask;
         }
-        JsRuntime.NavigateToNewTab(新窗口打开Url);
+        JS.NavigateToNewTab(新窗口打开Url);
         return Task.CompletedTask;
     }
     private Task 查找文本Icmd()
@@ -1233,9 +1294,9 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
             ToastService?.Error("提示", "Url为空!");
             return Task.CompletedTask;
         }
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
+#pragma warning disable BL0005 
         mainTable!.SearchText = 查找文本I;
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+#pragma warning restore BL0005 
         return Task.CompletedTask;
     }
 
@@ -1250,7 +1311,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
     /// <summary>
     /// 全部记录
     /// </summary>
-    public List<TItem>? GetAllItems() => GetDataService().GetAllItems( 
+    public List<TItem>? GetAllItems() => GetDataService().GetAllItems(
                 dynamicFilterInfo,
                 IncludeByPropertyNames,
                 LeftJoinString,

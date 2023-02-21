@@ -8,6 +8,7 @@ using BootstrapBlazor.Components;
 using Densen.DataAcces.FreeSql;
 using FreeSql;
 using System;
+using Densen.Service;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
