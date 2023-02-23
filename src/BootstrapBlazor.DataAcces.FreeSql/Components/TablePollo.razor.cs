@@ -12,7 +12,6 @@ using FreeSql.Internal.Model;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq.Expressions;
 using static AME.EnumsExtensions;
 using static Densen.Service.ImportExportsService;
@@ -125,11 +124,13 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     public TableRenderMode? SubRenderMode { get; set; }
 
     /// <summary>
-    /// 附加导航IncludeByPropertyName查询条件 <para></para>
+    /// 附加导航IncludeByPropertyName查询条件, 单项可逗号隔开附加查询条件的第二个参数 then，可以进行二次查询前的修饰工作. (暂时只支持一个then附加) <para></para>
     /// 例如 : <para></para>
     ///       new List&lt;string&gt; { "ProductsNamePrice","customers" } <para></para>
     /// 或: 直接附加最终关系<para></para>
-    ///       new List&lt;string&gt; { "Orders.Customers1","Orders.Employes1" } 
+    ///       new List&lt;string&gt; { "Orders.Customers1","Orders.Employes1" } <para></para>
+    /// 或: 附加查询条件的第二个参数 then<para></para>
+    ///       new List&lt;string&gt; { "Orders,Employes"}  对应linq为:IncludeByPropertyName("Orders",then => then.IncludeByPropertyName("Employes")<para></para>
     /// </summary>
     [Parameter] public List<string>? IncludeByPropertyNames { get; set; }
 
@@ -954,12 +955,12 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
         builder.AddAttribute(9, nameof(DoubleClickToEdit), DoubleClickToEdit);
         if (rowType == TableDetailRowType.自定义选项卡风格)
         {
-            builder.AddAttribute(10, nameof(TableSize), TableSize.Compact);  //直接设定,
+            builder.AddAttribute(10, nameof(TableSize), TableSize.Compact);
             builder.AddAttribute(11, nameof(HeaderStyle), TableHeaderStyle.Light);
         }
         else
         {
-            builder.AddAttribute(10, nameof(TableSize), TableSizeDetails); //或者变量设定,都有这个问题
+            builder.AddAttribute(10, nameof(TableSize), TableSizeDetails);
             builder.AddAttribute(11, nameof(HeaderStyle), HeaderStyleDetails);
         }
         builder.AddAttribute(12, nameof(ShowLineNo), ShowLineNo);

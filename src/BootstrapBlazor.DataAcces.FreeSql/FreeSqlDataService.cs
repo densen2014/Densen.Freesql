@@ -56,8 +56,8 @@ namespace Densen.DataAcces.FreeSql
         /// <summary>
         /// 保存方法
         /// </summary>
-        /// <param name="model"></param>
-        /// <param name="changedType"></param>
+        /// <param name="model">实体</param>
+        /// <param name="changedType">数据变化类型</param>
         /// <returns></returns>
         public override async Task<bool> SaveAsync(TModel model, ItemChangedType changedType)
         {
@@ -93,6 +93,12 @@ namespace Densen.DataAcces.FreeSql
         /// <summary>
         /// 全部记录
         /// </summary>
+        /// <param name="WhereCascade">附加查询条件使用and结合</param>
+        /// <param name="IncludeByPropertyNames">附加IncludeByPropertyName查询条件, 单项可逗号隔开附加查询条件的第二个参数 then，可以进行二次查询前的修饰工作. (暂时只支持一个then附加)</param>
+        /// <param name="LeftJoinString">左联查询，使用原生sql语法，LeftJoin("type b on b.id = a.id")</param>
+        /// <param name="OrderByPropertyName">强制排序,但是手动排序优先</param>
+        /// <param name="WhereCascadeOr">附加查询条件使用or结合</param>
+        /// <returns></returns>
         public List<TModel>? GetAllItems(
                     DynamicFilterInfo? WhereCascade = null,
                     List<string>? IncludeByPropertyNames = null,
@@ -114,7 +120,7 @@ namespace Densen.DataAcces.FreeSql
         /// </summary>
         /// <param name="option"></param>
         /// <param name="WhereCascade">附加查询条件使用and结合</param>
-        /// <param name="IncludeByPropertyNames">附加IncludeByPropertyName查询条件</param>
+        /// <param name="IncludeByPropertyNames">附加IncludeByPropertyName查询条件, 单项可逗号隔开附加查询条件的第二个参数 then，可以进行二次查询前的修饰工作. (暂时只支持一个then附加)</param>
         /// <param name="LeftJoinString">左联查询，使用原生sql语法，LeftJoin("type b on b.id = a.id")</param>
         /// <param name="OrderByPropertyName">强制排序,但是手动排序优先</param>
         /// <param name="WhereCascadeOr">附加查询条件使用or结合</param>
