@@ -1,9 +1,92 @@
 ﻿@page "/"
+@using Densen.Models.ids
 
-<PageTitle>Index</PageTitle>
+<PageTitle>管理</PageTitle>
 
-<h1>Hello, world!</h1>
+<Tab IsLazyLoadTabItem="true">
+    <TabItem Text="基本">
+        <TablePollo TItem="AspNetUsers" ItemDetails="NullClass" ItemDetailsII="NullClass" ShowColumnList />
+    </TabItem>
+    <TabItem Text="用户">
 
-Welcome to your new app.
+        <TablePollo TItem="AspNetUsers"
+                    IncludeByPropertyNames="@IncludeAspNetUsers"
+                    ItemDetails="AspNetUserRoles"
+                    SubIncludeByPropertyNames="@SubIncludeByPropertyNames"
+                    ItemDetailsII="NullClass"
+                    ShowColumnList
+                    ShowExportButton
+                    ShowDetailRowS
+                    Field="@nameof(AspNetUsers.Id)"
+                    FieldD="@nameof(AspNetUserRoles.UserId)"
+                    ExportToStream="false"
+                    ExportBasePath="temp" />
+        @code{
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+            //通过 UserId 联表读取角色表 AspNetUserRoles 指定用户数据, 但是AspNetUsers表主键是 Id 字段, 详表指定 FieldD="UserId"
+
+            //附加导航IncludeByPropertyName查询条件
+            List<string> IncludeAspNetUsers
+            {
+                get => new List<string> {
+                    $"{nameof(AspNetUsers.AspNetUserRoless)},{nameof(AspNetUserRoles.AspNetRoless)}" ,
+                };
+            }
+
+            List<string> SubIncludeByPropertyNames = new List<string> {
+                nameof(AspNetUserRoles.AspNetRoless) ,
+            };
+
+
+        }
+
+    </TabItem>
+    <TabItem Text="角色表">
+        <p>存储向哪些用户分配哪些角色</p>
+        <TablePollo TItem="AspNetUserRoles"
+                    IncludeByPropertyNames=" new List<string> {nameof(AspNetUserRoles.AspNetUserss),nameof(AspNetUserRoles.AspNetRoless) }"
+                    ItemDetails="AspNetUsers"
+                    SubIncludeByPropertyNames="@IncludeAspNetUsers"
+                    ItemDetailsII="NullClass"
+                    ShowColumnList
+                    ShowExportButton
+                    ShowDetailRowS
+                    Field="@nameof(AspNetUserRoles.UserId)"
+                    FieldD="@nameof(AspNetUsers.Id)"
+                    ExportToStream="false"
+                    ExportBasePath="temp" />
+    </TabItem>
+
+    <TabItem Text="角色定义">
+
+        <TablePollo TItem="AspNetRoles"
+                    IncludeByPropertyNames="new List<string> {nameof(AspNetRoles.AspNetUserRoless) }"
+                    ItemDetails="AspNetUserRoles"
+                    SubIncludeByPropertyNames="new List<string> {nameof(AspNetUserRoles.AspNetUserss),nameof(AspNetUserRoles.AspNetRoless) }"
+                    ItemDetailsII="NullClass"
+                    ShowColumnList
+                    ShowExportButton
+                    ShowDetailRowS
+                    Field="@nameof(AspNetRoles.Id)"
+                    FieldD="@nameof(AspNetUserRoles.RoleId)"
+                    ExportToStream="false"
+                    ExportBasePath="temp" />
+
+    </TabItem>
+</Tab>
+
+@code{
+    [Inject]
+    [NotNull]
+    IFreeSql? fsql { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (!firstRender) return;
+
+        //var users = fsql.Select<AspNetUsers>().Where(a => a.Email == "test@test.com").IncludeMany(a => a.AspNetUserRoless, then => then.Include(c => c.AspNetRoless)).ToOne();
+
+    }
+}
