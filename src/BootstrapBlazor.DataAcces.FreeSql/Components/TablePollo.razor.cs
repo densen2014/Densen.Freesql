@@ -136,10 +136,6 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
 
     /// <summary>
     /// 附加查询条件使用or结合 <para></para>
-    /// 例如 : <para></para>
-    ///       new List&lt;string&gt; { "ProductsNamePrice","customers" } <para></para>
-    /// 或: 直接附加最终关系<para></para>
-    ///       new List&lt;string&gt; { "Orders.Customers1","Orders.Employes1" } 
     /// </summary>
     [Parameter] public List<string>? WhereCascadeOr { get; set; }
 
@@ -620,6 +616,11 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
 
     [Parameter] public EventCallback<(IEnumerable<TItem>, bool)> 升级II { get; set; }
 
+    /// <summary>
+    /// 查询条件，Where(a => a.Id > 10)，支持导航对象查询，Where(a => a.Author.Email == "2881099@qq.com")
+    /// </summary>
+    [Parameter] public Expression<Func<TItem, bool>>? WhereLamda { get; set; }
+
 
     #region 继承bb table的设置
 
@@ -709,7 +710,8 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
                 IncludeByPropertyNames,
                 LeftJoinString,
                 OrderByPropertyName,
-                WhereCascadeOr
+                WhereCascadeOr,
+                WhereLamda
             );
         ItemsCache = items1.Items;
         System.Console.WriteLine($"[展开]TablePollo OnQueryAsync => Field:{dynamicFilterInfo?.Field} /Value: {dynamicFilterInfo?.Value} , itemsTotalCount: {items1.TotalCount}");
@@ -1317,7 +1319,8 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
                 IncludeByPropertyNames,
                 LeftJoinString,
                 OrderByPropertyName,
-                WhereCascadeOr
+                WhereCascadeOr,
+                WhereLamda
             );
 
     #endregion

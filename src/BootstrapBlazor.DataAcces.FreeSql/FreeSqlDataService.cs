@@ -8,6 +8,7 @@ using BootstrapBlazor.Components;
 using FreeSql.DataAnnotations;
 using FreeSql.Internal.Model;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using System.Reflection;
 using Console = System.Console;
 
@@ -72,7 +73,7 @@ namespace Densen.DataAcces.FreeSql
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"IdlebusDataService联级保存 error , {ex.Message}");
+                    Console.WriteLine($"FreeSqlDataService联级保存 error , {ex.Message}");
                 }
             }
 
@@ -98,15 +99,17 @@ namespace Densen.DataAcces.FreeSql
         /// <param name="LeftJoinString">左联查询，使用原生sql语法，LeftJoin("type b on b.id = a.id")</param>
         /// <param name="OrderByPropertyName">强制排序,但是手动排序优先</param>
         /// <param name="WhereCascadeOr">附加查询条件使用or结合</param>
+        /// <param name="WhereLamda">查询条件，Where(a => a.Id > 10)，支持导航对象查询，Where(a => a.Author.Email == "2881099@qq.com")</param>
         /// <returns></returns>
         public List<TModel>? GetAllItems(
                     DynamicFilterInfo? WhereCascade = null,
                     List<string>? IncludeByPropertyNames = null,
                     string? LeftJoinString = null,
                     List<string>? OrderByPropertyName = null,
-                    List<string>? WhereCascadeOr = null)
+                    List<string>? WhereCascadeOr = null,
+                    Expression<Func<TModel, bool>>? WhereLamda = null)
         {
-            var res = FsqlUtil.Fetch<TModel>(OptionsCache, OptionsCache, null, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, true);
+            var res = FsqlUtil.Fetch<TModel>(OptionsCache, OptionsCache, null, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, true, WhereLamda);
             return res.Items?.ToList();
         }
 
@@ -124,6 +127,7 @@ namespace Densen.DataAcces.FreeSql
         /// <param name="LeftJoinString">左联查询，使用原生sql语法，LeftJoin("type b on b.id = a.id")</param>
         /// <param name="OrderByPropertyName">强制排序,但是手动排序优先</param>
         /// <param name="WhereCascadeOr">附加查询条件使用or结合</param>
+        /// <param name="WhereLamda">查询条件，Where(a => a.Id > 10)，支持导航对象查询，Where(a => a.Author.Email == "2881099@qq.com")</param>
         /// <returns></returns>
         public Task<QueryData<TModel>> QueryAsyncWithWhereCascade(
                     QueryPageOptions option,
@@ -131,9 +135,10 @@ namespace Densen.DataAcces.FreeSql
                     List<string>? IncludeByPropertyNames = null,
                     string? LeftJoinString = null,
                     List<string>? OrderByPropertyName = null,
-                    List<string>? WhereCascadeOr = null)
+                    List<string>? WhereCascadeOr = null,
+                    Expression<Func<TModel, bool>>? WhereLamda = null)
         {
-            var res = FsqlUtil.Fetch<TModel>(option, OptionsCache, TotalCount, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr);
+            var res = FsqlUtil.Fetch<TModel>(option, OptionsCache, TotalCount, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr,WhereLamda: WhereLamda);
             TotalCount = res.TotalCount;
             Items = res.Items?.ToList();
             OptionsCache = option;
@@ -158,6 +163,9 @@ namespace Densen.DataAcces.FreeSql
 
     }
 
+    /// <summary>
+    /// FreeSql ORM 查询工具类
+    /// </summary>
     public static class FsqlUtil
     {
         /// <summary>
@@ -168,11 +176,14 @@ namespace Densen.DataAcces.FreeSql
         /// <param name="TotalCount"></param> 
         /// <param name="fsql"></param>
         /// <param name="WhereCascade">附加查询条件使用and结合</param>
-        /// <param name="IncludeByPropertyNames">附加IncludeByPropertyName查询条件, 单项可逗号隔开附加查询条件的第二个参数 then，可以进行二次查询前的修饰工作. (暂时只支持一个then附加)</param>
+        /// <param name="IncludeByPropertyNames">附加IncludeByPropertyName查询条件.<para></para>
+        /// 其中单项可逗号隔开附加查询条件的第二个参数 then，可以进行二次查询前的修饰工作. <para></para>
+        /// 单项第二个逗号隔开可第三层then附加</param>
         /// <param name="LeftJoinString">左联查询，使用原生sql语法，LeftJoin("type b on b.id = a.id")</param>
         /// <param name="OrderByPropertyName">强制排序,但是手动排序优先</param>
         /// <param name="WhereCascadeOr">附加查询条件使用or结合</param>
         /// <param name="forceAllItems">附加查询条件使用or结合</param>
+        /// <param name="WhereLamda">查询条件，Where(a => a.Id > 10)，支持导航对象查询，Where(a => a.Author.Email == "2881099@qq.com")</param>
         public static QueryData<TModel> Fetch<TModel>(
                                 QueryPageOptions options,
                                 QueryPageOptions? optionsLast,
@@ -183,7 +194,8 @@ namespace Densen.DataAcces.FreeSql
                                 string? LeftJoinString = null,
                                 List<string>? OrderByPropertyName = null,
                                 List<string>? WhereCascadeOr = null,
-                                bool forceAllItems = false) where TModel : class, new()
+                                bool forceAllItems = false,
+                                Expression<Func<TModel, bool>>? WhereLamda = null) where TModel : class, new()
         {
             var items = new List<TModel>(); ;
 
@@ -218,13 +230,22 @@ namespace Densen.DataAcces.FreeSql
                     {
                         fsql_select = fsql_select.LeftJoin(LeftJoinString);
                     }
+                    if (WhereLamda != null)
+                    {
+                        fsql_select = fsql_select.Where(WhereLamda);
+                    }
                     if (IncludeByPropertyNames != null)
                     {
                         foreach (var item in IncludeByPropertyNames)
                         {
-                            if (item.IndexOf (",") != -1 && item.Split(",").Length >1)
+                            if (item.IndexOf(",") != -1 && item.Split(",").Length > 2)
                             {
-                                var t1s= item.Split (",");
+                                var t1s = item.Split(","); 
+                                fsql_select = fsql_select.IncludeByPropertyName(t1s[0], then => then.IncludeByPropertyName(t1s[1], then => then.IncludeByPropertyName(t1s[2])));
+                            }
+                            else if (item.IndexOf(",") != -1 && item.Split(",").Length > 1)
+                            {
+                                var t1s = item.Split(",");
                                 fsql_select = fsql_select.IncludeByPropertyName(t1s[0], then => then.IncludeByPropertyName(t1s[1]));
                             }
                             else
@@ -233,6 +254,7 @@ namespace Densen.DataAcces.FreeSql
                             }
                         }
                     }
+
                     if (isSerach)
                         fsql_select = fsql_select.WhereDynamicFilter(dynamicFilterInfo);
 
@@ -287,7 +309,7 @@ namespace Densen.DataAcces.FreeSql
             }
             catch (Exception e)
             {
-                Console.WriteLine("IdlebusDataService Error: " + e.Message);
+                Console.WriteLine("FreeSqlDataService Error: " + e.Message);
                 items = new List<TModel>();
                 TotalCount = 0;
             }
