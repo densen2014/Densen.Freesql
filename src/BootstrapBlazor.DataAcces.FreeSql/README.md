@@ -3,6 +3,7 @@ BootstrapBlazor的FreeSql数据注入服务扩展包
 1. 注入服务
 
 ```
+//添加FreeSql服务
 builder.Services.AddFreeSql(option =>
 {
     option.UseConnectionString(FreeSql.DataType.Sqlite, builder.Configuration.GetConnectionString("IdsSQliteConnection"))  //也可以写到配置文件中
@@ -15,6 +16,9 @@ builder.Services.AddFreeSql(option =>
 #endif
     ;
 })
+
+//全功能版
+builder.Services.AddSingleton(typeof(FreeSqlDataService<>));
 ```
 
 2. FreeSql ORM 的 IDataService 数据注入服务接口实现
@@ -109,7 +113,7 @@ FsqlUtil
 ```
         <h4>用户表</h4>
 
-        <TablePollo TItem="AspNetUsers"/>
+        <TablePollo TItem="AspNetUsers" ItemDetails="NullClass" ItemDetailsII="NullClass" ShowColumnList />
 
         <TablePollo TItem="AspNetUsers"
                     IncludeByPropertyNames="@IncludeAspNetUsers"
