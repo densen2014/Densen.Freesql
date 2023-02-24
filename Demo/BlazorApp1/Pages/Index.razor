@@ -40,7 +40,43 @@
 
 
         }
+        <p>只显示某Id</p>
+        <TablePollo TItem="AspNetUsers"
+                    WhereLamda="DWhere1"
+                    IncludeByPropertyNames="@IncludeAspNetUsers"
+                    ItemDetails="AspNetUserRoles"
+                    SubIncludeByPropertyNames="@SubIncludeByPropertyNames"
+                    ItemDetailsII="NullClass"
+                    ShowColumnList
+                    ShowExportButton
+                    ShowDetailRowS
+                    Field="@nameof(AspNetUsers.Id)"
+                    FieldD="@nameof(AspNetUserRoles.UserId)"
+                    ExportToStream="false"
+                    ExportBasePath="temp" />
+        @code{
+            Expression<Func<AspNetUsers, bool>>? DWhere1 { get => dwhere1.And(d => d.Id == "19f37cba-1779-410f-850d-1e80a0ec7c21"); }
+            Expression<Func<AspNetUsers, bool>>? dwhere1;
+        }
 
+        <p>显示一组Id</p>
+        <TablePollo TItem="AspNetUsers"
+                    WhereLamda="DWhere2"
+                    IncludeByPropertyNames="@IncludeAspNetUsers"
+                    ItemDetails="AspNetUserRoles"
+                    SubIncludeByPropertyNames="@SubIncludeByPropertyNames"
+                    ItemDetailsII="NullClass"
+                    ShowColumnList
+                    ShowExportButton
+                    ShowDetailRowS
+                    Field="@nameof(AspNetUsers.Id)"
+                    FieldD="@nameof(AspNetUserRoles.UserId)"
+                    ExportToStream="false"
+                    ExportBasePath="temp" />
+        @code{
+            Expression<Func<AspNetUsers, bool>>? DWhere2 { get => dwhere2.And(d => "19f37cba-1779-410f-850d-1e80a0ec7c21,1751de94-0b1a-4f22-8f63-99986c620a09".Contains(d.Id)); }
+            Expression<Func<AspNetUsers, bool>>? dwhere2;
+        }
     </TabItem>
     <TabItem Text="角色表">
         <p>存储向哪些用户分配哪些角色</p>
