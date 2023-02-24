@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using Densen.Models.ids
+@using System.Linq.Expressions
 
 <PageTitle>管理</PageTitle>
 
@@ -55,6 +56,25 @@
                     FieldD="@nameof(AspNetUsers.Id)"
                     ExportToStream="false"
                     ExportBasePath="temp" />
+
+        <p>只显示Admin</p>
+        <TablePollo TItem="AspNetUserRoles"
+                    WhereLamda="DWhere"
+                    IncludeByPropertyNames=" new List<string> {nameof(AspNetUserRoles.AspNetUserss),nameof(AspNetUserRoles.AspNetRoless) }"
+                    ItemDetails="AspNetUsers"
+                    SubIncludeByPropertyNames="@IncludeAspNetUsers"
+                    ItemDetailsII="NullClass"
+                    ShowColumnList
+                    ShowExportButton
+                    ShowDetailRowS
+                    Field="@nameof(AspNetUserRoles.UserId)"
+                    FieldD="@nameof(AspNetUsers.Id)"
+                    ExportToStream="false"
+                    ExportBasePath="temp" />
+        @code{
+            Expression<Func<AspNetUserRoles, bool>>? DWhere { get => dwhere.And(d => d.AspNetRoless.Name == "Admin"); }
+            Expression<Func<AspNetUserRoles, bool>>? dwhere;
+        }
     </TabItem>
 
     <TabItem Text="角色定义">
@@ -76,7 +96,7 @@
 </Tab>
 
 @code{
-    [Inject]
+[Inject]
     [NotNull]
     IFreeSql? fsql { get; set; }
 
