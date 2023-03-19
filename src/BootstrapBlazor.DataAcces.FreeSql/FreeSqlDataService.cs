@@ -55,6 +55,15 @@ namespace Densen.DataAcces.FreeSql
         public string? SaveManyChildsPropertyName { get; set; }
 
         /// <summary>
+        /// 是否开启 一对一(OneToOne)、一对多(OneToMany)、多对多(ManyToMany) 级联保存功能<para></para>
+        /// <para></para>
+        /// 【一对一】模型下，保存时级联保存 OneToOne 属性。
+        /// <para></para>
+        /// 【一对多】模型下，保存时级联保存 OneToMany 集合属性。出于安全考虑我们没做完整对比，只针对实体属性集合的添加或更新操作，因此不会删除数据库表已有的数据。<para></para>
+        /// </summary>
+        public bool EnableCascadeSave { get; set; } = false;
+
+        /// <summary>
         /// 保存方法
         /// </summary>
         /// <param name="model">实体</param>
@@ -63,6 +72,7 @@ namespace Densen.DataAcces.FreeSql
         public override async Task<bool> SaveAsync(TModel model, ItemChangedType changedType)
         {
             var repo = fsql.GetRepository<TModel>();
+            repo.DbContextOptions.EnableCascadeSave = EnableCascadeSave;
             await repo.InsertOrUpdateAsync(model);
             if (!string.IsNullOrEmpty(SaveManyChildsPropertyName))
             {
