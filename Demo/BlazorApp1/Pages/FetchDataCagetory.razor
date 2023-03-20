@@ -1,9 +1,9 @@
-﻿@page "/fetchdata"
+﻿@page "/fetchdataCagetory"
 @using BlazorApp1.Data
 
-<PageTitle>Weather forecast</PageTitle>
+<PageTitle>Cagetory</PageTitle>
 
-<TablePollo TItem="Cagetory3"
+<TablePollo TItem="Cagetory"
         IncludeByPropertyNames="@IncludeByPropertyNames"
         ItemDetails="NullClass"
         ItemDetailsII="NullClass"
@@ -18,24 +18,14 @@
     [Inject] ToastService? toastService { get; set; }
 
     List<string> IncludeByPropertyNames = new List<string> {
-                nameof(Cagetory3.Ext) ,
+                nameof(Cagetory.Childs) ,
             };
 
-    //用演示服务的数据初始化数据库
-    [Inject] WeatherForecastService? ForecastService { get; set; }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            Cagetory3.GenDemoDatas(fsql!);
-
-
-            //检测一个导航属性是否有效：
-
-            var tbref = fsql!.CodeFirst
-                        .GetTableByEntity(typeof(Cagetory3))
-                        .GetTableRef(nameof(Cagetory3.Ext), true);
-             
+            Cagetory.GenDemoDatas(fsql!);
         }
     }
 

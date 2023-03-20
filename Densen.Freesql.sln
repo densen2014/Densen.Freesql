@@ -22,7 +22,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{C1F64296-9
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1", "Demo\BlazorApp1\BlazorApp1.csproj", "{947067D6-468B-46E0-8A90-4C3F11163104}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "Demo\ConsoleApp1\ConsoleApp1.csproj", "{2DDF3283-8006-400E-B044-24AE6A0B86BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp1", "Demo\ConsoleApp1\ConsoleApp1.csproj", "{2DDF3283-8006-400E-B044-24AE6A0B86BD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Densen.Extensions.BootstrapBlazor", "..\Densen.Extensions\Blazor\Densen.Extensions.BootstrapBlazor.csproj", "{23890B60-B8FB-4048-9076-9F4AC66ED4F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,12 @@ Global
 		{2DDF3283-8006-400E-B044-24AE6A0B86BD}.Preview|Any CPU.Build.0 = Debug|Any CPU
 		{2DDF3283-8006-400E-B044-24AE6A0B86BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DDF3283-8006-400E-B044-24AE6A0B86BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23890B60-B8FB-4048-9076-9F4AC66ED4F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23890B60-B8FB-4048-9076-9F4AC66ED4F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23890B60-B8FB-4048-9076-9F4AC66ED4F4}.Preview|Any CPU.ActiveCfg = Preview|Any CPU
+		{23890B60-B8FB-4048-9076-9F4AC66ED4F4}.Preview|Any CPU.Build.0 = Preview|Any CPU
+		{23890B60-B8FB-4048-9076-9F4AC66ED4F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23890B60-B8FB-4048-9076-9F4AC66ED4F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
