@@ -269,6 +269,16 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     [Parameter]
     public string? ExportBasePath { get; set; }
 
+    /// <summary>
+    /// 是否开启 一对一(OneToOne)、一对多(OneToMany)、多对多(ManyToMany) 级联保存功能<para></para>
+    /// <para></para>
+    /// 【一对一】模型下，保存时级联保存 OneToOne 属性。
+    /// <para></para>
+    /// 【一对多】模型下，保存时级联保存 OneToMany 集合属性。出于安全考虑我们没做完整对比，只针对实体属性集合的添加或更新操作，因此不会删除数据库表已有的数据。<para></para>
+    /// </summary>
+    [Parameter]
+    public bool EnableCascadeSave { get; set; } = false;
+
     #endregion
 
     #region 继承bb table的设置
@@ -695,6 +705,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
         {
             DataServices.Last().SaveManyChildsPropertyName = SaveManyChildsPropertyName;
             DataServices.Last().ibstring = ibstring;
+            DataServices.Last().EnableCascadeSave = EnableCascadeSave;
             return DataServices.Last();
         }
         else

@@ -72,8 +72,29 @@ namespace Densen.DataAcces.FreeSql
         public override async Task<bool> SaveAsync(TModel model, ItemChangedType changedType)
         {
             var repo = fsql.GetRepository<TModel>();
+
+            //一对一(OneToOne)、一对多(OneToMany)、多对多(ManyToMany) 级联保存功能
             repo.DbContextOptions.EnableCascadeSave = EnableCascadeSave;
+
             await repo.InsertOrUpdateAsync(model);
+
+            //TODO 测试mssql2005
+            //if (EnableCascadeSave)
+            //{
+            //    if (changedType == ItemChangedType.Add)
+            //    {
+            //        await repo.InsertAsync(model);
+            //    }
+            //    else
+            //    {
+            //        await repo.UpdateAsync(model);
+            //    }
+
+            //}
+            //else
+            //{
+            //    await repo.InsertOrUpdateAsync(model);
+            //}
             if (!string.IsNullOrEmpty(SaveManyChildsPropertyName))
             {
                 try
