@@ -14,8 +14,8 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.*" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.*" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Debug'">
@@ -24,8 +24,8 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Release'">
-        <PackageReference Include="Densen.FreeSql.Extensions.BootstrapBlazor" Version="7.*" />
-		<PackageReference Include="BootstrapBlazor.Table.ImportExportsService" Version="7.*" />
+        <PackageReference Include="Densen.FreeSql.Extensions.BootstrapBlazor" Version="7.2.2" />
+		<PackageReference Include="BootstrapBlazor.Table.ImportExportsService" Version="7.2.3" />
 	</ItemGroup>
 
 </Project>
