@@ -189,7 +189,7 @@ class Cagetory3
     public static void GenDemoDatas(IFreeSql fsql)
     {
         var repo = fsql.GetRepository<Cagetory3>();
-        //if (repo.Select.Any()) return;
+        if (repo.Select.Any()) return;
         repo.DbContextOptions.EnableCascadeSave = true;
 
         //OneToOne 关键点
