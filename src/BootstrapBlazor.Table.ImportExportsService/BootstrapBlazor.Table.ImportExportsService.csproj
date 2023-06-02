@@ -8,7 +8,7 @@
     </PropertyGroup>
 
 	<ItemGroup>
-        <PackageReference Include="Magicodes.IE.Core" Version="2.*" />
+        <PackageReference Include="Magicodes.IE.Core" Version="2.7.4.4" />
         <PackageReference Include="Magicodes.IE.Excel" Version="2.*" />
         <PackageReference Include="Magicodes.IE.Html" Version="2.*" />
         <PackageReference Include="Magicodes.IE.Pdf" Version="2.*" />
