@@ -6,22 +6,27 @@
 
 <Tab IsLazyLoadTabItem="true">
     <TabItem Text="基本">
-        <TablePollo TItem="AspNetUsers" ItemDetails="NullClass" ItemDetailsII="NullClass" 
+        <TablePollo TItem="AspNetUsers" ItemDetails="NullClass" ItemDetailsII="NullClass"
                     ItemDetailsIII="NullClass" ShowColumnList />
     </TabItem>
     <TabItem Text="用户">
 
         <TablePollo TItem="AspNetUsers"
+                    ShowDetailRowType=AME.EnumsExtensions.ShowDetailRowType.选项卡
                     IncludeByPropertyNames="@IncludeAspNetUsers"
+                    Field="@nameof(AspNetUsers.Id)"
+                    DetailRowsName1="角色表"
+                    FieldD="@nameof(AspNetUserRoles.UserId)"
                     ItemDetails="AspNetUserRoles"
                     SubIncludeByPropertyNames="@SubIncludeByPropertyNames"
-                    ItemDetailsII="NullClass"
+                    DetailRowsName2="用户声明"
+                    FieldIID="@nameof(AspNetUserClaims.UserId)"
+                    ItemDetailsII="AspNetUserClaims"
+                    SubIncludeByPropertyNamesII="new List<string> {}"
                     ItemDetailsIII="NullClass"
                     ShowColumnList
                     ShowExportButton
                     ShowDetailRowS
-                    Field="@nameof(AspNetUsers.Id)"
-                    FieldD="@nameof(AspNetUserRoles.UserId)"
                     ExportToStream="false"
                     ExportBasePath="temp" />
         @code{
@@ -138,15 +143,22 @@
                     Field="@nameof(AspNetRoles.Id)"
                     FieldD="@nameof(AspNetUserRoles.RoleId)"
                     ExportToStream="false"
-                    ExportBasePath="temp" />
+                    ExportBasePath="temp"
+                    RowButtons="list" />
 
+        @code{
+        }
     </TabItem>
 </Tab>
 
 @code{
-[Inject]
+    [Inject]
     [NotNull]
     IFreeSql? fsql { get; set; }
+
+    [Inject]
+    [NotNull]
+    ToastService? ToastService { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -157,4 +169,5 @@
         //var users = fsql.Select<AspNetUsers>().Where(a => a.Email == "test@test.com").IncludeMany(a => a.AspNetUserRoless, then => then.Include(c => c.AspNetRoless)).ToOne();
 
     }
+
 }

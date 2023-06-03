@@ -8,6 +8,7 @@ using AME;
 using BootstrapBlazor.Components;
 using Densen.DataAcces.FreeSql;
 using Densen.Service;
+using DocumentFormat.OpenXml.Spreadsheet;
 using FreeSql.Internal.Model;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -128,6 +129,30 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     /// </summary>
     [Parameter]
     public List<TableImgField>? SubTableImgFields { get; set; }
+
+    /// <summary>
+    /// 附加操作列参数集合,优先读取
+    /// </summary>
+    [Parameter]
+    public List<TableImgField>? TableFunctionsFields { get; set; }
+
+    /// <summary>
+    /// 详表附加操作参数集合,优先读取
+    /// </summary>
+    [Parameter]
+    public List<TableImgField>? SubTableFunctionsFields { get; set; }
+
+    /// <summary>
+    /// 附加行内操作按钮参数集合,优先读取
+    /// </summary>
+    [Parameter]
+    public List<RowButtonField>? RowButtons { get; set; }
+
+    /// <summary>
+    /// 详表附加行内操作按钮参数集合,优先读取
+    /// </summary>
+    [Parameter]
+    public List<RowButtonField>? SubRowButtons { get; set; }
 
     /// <summary>
     /// 详表附加组件布局方式 默认为 Auto
@@ -361,6 +386,47 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     public bool ShowToolbar { get; set; } = true;
 
     /// <summary>
+    /// 获得/设置 是否显示新建按钮 默认为 true 显示
+    /// </summary>
+    [Parameter]
+    public bool ShowAddButton { get; set; } = true;
+
+    /// <summary>
+    /// 获得/设置 是否显示编辑按钮 默认为 true 行内是否显示请使用 <see cref="ShowExtendEditButton"/> 与 <see cref="ShowEditButtonCallback" />
+    /// </summary>
+    [Parameter]
+    public bool ShowEditButton { get; set; } = true; 
+
+    /// <summary>
+    /// 获得/设置 是否显示删除按钮 默认为 true 行内是否显示请使用 <see cref="ShowExtendDeleteButton"/> 与 <see cref="ShowDeleteButtonCallback" />
+    /// </summary>
+    [Parameter]
+    public bool ShowDeleteButton { get; set; } = true;
+
+    /// <summary>
+    /// 获得/设置 是否自动收缩工具栏按钮 默认 true
+    /// </summary>
+    [Parameter]
+    public bool IsAutoCollapsedToolbarButton { get; set; } = true;
+
+    /// <summary>
+    /// 获得/设置 是否显示行内扩展编辑按钮 默认 true 显示
+    /// </summary>
+    [Parameter]
+    public bool ShowExtendEditButton { get; set; } = true;
+
+    /// <summary>
+    /// 获得/设置 是否显示行内扩展编辑按钮 默认 true 显示
+    /// </summary>
+    [Parameter]
+    public bool ShowExtendDeleteButton { get; set; } = true;
+
+    /// <summary>
+    /// 获得/设置 是否显示Excel自由编辑模式 默认为 true 显示
+    /// </summary>
+    [Parameter]
+    public bool ShowExcelModeButtons { get; set; } = true;
+    /// <summary>
     /// 获得/设置 是否显示添加/编辑/删除按钮 默认为 true 显示
     /// </summary>
     [Parameter]
@@ -467,12 +533,6 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     /// </summary>
     [Parameter]
     public bool ShowFooter { get; set; }
-
-    ///// <summary>
-    ///// 获得/设置 单击行回调委托方法
-    ///// </summary>
-    //[Parameter]
-    //public Func<TItem, Task>? OnClickRowCallback { get; set; }
 
     ///// <summary>
     ///// 获得/设置 双击行回调委托方法
@@ -589,6 +649,13 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     [Parameter]
     public bool EditDialogShowMaximizeButton { get; set; } = true;
 
+    /// <summary>
+    /// 获得/设置 表格 Toolbar 按钮模板
+    /// <para>表格工具栏左侧按钮模板，模板中内容出现在默认按钮前面</para>
+    /// </summary>
+    [Parameter]
+    public RenderFragment? TableToolbarBeforeTemplate { get; set; }
+
     #endregion
 
     public IJSObjectReference? module;
@@ -694,9 +761,16 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     /// </summary>
     [Parameter] public EventCallback<TItem> AfterSaveAsync { get; set; }
 
+    /// <summary>
+    /// 获得/设置 单击行回调委托方法
+    /// </summary>
+    [Parameter]
+    public Func<TItem, Task>? OnClickRowCallback { get; set; }
+
+
     Table<TItem>? mainTable;
 
-    TablePollo<ItemDetails, ItemDetailsII, NullClass, NullClass>? detalisTable;
+    TablePollo<ItemDetails, ItemDetailsII, ItemDetailsIII, NullClass>? detalisTable;
 
     public IEnumerable<TItem>? ItemsCache { get; set; }
 
@@ -811,10 +885,10 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     /// <param name="field">列名,默认"ID"</param>
     /// <param name="fieldType">列类型,默认typeof(int)</param>
     /// <returns></returns>
-    object GetExpression(object model, string field = "ID", Type? fieldType = null)
+    object GetExpression(object model, string? field = "ID", Type? fieldType = null)
     {
         // ValueExpression
-        var body = Expression.Property(Expression.Constant(model), typeof(TItem), field);
+        var body = Expression.Property(Expression.Constant(model), typeof(TItem), field??"ID");
         var tDelegate = typeof(Func<>).MakeGenericType(fieldType ?? typeof(int));
         var valueExpression = Expression.Lambda(tDelegate, body);
         return valueExpression;
@@ -859,6 +933,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     //  </Template>
     //</TableColumn>
 
+
     /// <summary>
     /// 动态生成控件 TableColumn 明细行按钮
     /// </summary>
@@ -866,7 +941,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     /// <returns></returns>
     private RenderFragment RenderTableColumn(TItem model) => builder =>
     {
-        var fieldExpresson = GetExpression(model); // 刚才你的那个获取表达式 GetExpression() 的返回值的
+        var fieldExpresson = GetExpression(model, Field, FieldType); // 刚才你的那个获取表达式 GetExpression() 的返回值的
         builder.OpenComponent(0, typeof(TableColumn<,>).MakeGenericType(typeof(TItem), FieldType));
         builder.AddAttribute(1, "FieldExpression", fieldExpresson);
         // 这里继续添加你原来 Razor 文件中的哪些属性
@@ -894,6 +969,38 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         builder.CloseComponent();
     };
 
+
+
+    /// <summary>
+    /// 动态生成控件 TableColumn 功能列
+    /// </summary>
+    /// <param name="model"></param>
+    /// <param name="tableImgField"></param>
+    /// <returns></returns>
+    private RenderFragment RenderTableFunctionsColumn(TItem model, TableImgField tableImgField) => builder =>
+    {
+        var fieldExpresson = GetExpression(model, tableImgField.Field, tableImgField.FieldType);
+        builder.OpenComponent(0, typeof(TableColumn<,>).MakeGenericType(typeof(TItem), tableImgField.FieldType));
+        builder.AddAttribute(1, "FieldExpression", fieldExpresson);
+        //builder.AddAttribute(2, "Width", 200);
+        builder.AddAttribute(3, "Template", new RenderFragment<TableColumnContext<TItem, string>>(context => buttonBuilder =>
+        {
+            buttonBuilder.OpenComponent<Button>(0);
+            buttonBuilder.AddAttribute(1, nameof(Button.Text), tableImgField.Title); 
+            var value = (context.Row).GetIdentityKey(tableImgField.Field);
+            if (tableImgField.Callback.HasDelegate)
+            { 
+                buttonBuilder.AddAttribute(1, nameof(Button.OnClickWithoutRender), new Func<Task>(async () =>
+                {
+                    await tableImgField.Callback.InvokeAsync(value);
+                }));
+            }
+            if (!string.IsNullOrEmpty(tableImgField.Style)) buttonBuilder.AddAttribute(5, nameof(ImgColumn.Style), tableImgField.Style);
+            buttonBuilder.CloseComponent();
+        }));
+        if (!string.IsNullOrEmpty(tableImgField.ColumnText)) builder.AddAttribute(4, "Text", tableImgField.ColumnText);
+        builder.CloseComponent();
+    };
 
     //<TableColumn @bind-Field="@context1.PhotoUrl" Text="图" Width="60" Visible="true">
     //    <Template Context = "value" >
@@ -1027,6 +1134,8 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         if (SubTableImgField != null) builder.AddAttribute(17, nameof(TableImgField), SubTableImgField);
         if (SubRenderMode != null) builder.AddAttribute(18, nameof(RenderMode), SubRenderMode);
         if (ibstring != null) builder.AddAttribute(19, nameof(ibstring), ibstring);
+        if (SubTableFunctionsFields != null) builder.AddAttribute(16, nameof(TableFunctionsFields), SubTableFunctionsFields);
+        if (SubRowButtons != null) builder.AddAttribute(16, nameof(RowButtons), SubRowButtons);
         builder.CloseComponent();
     };
 
@@ -1325,7 +1434,22 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
             ToastService?.Success($"{升级按钮II文字}成功", $"{升级按钮II文字}成功,请检查数据");
         }
     }
+    private async Task ClickRow(TItem item)
+    {
+        if (OnClickRowCallback!=null)
+        {
+            await OnClickRowCallback.Invoke(item);
+        }
+    }
 
+    private async Task OnRowButtonClick(TItem item, RowButtonField RowButtonField)
+    {
+        if (RowButtonField.CallbackFunc != null)
+        {
+            await RowButtonField.CallbackFunc.Invoke(item);  
+            await mainTable!.QueryAsync();
+        }
+    }
 
     public Task PrintPreview(IEnumerable<TItem> item)
     {
@@ -1334,6 +1458,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         );
         return Task.CompletedTask;
     }
+
     private Task 新窗口打开()
     {
         if (string.IsNullOrEmpty(新窗口打开Url))

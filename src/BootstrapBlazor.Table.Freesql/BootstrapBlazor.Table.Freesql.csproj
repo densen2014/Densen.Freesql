@@ -24,8 +24,8 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Release'">
-        <PackageReference Include="Densen.FreeSql.Extensions.BootstrapBlazor" Version="7.2.2" />
-		<PackageReference Include="BootstrapBlazor.Table.ImportExportsService" Version="7.2.3" />
+        <PackageReference Include="Densen.FreeSql.Extensions.BootstrapBlazor" Version="7.*" />
+		<PackageReference Include="BootstrapBlazor.Table.ImportExportsService" Version="7.*" />
 	</ItemGroup>
 
 </Project>

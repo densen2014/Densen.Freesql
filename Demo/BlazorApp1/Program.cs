@@ -6,8 +6,7 @@
 
 using BlazorApp1.Data;
 using Densen.DataAcces.FreeSql;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +33,12 @@ builder.Services.AddFreeSql(option =>
 builder.Services.AddSingleton(typeof(FreeSqlDataService<>));
 
 builder.Services.AddDensenExtensions();
+builder.Services.ConfigureJsonLocalizationOptions(op =>
+{
+    // 忽略文化信息丢失日志
+    op.IgnoreLocalizerMissing = true;
+
+});
 
 var app = builder.Build();
 

@@ -31,8 +31,15 @@
        ShowLineNo="@ShowLineNo"
        ShowSkeleton="@ShowSkeleton"
        ShowToolbar="@ShowToolbar"
+       ShowAddButton="@ShowAddButton"
+       ShowEditButton="@ShowEditButton"
+       ShowDeleteButton="@ShowDeleteButton" 
+       IsAutoCollapsedToolbarButton="@IsAutoCollapsedToolbarButton" 
+       ShowExtendEditButton="@ShowExtendEditButton" 
+       ShowExtendDeleteButton="@ShowExtendDeleteButton" 
        ShowDefaultButtons="@ShowDefaultButtons"
        ShowExtendButtons="@ShowExtendButtons"
+       ShowExportButton=ShowExportButton
        ShowSearch="@ShowSearch"
        ShowDetailRow="@ShowDetailRow"
        ShowFooter="@ShowFooter"
@@ -52,12 +59,13 @@
        EditDialogLabelAlign="EditDialogLabelAlign"
        EditDialogSize="EditDialogSize"
        EditDialogShowMaximizeButton="EditDialogShowMaximizeButton"
-       ShowExportButton=ShowExportButton
        ExportButtonIcon=@ExportButtonIcon
-       OnExportAsync="ExportAsync">
+       OnExportAsync="ExportAsync"
+       OnClickRowCallback="ClickRow"
+       TableToolbarBeforeTemplate="@TableToolbarBeforeTemplate">
 
     <TableToolbarTemplate>
-        @if (ShowDefaultButtons)
+        @if (ShowDefaultButtons && ShowExcelModeButtons)
         {
             <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="自由编辑" OnClick="@IsExcelToggle" />
         }
@@ -133,7 +141,27 @@
         {
             @RenderTableImgColumn(context)
         }
+        @if (TableFunctionsFields != null && TableFunctionsFields.Any())
+        {
+            foreach (var item in TableFunctionsFields)
+            {
+                @RenderTableFunctionsColumn(context, item)
+            }
+        }
     </TableColumns>
+
+    <RowButtonTemplate>
+        @if (RowButtons != null && RowButtons.Any())
+        {
+            foreach (var item in RowButtons)
+            {
+                <TableCellButton Color=@item.Color 
+                                 Icon=@item.Icon 
+                                 Text="@item.Title" 
+                                 OnClick="(() => OnRowButtonClick(context,item))" />
+            }
+        }
+    </RowButtonTemplate>
 
     <DetailRowTemplate>
         @if (ShowDetailRowType == ShowDetailRowType.选项卡)
@@ -228,7 +256,7 @@
                 <TablePollo @ref="@detalisTable"
                             TItem="@ItemDetails"
                             ItemDetails="ItemDetailsII"
-                            ItemDetailsII="NullClass"
+                            ItemDetailsII="ItemDetailsIII"
                             ItemDetailsIII="NullClass"
                             Field="@(FieldD??Field)"
                             FieldValue="@SelectOneItem!.GetIdentityKey(Field)"
