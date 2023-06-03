@@ -767,6 +767,17 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     [Parameter]
     public Func<TItem, Task>? OnClickRowCallback { get; set; }
 
+    /// <summary>
+    /// 获得/设置 RowButtonTemplate 实例 此模板生成的按钮默认放置到按钮后面 />
+    /// </summary>
+    [Parameter]
+    public RenderFragment<TItem>? RowButtonTemplate { get; set; }
+
+    /// <summary>
+    /// 获得/设置 EditTemplate 实例
+    /// </summary>
+    [Parameter]
+    public RenderFragment<TItem>? EditTemplate { get; set; }
 
     Table<TItem>? mainTable;
 

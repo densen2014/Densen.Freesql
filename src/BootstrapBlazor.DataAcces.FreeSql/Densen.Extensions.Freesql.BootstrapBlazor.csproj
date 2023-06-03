@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Release'">
-        <PackageReference Include="Densen.Extensions.BootstrapBlazor" Version="7.7.0" />
+        <PackageReference Include="Densen.Extensions.BootstrapBlazor" Version="7.*" />
         <PackageReference Include="BootstrapBlazor.Table.ImportExportsService" Version="7.*" />
     </ItemGroup>
 </Project>

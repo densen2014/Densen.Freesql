@@ -62,7 +62,8 @@
        ExportButtonIcon=@ExportButtonIcon
        OnExportAsync="ExportAsync"
        OnClickRowCallback="ClickRow"
-       TableToolbarBeforeTemplate="@TableToolbarBeforeTemplate">
+       TableToolbarBeforeTemplate="@TableToolbarBeforeTemplate" 
+       EditTemplate="@EditTemplate">
 
     <TableToolbarTemplate>
         @if (ShowDefaultButtons && ShowExcelModeButtons)
@@ -151,13 +152,18 @@
     </TableColumns>
 
     <RowButtonTemplate>
+        @if (RowButtonTemplate != null) 
+        {
+            @RowButtonTemplate
+        }
+
         @if (RowButtons != null && RowButtons.Any())
         {
             foreach (var item in RowButtons)
             {
-                <TableCellButton Color=@item.Color 
-                                 Icon=@item.Icon 
-                                 Text="@item.Title" 
+                <TableCellButton Color=@item.Color
+                                 Icon=@item.Icon
+                                 Text="@item.Title"
                                  OnClick="(() => OnRowButtonClick(context,item))" />
             }
         }
