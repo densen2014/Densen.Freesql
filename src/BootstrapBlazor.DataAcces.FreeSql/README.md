@@ -120,6 +120,7 @@ FsqlUtil
                     ItemDetails="AspNetUserRoles"
                     SubIncludeByPropertyNames="@SubIncludeByPropertyNames"
                     ItemDetailsII="NullClass"
+                    ItemDetailsIII="NullClass"
                     ShowColumnList
                     ShowExportButton
                     ShowDetailRowS
@@ -147,3 +148,6 @@ FsqlUtil
 
         }
 ```
+
+## 更新日志
+- 2023-6-3 添加 ItemDetailsIII , 选项卡3, 附加查询条件III
