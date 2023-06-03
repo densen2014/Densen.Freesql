@@ -1,6 +1,7 @@
 ﻿@typeparam TItem
 @typeparam ItemDetails
 @typeparam ItemDetailsII
+@typeparam ItemDetailsIII
 @inherits TbPolloBase
 @namespace AmeBlazor.Components
 @using AME
@@ -137,13 +138,19 @@
     <DetailRowTemplate>
         @if (ShowDetailRowType == ShowDetailRowType.选项卡)
         {
-            <Tab>
+            <Tab IsLazyLoadTabItem="true">
                 <TabItem Text="@DetailRowsName1">
                     @RenderTableDetailRow(context)
                 </TabItem>
                 <TabItem Text="@DetailRowsName2">
                     @RenderTableDetailRow(context, TableDetailRowType.选项卡2)
                 </TabItem>
+                @if (DetailRowsName3 != null)
+                {
+                    <TabItem Text="@DetailRowsName3">
+                        @RenderTableDetailRow(context, TableDetailRowType.选项卡3)
+                    </TabItem>
+                }
             </Tab>
         }
         else
@@ -222,6 +229,7 @@
                             TItem="@ItemDetails"
                             ItemDetails="ItemDetailsII"
                             ItemDetailsII="NullClass"
+                            ItemDetailsIII="NullClass"
                             Field="@(FieldD??Field)"
                             FieldValue="@SelectOneItem!.GetIdentityKey(Field)"
                             IsBordered="false"

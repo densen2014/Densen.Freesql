@@ -80,6 +80,18 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     public string? FieldIID { get; set; } = null;
 
     /// <summary>
+    /// 动态附加查询条件III, 主键字段名称
+    /// </summary>
+    [Parameter]
+    public string? FieldIII { get; set; } = null;
+
+    /// <summary>
+    /// 动态附加查询条件, 详表关联字段名称, FieldIII!=FieldIIID才需要设置
+    /// </summary>
+    [Parameter]
+    public string? FieldIIID { get; set; } = null;
+
+    /// <summary>
     /// 动态附加查询条件, 主键字段数值
     /// </summary>
     [Parameter]
@@ -146,6 +158,18 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     [Parameter] public List<string>? SubIncludeByPropertyNames { get; set; }
 
     /// <summary>
+    /// 详表附加导航IncludeByPropertyNameII查询条件 <para></para>
+    /// 例如 : new List&lt;string&gt; { "ProductsNamePrice","customers" }
+    /// </summary>
+    [Parameter] public List<string>? SubIncludeByPropertyNamesII { get; set; }
+
+    /// <summary>
+    /// 详表附加导航IncludeByPropertyNameIII查询条件 <para></para>
+    /// 例如 : new List&lt;string&gt; { "ProductsNamePrice","customers" }
+    /// </summary>
+    [Parameter] public List<string>? SubIncludeByPropertyNamesIII { get; set; }
+
+    /// <summary>
     /// 左联查询，使用原生sql语法，LeftJoin("type b on b.id = a.id")
     /// </summary>
     [Parameter] public string? LeftJoinString { get; set; }
@@ -170,6 +194,11 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     /// 获得/设置 表内明细名称2
     /// </summary>
     [Parameter] public string? DetailRowsName2 { get; set; } = "Logs";
+
+    /// <summary>
+    /// 获得/设置 表内明细名称3
+    /// </summary>
+    [Parameter] public string? DetailRowsName3 { get; set; }
 
     /// <summary>
     /// 获得/设置 显示导入,执行添加工具栏按钮
@@ -602,10 +631,12 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
 /// <typeparam name="TItem">主表类名</typeparam>
 /// <typeparam name="ItemDetails">详表类名</typeparam>
 /// <typeparam name="ItemDetailsII">详表的详表类名</typeparam>
-public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
+/// <typeparam name="ItemDetailsII">详表3类名</typeparam>
+public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsIII> : TbPolloBase
     where TItem : class, new()
     where ItemDetails : class, new()
     where ItemDetailsII : class, new()
+    where ItemDetailsIII : class, new()
 {
 
     /// <summary>
@@ -665,7 +696,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
 
     Table<TItem>? mainTable;
 
-    TablePollo<ItemDetails, ItemDetailsII, NullClass>? detalisTable;
+    TablePollo<ItemDetails, ItemDetailsII, NullClass, NullClass>? detalisTable;
 
     public IEnumerable<TItem>? ItemsCache { get; set; }
 
@@ -915,6 +946,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
         选项卡1,
         选项卡2,
         自定义选项卡风格,
+        选项卡3,
     }
 
     //<TablePollo TItem = "@ItemDetails"
@@ -936,7 +968,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
         if (rowType == TableDetailRowType.选项卡2)
         {
             //第二选项卡
-            builder.OpenComponent<TablePollo<ItemDetailsII, NullClass, NullClass>>(0);
+            builder.OpenComponent<TablePollo<ItemDetailsII, NullClass, NullClass, NullClass>>(0);
             if (FieldII != null && FieldII != Field)
             {
                 _Field = FieldII ?? Field;
@@ -945,14 +977,25 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
             _Field = FieldIID ?? Field;
 
         }
+        else if (rowType == TableDetailRowType.选项卡3)
+        {
+            builder.OpenComponent<TablePollo<ItemDetailsIII, NullClass, NullClass, NullClass>>(0);
+            if (FieldII != null && FieldII != Field)
+            {
+                _Field = FieldIII ?? Field;
+                _FieldValue = model.GetIdentityKey(FieldIII);
+            }
+            _Field = FieldIIID ?? Field;
+
+        }
         else if (ShowDetailRowType == ShowDetailRowType.表内明细II)
         {
-            builder.OpenComponent<TablePollo<ItemDetails, ItemDetailsII, NullClass>>(0);
+            builder.OpenComponent<TablePollo<ItemDetails, ItemDetailsII, NullClass, NullClass>>(0);
             _Field = FieldD ?? Field;
         }
         else
         {
-            builder.OpenComponent<TablePollo<ItemDetails, NullClass, NullClass>>(0);
+            builder.OpenComponent<TablePollo<ItemDetails, NullClass, NullClass, NullClass>>(0);
             _Field = FieldD ?? Field;
         }
         builder.AddAttribute(0, nameof(Field), _Field);
@@ -979,7 +1022,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII> : TbPolloBase
         builder.AddAttribute(12, nameof(ShowLineNo), ShowLineNo);
         builder.AddAttribute(13, nameof(ShowSkeleton), ShowSkeleton);
         builder.AddAttribute(14, nameof(ShowRefresh), ShowRefresh);
-        builder.AddAttribute(15, nameof(IncludeByPropertyNames), SubIncludeByPropertyNames);
+        builder.AddAttribute(15, nameof(IncludeByPropertyNames), rowType == TableDetailRowType.选项卡2 ? (SubIncludeByPropertyNamesII ?? SubIncludeByPropertyNames) : rowType == TableDetailRowType.选项卡3 ? (SubIncludeByPropertyNamesIII ?? SubIncludeByPropertyNames) : SubIncludeByPropertyNames);
         if (SubTableImgFields != null) builder.AddAttribute(16, nameof(TableImgFields), SubTableImgFields);
         if (SubTableImgField != null) builder.AddAttribute(17, nameof(TableImgField), SubTableImgField);
         if (SubRenderMode != null) builder.AddAttribute(18, nameof(RenderMode), SubRenderMode);

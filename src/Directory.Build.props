@@ -3,7 +3,7 @@
         <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <IsPackable>true</IsPackable>
-        <Version>7.7.0</Version>
+        <Version>7.7.3</Version>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Copyright>DensenInformatica</Copyright>
         <RepositoryType>git</RepositoryType>
