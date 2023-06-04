@@ -395,7 +395,7 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     /// 获得/设置 是否显示编辑按钮 默认为 true 行内是否显示请使用 <see cref="ShowExtendEditButton"/> 与 <see cref="ShowEditButtonCallback" />
     /// </summary>
     [Parameter]
-    public bool ShowEditButton { get; set; } = true; 
+    public bool ShowEditButton { get; set; } = true;
 
     /// <summary>
     /// 获得/设置 是否显示删除按钮 默认为 true 行内是否显示请使用 <see cref="ShowExtendDeleteButton"/> 与 <see cref="ShowDeleteButtonCallback" />
@@ -757,6 +757,18 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     public Func<TItem, bool> ShowDetailRow { get; set; } = _ => false;
 
     /// <summary>
+    /// 获得/设置 新建按钮回调方法
+    /// </summary>
+    [Parameter]
+    public Func<TItem, Task<TItem>>? AddAsync { get; set; }
+
+    /// <summary>
+    /// 获得/设置 保存按钮异步回调方法
+    /// </summary>
+    [Parameter]
+    public Func<TItem, ItemChangedType, Task<TItem>>? SaveAsync { get; set; }
+
+    /// <summary>
     /// 保存数据后异步回调方法
     /// </summary>
     [Parameter] public EventCallback<(TItem, ItemChangedType)> AfterSaveAsync { get; set; }
@@ -808,11 +820,27 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
 
 
     //protected Task<TItem> OnAddAsync() => Task.FromResult(new TItem());
-    public Task<TItem> OnAddAsync()
+    public async Task<TItem> OnAddAsync()
     {
         var newone = new TItem();
         if (FieldValue != null || FieldValueD != null) newone.FieldSetValue(Field, FieldValue ?? FieldValueD);
-        return Task.FromResult(newone);
+        if (AddAsync != null)
+        {
+            newone = await AddAsync(newone);
+        }
+        return newone;
+    }
+
+    public async Task<bool> OnSaveAsync(TItem item, ItemChangedType changedType)
+    {
+        if (SaveAsync != null)
+        {
+            item = await SaveAsync(item, changedType);
+        }
+        var res = await GetDataService().SaveAsync(item, changedType);
+        if (AfterSaveAsync.HasDelegate)
+            await AfterSaveAsync.InvokeAsync((item, changedType));
+        return res;
     }
 
     protected FreeSqlDataService<TItem> GetDataService()
@@ -829,6 +857,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
             throw new InvalidOperationException("DataServiceInvalidOperationText");
         }
     }
+
     public async Task<QueryData<TItem>> OnQueryAsync(QueryPageOptions options)
     {
         var items1 = await GetDataService().QueryAsyncWithWhereCascade(
@@ -843,13 +872,6 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         ItemsCache = items1.Items;
         System.Console.WriteLine($"[展开]TablePollo OnQueryAsync => Field:{dynamicFilterInfo?.Field} /Value: {dynamicFilterInfo?.Value} , itemsTotalCount: {items1.TotalCount}");
         return items1;
-    }
-    public async Task<bool> OnSaveAsync(TItem item, ItemChangedType changedType)
-    {
-        var res = await GetDataService().SaveAsync(item, changedType);
-        if (AfterSaveAsync.HasDelegate)
-            await AfterSaveAsync.InvokeAsync(item, changedType);
-        return res;
     }
 
     //public async Task<Func<TItem, Task>> OnAfterSaveAsync(TItem item)
@@ -899,7 +921,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     object GetExpression(object model, string? field = "ID", Type? fieldType = null)
     {
         // ValueExpression
-        var body = Expression.Property(Expression.Constant(model), typeof(TItem), field??"ID");
+        var body = Expression.Property(Expression.Constant(model), typeof(TItem), field ?? "ID");
         var tDelegate = typeof(Func<>).MakeGenericType(fieldType ?? typeof(int));
         var valueExpression = Expression.Lambda(tDelegate, body);
         return valueExpression;
@@ -997,10 +1019,10 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         builder.AddAttribute(3, "Template", new RenderFragment<TableColumnContext<TItem, string>>(context => buttonBuilder =>
         {
             buttonBuilder.OpenComponent<Button>(0);
-            buttonBuilder.AddAttribute(1, nameof(Button.Text), tableImgField.Title); 
+            buttonBuilder.AddAttribute(1, nameof(Button.Text), tableImgField.Title);
             var value = (context.Row).GetIdentityKey(tableImgField.Field);
             if (tableImgField.Callback.HasDelegate)
-            { 
+            {
                 buttonBuilder.AddAttribute(1, nameof(Button.OnClickWithoutRender), new Func<Task>(async () =>
                 {
                     await tableImgField.Callback.InvokeAsync(value);
@@ -1447,7 +1469,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     }
     private async Task ClickRow(TItem item)
     {
-        if (OnClickRowCallback!=null)
+        if (OnClickRowCallback != null)
         {
             await OnClickRowCallback.Invoke(item);
         }
@@ -1457,7 +1479,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     {
         if (RowButtonField.CallbackFunc != null)
         {
-            await RowButtonField.CallbackFunc.Invoke(item);  
+            await RowButtonField.CallbackFunc.Invoke(item);
             await mainTable!.QueryAsync();
         }
     }
