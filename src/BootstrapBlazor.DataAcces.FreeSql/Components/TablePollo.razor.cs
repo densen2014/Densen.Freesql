@@ -759,7 +759,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     /// <summary>
     /// 保存数据后异步回调方法
     /// </summary>
-    [Parameter] public EventCallback<TItem> AfterSaveAsync { get; set; }
+    [Parameter] public EventCallback<(TItem, ItemChangedType)> AfterSaveAsync { get; set; }
 
     /// <summary>
     /// 获得/设置 单击行回调委托方法
@@ -848,7 +848,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     {
         var res = await GetDataService().SaveAsync(item, changedType);
         if (AfterSaveAsync.HasDelegate)
-            await AfterSaveAsync.InvokeAsync(item);
+            await AfterSaveAsync.InvokeAsync(item, changedType);
         return res;
     }
 
