@@ -16,11 +16,11 @@
     <!--<ItemGroup>-->
     <ItemGroup Condition="'$(Configuration)' == 'Debug'">
         <ProjectReference Include="..\..\..\Densen.Extensions\Blazor\Densen.Extensions.BootstrapBlazor.csproj" />
-        <ProjectReference Include="..\BootstrapBlazor.Table.ImportExportsService\BootstrapBlazor.Table.ImportExportsService.csproj" />
+        <ProjectReference Include="..\BootstrapBlazor.Table.ImportExportsMiniService\BootstrapBlazor.Table.ImportExportsMiniService.csproj" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Release'">
         <PackageReference Include="Densen.Extensions.BootstrapBlazor" Version="7.*" />
-        <PackageReference Include="BootstrapBlazor.Table.ImportExportsService" Version="7.*" />
+        <PackageReference Include="BootstrapBlazor.Table.ImportExportsMiniService" Version="7.*" />
     </ItemGroup>
 </Project>

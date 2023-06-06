@@ -13,5 +13,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\BootstrapBlazor.DataAcces.FreeSql\Densen.Extensions.Freesql.BootstrapBlazor.csproj" />
+      <ProjectReference Include="..\..\src\BootstrapBlazor.Table.ImportExportsService\BootstrapBlazor.Table.ImportExportsService.csproj" />
     </ItemGroup>
 </Project>

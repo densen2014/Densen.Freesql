@@ -10,17 +10,8 @@ namespace Densen.Service;
 /// <summary>
 /// 通用导入导出服务类
 /// </summary>
-public class ImportExportsService
+public class ImportExportsService : IImportExport
 {
-    public enum ExportType
-    {
-        Excel,
-        Pdf,
-        Word,
-        Html,
-        MiniExcel,
-        MiniWord,
-    }
 
     /// <summary>
     /// 通用导出
@@ -31,7 +22,7 @@ public class ImportExportsService
     /// <param name="exportType"></param>
     /// <param name="templatePath">模板路径</param>
     /// <returns></returns>
-    public static async Task<string> Export<T>(string filePath, List<T>? items = null, ExportType exportType = ExportType.Excel, string? templatePath = null) where T : class, new()
+    public async Task<string> Export<T>(string filePath, List<T>? items = null, ExportType exportType = ExportType.Excel, string? templatePath = null) where T : class, new()
     {
         items = items ?? new List<T>();
         switch (exportType)
@@ -61,13 +52,8 @@ public class ImportExportsService
         }
     }
 
-    public class ExportResult
-    {
-        public string? FileName { get; set; }
-        public Stream? Stream { get; set; }
-    }
 
-    public static async Task<ExportResult> Export2Stream<T>(List<T>? items = null, ExportType exportType = ExportType.Excel, string? templatePath = null, string? fileName = null) where T : class, new()
+    public  async Task<ExportResult> Export2Stream<T>(List<T>? items = null, ExportType exportType = ExportType.Excel, string? templatePath = null, string? fileName = null) where T : class, new()
     {
         var memoryStream = new MemoryStream();
         fileName = fileName ?? "";

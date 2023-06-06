@@ -5,7 +5,9 @@
 // **********************************
 
 using BlazorApp1.Data;
+using BootstrapBlazor.Components;
 using Densen.DataAcces.FreeSql;
+using Densen.Service;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +34,7 @@ builder.Services.AddFreeSql(option =>
 //全功能版
 builder.Services.AddSingleton(typeof(FreeSqlDataService<>));
 
+builder.Services.AddTransient<IImportExport, ImportExportsService>();
 builder.Services.AddDensenExtensions();
 builder.Services.ConfigureJsonLocalizationOptions(op =>
 {

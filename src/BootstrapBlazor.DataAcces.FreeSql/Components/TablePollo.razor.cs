@@ -8,6 +8,7 @@ using AME;
 using BootstrapBlazor.Components;
 using Densen.DataAcces.FreeSql;
 using Densen.Service;
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Spreadsheet;
 using FreeSql.Internal.Model;
 using Microsoft.AspNetCore.Components;
@@ -15,7 +16,6 @@ using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using static AME.EnumsExtensions;
-using static Densen.Service.ImportExportsService;
 using Alignment = BootstrapBlazor.Components.Alignment;
 
 namespace AmeBlazor.Components;
@@ -48,6 +48,10 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     [Inject]
     [NotNull]
     protected ToastService? ToastService { get; set; }
+
+    [Inject]
+    [NotNull]
+    protected IImportExport? Exporter { get; set; }
 
     /// <summary>
     /// 获得/设置 IJSRuntime 实例
@@ -287,6 +291,13 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     /// 使用 MiniExcel 库导出,默认为 true
     /// </summary>
     [Parameter] public bool UseMiniExcel { get; set; } = true;
+
+    /// <summary>
+    /// 默认使用内置 MiniExcel/MiniWord 导入导出服务. <para></para>
+    /// 如果要使用 ImportExportsService 库全功能导出, 需要自己拉包 BootstrapBlazor.Table.ImportExportsService 注入服务,<para></para>
+    /// 默认为 false
+    /// </summary>
+    [Parameter] public bool UseFullExportService { get; set; }
 
     /// <summary>
     /// 级联保存字段名
@@ -655,6 +666,33 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     /// </summary>
     [Parameter]
     public RenderFragment? TableToolbarBeforeTemplate { get; set; }
+
+    /// <summary>
+    /// 获得/设置 表格 Toolbar 按钮模板
+    /// <para>表格工具栏左侧按钮模板，模板中内容出现在默认按钮后面</para>
+    /// </summary>
+    [Parameter]
+    public RenderFragment? TableToolbarTemplate { get; set; } 
+
+    /// <summary>
+    /// 获得/设置 表格 Toolbar 按钮模板
+    /// <para>表格工具栏右侧按钮模板，模板中内容出现在默认按钮前面</para>
+    /// </summary>
+    [Parameter]
+    public RenderFragment? TableExtensionToolbarBeforeTemplate { get; set; }
+
+    /// <summary>
+    /// 获得/设置 表格 Toolbar 按钮模板
+    /// <para>表格工具栏右侧按钮模板，模板中内容出现在默认按钮后面</para>
+    /// </summary>
+    [Parameter]
+    public RenderFragment? TableExtensionToolbarTemplate { get; set; }
+
+    /// <summary>
+    /// 获得/设置 扩展按钮是否在前面 默认 false 在行尾
+    /// </summary>
+    [Parameter]
+    public bool IsExtendButtonsInRowHeader { get; set; }
 
     #endregion
 
@@ -1169,6 +1207,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         if (ibstring != null) builder.AddAttribute(19, nameof(ibstring), ibstring);
         if (SubTableFunctionsFields != null) builder.AddAttribute(16, nameof(TableFunctionsFields), SubTableFunctionsFields);
         if (SubRowButtons != null) builder.AddAttribute(16, nameof(RowButtons), SubRowButtons);
+        builder.AddAttribute(17, nameof(IsExtendButtonsInRowHeader), IsExtendButtonsInRowHeader);
         builder.CloseComponent();
     };
 
@@ -1420,7 +1459,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
             var memoryStream = new MemoryStream();
             if (ExportToStream)
             {
-                var res = await Export2Stream(items, exportType, fileName: fileName);
+                var res = await Exporter.Export2Stream(items, exportType, fileName: fileName);
                 if (res.Stream == null)
                 {
                     ToastService?.Error("提示", "导出失败,请检查数据");
@@ -1431,7 +1470,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
             }
             else
             {
-                fileName = await ImportExportsService.Export(fileName, items, exportType);
+                fileName = await Exporter.Export(fileName, items, exportType);
                 ToastService?.Success("提示", Path.GetFileName(fileName) + "已生成");
                 using FileStream source = File.Open(fileName, FileMode.Open);
                 source.CopyTo(memoryStream);

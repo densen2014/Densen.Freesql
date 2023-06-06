@@ -33,10 +33,10 @@
        ShowToolbar="@ShowToolbar"
        ShowAddButton="@ShowAddButton"
        ShowEditButton="@ShowEditButton"
-       ShowDeleteButton="@ShowDeleteButton" 
-       IsAutoCollapsedToolbarButton="@IsAutoCollapsedToolbarButton" 
-       ShowExtendEditButton="@ShowExtendEditButton" 
-       ShowExtendDeleteButton="@ShowExtendDeleteButton" 
+       ShowDeleteButton="@ShowDeleteButton"
+       IsAutoCollapsedToolbarButton="@IsAutoCollapsedToolbarButton"
+       ShowExtendEditButton="@ShowExtendEditButton"
+       ShowExtendDeleteButton="@ShowExtendDeleteButton"
        ShowDefaultButtons="@ShowDefaultButtons"
        ShowExtendButtons="@ShowExtendButtons"
        ShowExportButton=ShowExportButton
@@ -62,10 +62,17 @@
        ExportButtonIcon=@ExportButtonIcon
        OnExportAsync="ExportAsync"
        OnClickRowCallback="ClickRow"
-       TableToolbarBeforeTemplate="@TableToolbarBeforeTemplate" 
-       EditTemplate="@EditTemplate">
+       TableToolbarBeforeTemplate="@TableToolbarBeforeTemplate"
+       EditTemplate="@EditTemplate"
+       TableExtensionToolbarBeforeTemplate="@TableExtensionToolbarBeforeTemplate"
+       TableExtensionToolbarTemplate="@TableExtensionToolbarTemplate"
+       IsExtendButtonsInRowHeader="@IsExtendButtonsInRowHeader">
 
     <TableToolbarTemplate>
+        @if (TableToolbarTemplate != null)
+        {
+            @TableToolbarTemplate
+        }
         @if (ShowDefaultButtons && ShowExcelModeButtons)
         {
             <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="自由编辑" OnClick="@IsExcelToggle" />
@@ -152,7 +159,7 @@
     </TableColumns>
 
     <RowButtonTemplate>
-        @if (RowButtonTemplate != null) 
+        @if (RowButtonTemplate != null)
         {
             @RowButtonTemplate
         }
@@ -223,14 +230,18 @@
             <i class="fas fa-file-word"></i>
             <span>Word</span>
         </div>
-        <div class="dropdown-item" @onclick="_=>ExportHtmlAsync(mainTable!.Rows)">
-            <i class="fa-brands fa-html5"></i>
-            <span>Html</span>
-        </div>
-        <div class="dropdown-item" @onclick="_=>ExportPDFAsync(mainTable!.Rows)">
-            <i class="fas fa-file-pdf"></i>
-            <span>PDF</span>
-        </div>
+        @if (UseFullExportService)
+        {
+            <div class="dropdown-item" @onclick="_=>ExportHtmlAsync(mainTable!.Rows)">
+                <i class="fa-brands fa-html5"></i>
+                <span>Html</span>
+            </div>
+            <div class="dropdown-item" @onclick="_=>ExportPDFAsync(mainTable!.Rows)">
+                <i class="fas fa-file-pdf"></i>
+                <span>PDF</span>
+            </div>
+
+        }
         <div class="dropdown-divider"></div>
         <h6 class="dropdown-header">全部数据</h6>
         <div class="dropdown-item" @onclick="_=>ExportExcelAsync(GetAllItems())">
@@ -241,14 +252,17 @@
             <i class="fas fa-file-word"></i>
             <span>Word</span>
         </div>
-        <div class="dropdown-item" @onclick="_=>ExportHtmlAsync(GetAllItems())">
-            <i class="fa-brands fa-html5"></i>
-            <span>Html</span>
-        </div>
-        <div class="dropdown-item" @onclick="_=>ExportPDFAsync(GetAllItems())">
-            <i class="fas fa-file-pdf"></i>
-            <span>PDF</span>
-        </div>
+        @if (UseFullExportService)
+        {
+            <div class="dropdown-item" @onclick="_ => ExportHtmlAsync(GetAllItems())">
+                <i class="fa-brands fa-html5"></i>
+                <span>Html</span>
+            </div>
+            <div class="dropdown-item" @onclick="_ => ExportPDFAsync(GetAllItems())">
+                <i class="fas fa-file-pdf"></i>
+                <span>PDF</span>
+            </div>
+        }
     </ExportButtonDropdownTemplate>
 
 </Table>

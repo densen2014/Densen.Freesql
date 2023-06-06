@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Description>BootstrapBlazor Table 数据导入导出服务扩展包</Description>
+		<Description>BootstrapBlazor Table 数据导入导出服务扩展包(Excel/Word/Html/Pdf)</Description>
 		<PackageTags>ImportExports Service for BootstrapBlazor</PackageTags>
 		<AssemblyName>BootstrapBlazor.Table.ImportExportsService</AssemblyName>
 		<RootNamespace>Densen.Service</RootNamespace>
@@ -13,8 +13,10 @@
         <PackageReference Include="Magicodes.IE.Html" Version="2.*" />
         <PackageReference Include="Magicodes.IE.Pdf" Version="2.*" />
         <PackageReference Include="Magicodes.IE.Word" Version="2.*" />
-        <PackageReference Include="MiniExcel" Version="1.*" />
-        <PackageReference Include="MiniWord" Version="0.*" />
     </ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\BootstrapBlazor.Table.ImportExportsMiniService\BootstrapBlazor.Table.ImportExportsMiniService.csproj" />
+	</ItemGroup>
 
 </Project>

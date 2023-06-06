@@ -6,90 +6,92 @@
 
 using BootstrapBlazor.Components;
 using Densen.DataAcces.FreeSql;
+using Densen.Service;
 using FreeSql;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Microsoft.Extensions.DependencyInjection;
+
+/// <summary>
+/// BootstrapBlazor 服务扩展类
+/// </summary>
+public static class FreeSqlServiceCollectionExtensions
 {
     /// <summary>
-    /// BootstrapBlazor 服务扩展类
+    /// 增加 FreeSql 数据库操作服务
     /// </summary>
-    public static class FreeSqlServiceCollectionExtensions
+    /// <param name="services"></param>
+    /// <param name="optionsAction"></param>
+    /// <param name="configureAction"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddFreeSql(this IServiceCollection services, Action<FreeSqlBuilder> optionsAction, Action<IFreeSql>? configureAction = null, bool configEntityPropertyImage=false)
     {
-        /// <summary>
-        /// 增加 FreeSql 数据库操作服务
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="optionsAction"></param>
-        /// <param name="configureAction"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddFreeSql(this IServiceCollection services, Action<FreeSqlBuilder> optionsAction, Action<IFreeSql>? configureAction = null, bool configEntityPropertyImage=false)
+        services.AddSingleton(sp =>
         {
-            services.AddSingleton<IFreeSql>(sp =>
+            var builder = new FreeSqlBuilder();
+            optionsAction(builder);
+            var instance = builder.Build();
+            instance.UseJsonMap();
+            if (configEntityPropertyImage)
             {
-                var builder = new FreeSqlBuilder();
-                optionsAction(builder);
-                var instance = builder.Build();
-                instance.UseJsonMap();
-                if (configEntityPropertyImage)
-                {
-                    instance.Aop.AuditValue += AuditValue;
-                    instance.Aop.ConfigEntityProperty += ConfigEntityProperty;
-                }
-                configureAction?.Invoke(instance);
-                return instance;
-            });
-
-            services.AddSingleton(typeof(IDataService<>), typeof(FreeSqlDataService<>));
-            return services;
-        }
-
-        #region 自定义Guid支持
-        /// <summary>
-        /// 审计属性值 , 实现插入/更新时统一处理某些值，比如某属性的雪花算法值、创建时间值、甚至是业务值。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public static void AuditValue(object? sender, FreeSql.Aop.AuditValueEventArgs? e)
-        {
-            if (e!.Column.CsType == typeof(Guid) && e.Column.Attribute.MapType == typeof(string) && e.Value?.ToString() == Guid.Empty.ToString())
-            {
-                e.Value = FreeUtil.NewMongodbId();
-            } 
-        }
-        #endregion 
-
-        #region 自定义实体特性
-        /// <summary>
-        /// 自定义实体特性 : 自定义Enum支持和Image支持
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public static void ConfigEntityProperty(object? sender, FreeSql.Aop.ConfigEntityPropertyEventArgs? e)
-        {
-
-            if (e!.Property.PropertyType.IsEnum)
-            {
-                e.ModifyResult.MapType = typeof(int);
+                instance.Aop.AuditValue += AuditValue;
+                instance.Aop.ConfigEntityProperty += ConfigEntityProperty;
             }
-            else if (e.Property.PropertyType == typeof(byte[]))
-            {
-                var orm = sender as IFreeSql;
-                switch (orm?.Ado.DataType)
-                {
-                    case DataType.SqlServer:
-                        e.ModifyResult.DbType = "image";
-                        break;
-                    case DataType.MySql:
-                        e.ModifyResult.DbType = "longblob";
-                        break;
-                    case DataType.PostgreSQL:
-                        e.ModifyResult.DbType = "bytea";
-                        break;
-                }
-            }
-        }
-        #endregion 
+            configureAction?.Invoke(instance);
+            return instance;
+        });
 
-
+        services.AddSingleton(typeof(IDataService<>), typeof(FreeSqlDataService<>));
+        services.TryAddTransient<IImportExport, ImportExportsMiniService>();
+        return services;
     }
+
+    #region 自定义Guid支持
+    /// <summary>
+    /// 审计属性值 , 实现插入/更新时统一处理某些值，比如某属性的雪花算法值、创建时间值、甚至是业务值。
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    public static void AuditValue(object? sender, FreeSql.Aop.AuditValueEventArgs? e)
+    {
+        if (e!.Column.CsType == typeof(Guid) && e.Column.Attribute.MapType == typeof(string) && e.Value?.ToString() == Guid.Empty.ToString())
+        {
+            e.Value = FreeUtil.NewMongodbId();
+        } 
+    }
+    #endregion 
+
+    #region 自定义实体特性
+    /// <summary>
+    /// 自定义实体特性 : 自定义Enum支持和Image支持
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    public static void ConfigEntityProperty(object? sender, FreeSql.Aop.ConfigEntityPropertyEventArgs? e)
+    {
+
+        if (e!.Property.PropertyType.IsEnum)
+        {
+            e.ModifyResult.MapType = typeof(int);
+        }
+        else if (e.Property.PropertyType == typeof(byte[]))
+        {
+            var orm = sender as IFreeSql;
+            switch (orm?.Ado.DataType)
+            {
+                case DataType.SqlServer:
+                    e.ModifyResult.DbType = "image";
+                    break;
+                case DataType.MySql:
+                    e.ModifyResult.DbType = "longblob";
+                    break;
+                case DataType.PostgreSQL:
+                    e.ModifyResult.DbType = "bytea";
+                    break;
+            }
+        }
+    }
+    #endregion 
+
+
 }
