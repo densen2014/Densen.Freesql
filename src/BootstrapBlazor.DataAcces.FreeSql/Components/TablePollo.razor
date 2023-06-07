@@ -66,7 +66,8 @@
        EditTemplate="@EditTemplate"
        TableExtensionToolbarBeforeTemplate="@TableExtensionToolbarBeforeTemplate"
        TableExtensionToolbarTemplate="@TableExtensionToolbarTemplate"
-       IsExtendButtonsInRowHeader="@IsExtendButtonsInRowHeader">
+       IsExtendButtonsInRowHeader="@IsExtendButtonsInRowHeader"
+       >
 
     <TableToolbarTemplate>
         @if (TableToolbarTemplate != null)
@@ -155,6 +156,10 @@
             {
                 @RenderTableFunctionsColumn(context, item)
             }
+        }
+        @if (TableColumnsTemplate != null)
+        {
+            @TableColumnsTemplate
         }
     </TableColumns>
 

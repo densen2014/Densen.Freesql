@@ -689,6 +689,13 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     public RenderFragment? TableExtensionToolbarTemplate { get; set; }
 
     /// <summary>
+    /// 获得/设置 表格 列模板
+    /// <para>列模板，模板中内容出现在现有列后面</para>
+    /// </summary>
+    [Parameter]
+    public RenderFragment? TableColumnsTemplate { get; set; }
+
+    /// <summary>
     /// 获得/设置 扩展按钮是否在前面 默认 false 在行尾
     /// </summary>
     [Parameter]
