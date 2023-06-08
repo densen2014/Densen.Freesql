@@ -1,4 +1,5 @@
 ﻿using BootstrapBlazor.Components;
+using DocumentFormat.OpenXml.Vml.Spreadsheet;
 using FreeSql.DataAnnotations;
 using Newtonsoft.Json;
 using System.ComponentModel;
@@ -131,7 +132,7 @@ public partial class AspNetUsers
     public string TaxNumber { get; set; }
 
     [DisplayName("提供者")]
-    [AutoGenerateColumn(Visible = false)]
+    [AutoGenerateColumn(Visible = false ,ComponentType = typeof(Select<string>), LookupServiceKey = "Provideres")] 
     [JsonProperty, Column(StringLength = -2)]
     public string provider { get; set; }
 

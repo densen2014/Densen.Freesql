@@ -35,6 +35,7 @@ builder.Services.AddFreeSql(option =>
 builder.Services.AddSingleton(typeof(FreeSqlDataService<>));
 
 builder.Services.AddTransient<IImportExport, ImportExportsService>();
+builder.Services.AddSingleton(typeof(ILookupService), typeof(DemoLookupService));
 builder.Services.AddDensenExtensions();
 builder.Services.ConfigureJsonLocalizationOptions(op =>
 {
