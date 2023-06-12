@@ -22,14 +22,16 @@ namespace AmeBlazor.Components;
 /// <summary>
 /// TablePollo 组件基类
 /// </summary>
-public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
+public partial class TbPolloBase : BootstrapComponentBase
 {
-    //[Inject]
-    //protected Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostEnvironment { get; set; }
 
     [Inject]
     [NotNull]
     protected NavigationManager? NavigationManager { get; set; }
+
+    [Inject]
+    [NotNull]
+    protected DownloadService? DownloadService { get; set; }
 
 
     #region TablePollo 的设置
@@ -302,7 +304,7 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     /// <summary>
     /// 使用 UseMiniWord 库导出,默认为 false
     /// </summary>
-    [Parameter] public bool UseMiniWord { get; set; }  
+    [Parameter] public bool UseMiniWord { get; set; }
 
     /// <summary>
     /// * MiniWord 必须指定模板路径,否则出错. <para></para> 
@@ -333,10 +335,10 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     public bool ShowExportMoreButtons { get; set; } = true;
 
     /// <summary>
-    /// 获得/设置 导出到流或者文件 默认为 true 流
+    /// 获得/设置 导出到流或者文件 默认为 false
     /// </summary>
     [Parameter]
-    public bool ExportToStream { get; set; } = true;
+    public bool ExportToStream { get; set; } = false;
 
 
     /// <summary>
@@ -683,7 +685,7 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     /// <para>表格工具栏左侧按钮模板，模板中内容出现在默认按钮后面</para>
     /// </summary>
     [Parameter]
-    public RenderFragment? TableToolbarTemplate { get; set; } 
+    public RenderFragment? TableToolbarTemplate { get; set; }
 
     /// <summary>
     /// 获得/设置 表格 Toolbar 按钮模板
@@ -714,36 +716,12 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
 
     #endregion
 
-    public IJSObjectReference? module;
-
     protected override void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
         if (!firstRender) return;
     }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        try
-        {
-            if (firstRender)
-            {
-                module = await JS!.InvokeAsync<IJSObjectReference>("import", "./_content/Densen.Extensions.BootstrapBlazor/download.js" + "?v=" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
-            }
-        }
-        catch
-        {
-        }
-    }
-
-    async ValueTask IAsyncDisposable.DisposeAsync()
-    {
-        if (module is not null)
-        {
-            await module.DisposeAsync();
-        }
-    }
-
+ 
 }
 
 /// <summary>
@@ -1410,7 +1388,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
 
     private async Task<bool> ExportExcelAsync(IEnumerable<TItem>? items) => await ExportAutoAsync(items, UseMiniExcel ? ExportType.MiniExcel : ExportType.Excel);
     private async Task<bool> ExportPDFAsync(IEnumerable<TItem>? items) => await ExportAutoAsync(items, ExportType.Pdf);
-    private async Task<bool> ExportWordAsync(IEnumerable<TItem>? items) => await ExportAutoAsync(items, UseMiniWord? ExportType.MiniWord :ExportType.Word);
+    private async Task<bool> ExportWordAsync(IEnumerable<TItem>? items) => await ExportAutoAsync(items, UseMiniWord ? ExportType.MiniWord : ExportType.Word);
     private async Task<bool> ExportHtmlAsync(IEnumerable<TItem>? items) => await ExportAutoAsync(items, ExportType.Html);
     private async Task<bool> ExportAutoAsync(IEnumerable<TItem>? items, ExportType exportType = ExportType.MiniExcel)
     {
@@ -1463,7 +1441,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         try
         {
             var fileName = items == null ? "模板" : typeof(TItem).Name;
-
+            ExportBasePath ??= Path.Combine(Path.GetTempPath());
             if (ExportBasePath != null)
             {
                 if (Directory.Exists(ExportBasePath) == false)
@@ -1490,13 +1468,17 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
             {
                 fileName = await Exporter.Export(fileName, items, exportType);
                 ToastService?.Success("提示", Path.GetFileName(fileName) + "已生成");
-                using FileStream source = File.Open(fileName, FileMode.Open);
-                source.CopyTo(memoryStream);
+                await Task.Delay(100);
+                MemoryStream ms = new MemoryStream();
+                using (FileStream file = File.Open(fileName, FileMode.Open, FileAccess.Read))
+                    await file.CopyToAsync(memoryStream);
+                memoryStream.Position = 0;
+#if DEBUG
+                System.Console.WriteLine($"导出文件大小:{memoryStream.Length}");
+#endif 
             }
 
-            using var streamRef = new DotNetStreamReference(stream: memoryStream);
-
-            await module!.InvokeVoidAsync("downloadFileFromStream", Path.GetFileName(fileName), streamRef);
+            await DownloadService.DownloadFromStreamAsync(Path.GetFileName(fileName) ?? "file", memoryStream);
 
         }
         catch (Exception e)
@@ -1505,7 +1487,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         }
     }
 
-    #endregion
+#endregion
 
     private async Task 升级Cmd(IEnumerable<TItem> items)
     {
@@ -1566,9 +1548,9 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
             ToastService?.Error("提示", "Url为空!");
             return Task.CompletedTask;
         }
-#pragma warning disable BL0005 
+#pragma warning disable BL0005
         mainTable!.SearchText = 查找文本I;
-#pragma warning restore BL0005 
+#pragma warning restore BL0005
         return Task.CompletedTask;
     }
 
@@ -1592,7 +1574,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
                 WhereLamda
             );
 
-    #endregion
+#endregion
 
 
 }

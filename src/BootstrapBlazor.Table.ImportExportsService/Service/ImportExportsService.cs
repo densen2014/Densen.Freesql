@@ -10,8 +10,7 @@ namespace Densen.Service;
 /// </summary>
 public class ImportExportsService : IImportExport
 {
-        ImportExportsMiniService importExportsMiniService = new ImportExportsMiniService();
-
+    public ImportExportsMiniService MiniExpoet = new ImportExportsMiniService();
 
     /// <summary>
     /// 通用导出
@@ -42,9 +41,9 @@ public class ImportExportsService : IImportExport
             case ExportType.Html:
                 var exporterHtml = new HtmlExporter();
                 var resultHtml = await exporterHtml.ExportListByTemplate(filePath + ".html", items, htmlTemplate: templatePath);
-                return resultHtml.FileName; 
+                return resultHtml.FileName;
             default:
-                return await importExportsMiniService.Export(filePath, items, exportType,templatePath );
+                return await MiniExpoet.Export(filePath, items, exportType, templatePath);
         }
     }
 
@@ -90,7 +89,7 @@ public class ImportExportsService : IImportExport
                 fileName += ".html";
                 break;
             default:
-                return await importExportsMiniService.Export2Stream(items, exportType, templatePath, fileName);
+                return await MiniExpoet.Export2Stream(items, exportType, templatePath, fileName);
         }
 
         return new ExportResult()
