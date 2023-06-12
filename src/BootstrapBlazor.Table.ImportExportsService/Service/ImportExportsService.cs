@@ -2,8 +2,6 @@
 using Magicodes.ExporterAndImporter.Html;
 using Magicodes.ExporterAndImporter.Pdf;
 using Magicodes.ExporterAndImporter.Word;
-using MiniExcelLibs;
-using MiniSoftware;
 
 namespace Densen.Service;
 
@@ -12,6 +10,8 @@ namespace Densen.Service;
 /// </summary>
 public class ImportExportsService : IImportExport
 {
+        ImportExportsMiniService importExportsMiniService = new ImportExportsMiniService();
+
 
     /// <summary>
     /// 通用导出
@@ -20,13 +20,17 @@ public class ImportExportsService : IImportExport
     /// <param name="filePath"></param>
     /// <param name="items"></param>
     /// <param name="exportType"></param>
-    /// <param name="templatePath">模板路径</param>
+    /// <param name="templatePath">* MiniWord 必须指定模板路径,否则出错</param>
     /// <returns></returns>
     public async Task<string> Export<T>(string filePath, List<T>? items = null, ExportType exportType = ExportType.Excel, string? templatePath = null) where T : class, new()
     {
-        items = items ?? new List<T>();
+        items ??= new List<T>();
         switch (exportType)
         {
+            case ExportType.Excel:
+                var exporter = new ExcelExporter();
+                var result = await exporter.Export(filePath + ".xlsx", items);
+                return result.FileName;
             case ExportType.Pdf:
                 var exporterPdf = new PdfExporter();
                 var resultPdf = await exporterPdf.ExportListByTemplate(filePath + ".pdf", items, htmlTemplate: templatePath);
@@ -38,29 +42,35 @@ public class ImportExportsService : IImportExport
             case ExportType.Html:
                 var exporterHtml = new HtmlExporter();
                 var resultHtml = await exporterHtml.ExportListByTemplate(filePath + ".html", items, htmlTemplate: templatePath);
-                return resultHtml.FileName;
-            case ExportType.MiniExcel:
-                MiniExcel.SaveAs(filePath + ".xlsx", items, overwriteFile: true);
-                return filePath + ".xlsx";
-            case ExportType.MiniWord:
-                MiniWord.SaveAsByTemplate(filePath + ".docx", templatePath, items);
-                return filePath + ".docx";
+                return resultHtml.FileName; 
             default:
-                var exporter = new ExcelExporter();
-                var result = await exporter.Export(filePath + ".xlsx", items);
-                return result.FileName;
+                return await importExportsMiniService.Export(filePath, items, exportType,templatePath );
         }
     }
 
 
-    public  async Task<ExportResult> Export2Stream<T>(List<T>? items = null, ExportType exportType = ExportType.Excel, string? templatePath = null, string? fileName = null) where T : class, new()
+    /// <summary>
+    /// 导出到流
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="items"></param>
+    /// <param name="exportType"></param>
+    /// <param name="templatePath">* MiniWord 必须指定模板路径,否则出错</param>
+    /// <param name="fileName"></param>
+    /// <returns></returns>
+    public async Task<ExportResult> Export2Stream<T>(List<T>? items = null, ExportType exportType = ExportType.Excel, string? templatePath = null, string? fileName = null) where T : class, new()
     {
-        var memoryStream = new MemoryStream();
-        fileName = fileName ?? "";
-
-        items = items ?? new List<T>();
+        MemoryStream memoryStream;
+        fileName ??= "";
+        items ??= new List<T>();
         switch (exportType)
         {
+            case ExportType.Excel:
+                var exporter = new ExcelExporter();
+                var result = await exporter.ExportAsByteArray(items);
+                memoryStream = new MemoryStream(result);
+                fileName += ".xlsx";
+                break;
             case ExportType.Pdf:
                 var exporterPdf = new PdfExporter();
                 var resultPdf = await exporterPdf.ExportBytesByTemplate(items, templatePath);
@@ -79,21 +89,8 @@ public class ImportExportsService : IImportExport
                 memoryStream = new MemoryStream(resultHtml);
                 fileName += ".html";
                 break;
-            case ExportType.MiniExcel:
-                await memoryStream.SaveAsAsync(items);
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                fileName += ".xlsx";
-                break;
-            case ExportType.MiniWord:
-                MiniWord.SaveAsByTemplate(memoryStream, templatePath, items);
-                fileName += ".docx";
-                break;
             default:
-                var exporter = new ExcelExporter();
-                var result = await exporter.ExportAsByteArray(items);
-                memoryStream = new MemoryStream(result);
-                fileName += ".xlsx";
-                break;
+                return await importExportsMiniService.Export2Stream(items, exportType, templatePath, fileName);
         }
 
         return new ExportResult()

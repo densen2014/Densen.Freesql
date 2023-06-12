@@ -31,9 +31,9 @@ public interface IImportExport
     /// <param name="filePath"></param>
     /// <param name="items"></param>
     /// <param name="exportType"></param>
-    /// <param name="templatePath">模板路径</param>
+    /// <param name="templatePath">* MiniWord 必须指定模板路径,否则出错</param>
     /// <returns></returns>
-   Task<string> Export<T>(string filePath, List<T>? items = null, ExportType exportType = ExportType.Excel, string? templatePath = null) where T : class, new();
+    Task<string> Export<T>(string filePath, List<T>? items = null, ExportType exportType = ExportType.Excel, string? templatePath = null) where T : class, new();
 
     Task<ExportResult> Export2Stream<T>(List<T>? items = null, ExportType exportType = ExportType.Excel, string? templatePath = null, string? fileName = null) where T : class, new();
 
