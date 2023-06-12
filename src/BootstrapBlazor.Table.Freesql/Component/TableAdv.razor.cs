@@ -9,8 +9,7 @@ using Densen.DataAcces.FreeSql;
 using Densen.Service;
 using FreeSql.Internal.Model;
 using Microsoft.AspNetCore.Components;
-using System.Diagnostics.CodeAnalysis;
-using static Densen.Service.ImportExportsService;
+using System.Diagnostics.CodeAnalysis; 
 
 namespace Densen.Components
 {
@@ -21,6 +20,10 @@ namespace Densen.Components
         [Inject]
         [NotNull]
         NavigationManager? NavigationManager { get; set; }
+
+        [Inject]
+        [NotNull]
+        protected IImportExport? Exporter { get; set; }
 
         [Inject]
         [NotNull]
@@ -293,7 +296,7 @@ namespace Densen.Components
                 }
                 var fileName = items == null ? "模板" : typeof(TItem).Name;
                 var fullName = Path.Combine(UploadPath, fileName);
-                fullName = await ImportExportsService.Export(fullName, items, exportType);
+                fullName = await Exporter.Export(fullName, items, exportType);
                 fileName = (new System.IO.FileInfo(fullName)).Name;
                 ToastService?.Success("提示", fileName + "已生成");
 
@@ -364,7 +367,7 @@ namespace Densen.Components
         
         private async Task<bool> MockImportExcel()
         {
-            var items_temp = await ImportFormExcel<TItem>(tempfilename!);
+            var items_temp = await ImportExportsService.ImportFormExcel<TItem>(tempfilename!);
             if (items_temp.items == null)
             {
                 ToastService?.Error("提示", "文件导入失败: " + items_temp.error);

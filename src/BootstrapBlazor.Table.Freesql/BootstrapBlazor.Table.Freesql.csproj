@@ -5,7 +5,8 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageTags>Table with Freesql for BootstrapBlazor</PackageTags>
 		<AssemblyName>BootstrapBlazor.Table.Freesql</AssemblyName>
-		<RootNamespace>Densen.Components</RootNamespace> 
+		<RootNamespace>Densen.Components</RootNamespace>
+        <OutputPath>..\Bin</OutputPath>
     </PropertyGroup>
     
     <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">

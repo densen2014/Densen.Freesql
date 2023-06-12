@@ -38,7 +38,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton(typeof(IDataService<>), typeof(FreeSqlDataService<>));
             services.AddSingleton(typeof(FreeSqlDataService<>));
             //导入导出服务
-            services.AddTransient<ImportExportsService>();
+            //services.AddTransient<IImportExport, ImportExportsMiniService>();
+            services.AddTransient<IImportExport, ImportExportsService>();
             return services;
         }
     }

@@ -5,6 +5,7 @@
         <PackageTags>FreeSql DataAcces for BootstrapBlazor</PackageTags>
         <AssemblyName>Densen.FreeSql.Extensions.BootstrapBlazor</AssemblyName>
         <RootNamespace>Densen.Extensions.Freesql.BootstrapBlazor</RootNamespace>
+        <OutputPath>..\Bin</OutputPath>
     </PropertyGroup>
 
     <ItemGroup>
