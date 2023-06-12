@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net7.0;net48</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+      <PackageReference Include="FreeSql.Provider.SqlServerForSystem" Version="3.2.697" />
+  </ItemGroup>
+
+    <ItemGroup>
+        <!--<PackageReference Include="Densen.Magicodes.IE.Core" Version="2.8.0" />
+		<PackageReference Include="Magicodes.IE.Excel" Version="2.7.2" />
+		<PackageReference Include="Magicodes.IE.Html" Version="2.7.2" />
+		<PackageReference Include="Magicodes.IE.Pdf" Version="2.7.2" />
+		<PackageReference Include="Magicodes.IE.Word" Version="2.7.2" />
+		<PackageReference Include="MiniExcel" Version="1.*" />
+		<PackageReference Include="System.Text.Encoding" Version="4.3.0" />
+        <PackageReference Include="HtmlToOpenXml.dll" Version="2.3.0" />
+        <PackageReference Include="Haukcode.WkHtmlToPdfDotNet" Version="1.5.86" />-->
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\BootstrapBlazor.Table.ImportExportsService\BootstrapBlazor.Table.ImportExportsService.csproj" />
+    </ItemGroup>
+    
+</Project>
