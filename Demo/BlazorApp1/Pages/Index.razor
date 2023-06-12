@@ -7,7 +7,11 @@
 <Tab IsLazyLoadTabItem="true">
     <TabItem Text="基本">
         <TablePollo TItem="AspNetUsers" ItemDetails="NullClass" ItemDetailsII="NullClass"
-                    ItemDetailsIII="NullClass" ShowColumnList EditDialogItemsPerRow="1" EditDialogRowType="RowType.Normal" />
+                    ItemDetailsIII="NullClass" ShowColumnList EditDialogItemsPerRow="1" EditDialogRowType="RowType.Normal"                  
+                    ShowExportButton
+                    UseMiniExcel="false"
+                    UseFullExportService 
+                    ExportToStream="false"/>
     </TabItem>
     <TabItem Text="用户">
 
@@ -25,10 +29,11 @@
                     SubIncludeByPropertyNamesII="new List<string> {}"
                     ItemDetailsIII="NullClass"
                     ShowColumnList
-                    ShowExportButton
                     ShowDetailRowS
                     ExportToStream="false"
-                    ExportBasePath="temp"
+                    ExportBasePath="temp"                    
+                    ShowExportButton
+                    UseMiniExcel="false"
                     UseFullExportService />
         @code{
 

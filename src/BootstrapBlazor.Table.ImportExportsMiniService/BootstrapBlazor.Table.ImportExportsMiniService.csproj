@@ -5,6 +5,7 @@
 		<PackageTags>ImportExports Service for BootstrapBlazor</PackageTags>
 		<AssemblyName>BootstrapBlazor.Table.ImportExportsMiniService</AssemblyName>
 		<RootNamespace>Densen.Service</RootNamespace>
+        <TargetFrameworks>netstandard2.0;netstandard2.1;net7.0</TargetFrameworks>
     </PropertyGroup>
 
 	<ItemGroup>
