@@ -66,8 +66,7 @@
        EditTemplate="@EditTemplate"
        TableExtensionToolbarBeforeTemplate="@TableExtensionToolbarBeforeTemplate"
        TableExtensionToolbarTemplate="@TableExtensionToolbarTemplate"
-       IsExtendButtonsInRowHeader="@IsExtendButtonsInRowHeader"
-       >
+       IsExtendButtonsInRowHeader="@IsExtendButtonsInRowHeader">
 
     <TableToolbarTemplate>
         @if (TableToolbarTemplate != null)
@@ -231,12 +230,19 @@
             <i class="fas fa-file-excel"></i>
             <span>Excel</span>
         </div>
-        <div class="dropdown-item" @onclick="_=>ExportWordAsync(mainTable!.Rows)">
-            <i class="fas fa-file-word"></i>
-            <span>Word</span>
-        </div>
+        @if (UseMiniWord && !string.IsNullOrEmpty(MiniWordTemplatePath))
+        {
+            <div class="dropdown-item" @onclick="_ => ExportWordAsync(mainTable!.Rows)">
+                <i class="fas fa-file-word"></i>
+                <span>Word</span>
+            </div>
+        }
         @if (UseFullExportService)
         {
+            <div class="dropdown-item" @onclick="_ => ExportWordAsync(mainTable!.Rows)">
+                <i class="fas fa-file-word"></i>
+                <span>Word</span>
+            </div>
             <div class="dropdown-item" @onclick="_=>ExportHtmlAsync(mainTable!.Rows)">
                 <i class="fa-brands fa-html5"></i>
                 <span>Html</span>
@@ -253,12 +259,19 @@
             <i class="fas fa-file-excel"></i>
             <span>Excel</span>
         </div>
-        <div class="dropdown-item" @onclick="_=>ExportWordAsync(GetAllItems())">
-            <i class="fas fa-file-word"></i>
-            <span>Word</span>
-        </div>
+        @if (UseMiniWord && !string.IsNullOrEmpty(MiniWordTemplatePath))
+        {
+            <div class="dropdown-item" @onclick="_ => ExportWordAsync(GetAllItems())">
+                <i class="fas fa-file-word"></i>
+                <span>Word</span>
+            </div>
+        }
         @if (UseFullExportService)
         {
+            <div class="dropdown-item" @onclick="_ => ExportWordAsync(GetAllItems())">
+                <i class="fas fa-file-word"></i>
+                <span>Word</span>
+            </div>
             <div class="dropdown-item" @onclick="_ => ExportHtmlAsync(GetAllItems())">
                 <i class="fa-brands fa-html5"></i>
                 <span>Html</span>
@@ -279,23 +292,23 @@
             <BodyTemplate>
 
                 @*<TablePollo @ref="@detalisTable"
-                            TItem="@ItemDetails"
-                            ItemDetails="ItemDetailsII"
-                            ItemDetailsII="ItemDetailsIII"
-                            ItemDetailsIII="NullClass"
-                            Field="@(FieldD??Field)"
-                            FieldValue="@SelectOneItem!.GetIdentityKey(Field)"
-                            IsBordered="false"
-                            ShowToolbar="@ShowToolbar"
-                            ShowDefaultButtons="@ShowDefaultButtons"
-                            ShowExtendButtons="@ShowExtendButtons"
-                            ShowSearch="@ShowSearch"
-                            DoubleClickToEdit="@DoubleClickToEdit"
-                            TableSize="@TableSize"
-                            HeaderStyle="@HeaderStyle"
-                            ShowLineNo="@ShowLineNo"
-                            ShowSkeleton="@ShowSkeleton"
-                            ShowRefresh="@ShowRefresh" />*@
+                    TItem="@ItemDetails"
+                    ItemDetails="ItemDetailsII"
+                    ItemDetailsII="ItemDetailsIII"
+                    ItemDetailsIII="NullClass"
+                    Field="@(FieldD??Field)"
+                    FieldValue="@SelectOneItem!.GetIdentityKey(Field)"
+                    IsBordered="false"
+                    ShowToolbar="@ShowToolbar"
+                    ShowDefaultButtons="@ShowDefaultButtons"
+                    ShowExtendButtons="@ShowExtendButtons"
+                    ShowSearch="@ShowSearch"
+                    DoubleClickToEdit="@DoubleClickToEdit"
+                    TableSize="@TableSize"
+                    HeaderStyle="@HeaderStyle"
+                    ShowLineNo="@ShowLineNo"
+                    ShowSkeleton="@ShowSkeleton"
+                    ShowRefresh="@ShowRefresh" />*@
 
             </BodyTemplate>
 

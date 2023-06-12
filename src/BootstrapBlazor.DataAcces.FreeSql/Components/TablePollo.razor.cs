@@ -298,6 +298,18 @@ public partial class TbPolloBase : BootstrapComponentBase, IAsyncDisposable
     /// </summary>
     [Parameter] public bool UseFullExportService { get; set; }
 
+
+    /// <summary>
+    /// 使用 UseMiniWord 库导出,默认为 false
+    /// </summary>
+    [Parameter] public bool UseMiniWord { get; set; }  
+
+    /// <summary>
+    /// * MiniWord 必须指定模板路径,否则出错. <para></para> 
+    /// 默认为 false
+    /// </summary>
+    [Parameter] public string? MiniWordTemplatePath { get; set; }
+
     /// <summary>
     /// 级联保存字段名
     /// </summary>
@@ -1398,7 +1410,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
 
     private async Task<bool> ExportExcelAsync(IEnumerable<TItem>? items) => await ExportAutoAsync(items, UseMiniExcel ? ExportType.MiniExcel : ExportType.Excel);
     private async Task<bool> ExportPDFAsync(IEnumerable<TItem>? items) => await ExportAutoAsync(items, ExportType.Pdf);
-    private async Task<bool> ExportWordAsync(IEnumerable<TItem>? items) => await ExportAutoAsync(items, ExportType.Word);
+    private async Task<bool> ExportWordAsync(IEnumerable<TItem>? items) => await ExportAutoAsync(items, UseMiniWord? ExportType.MiniWord :ExportType.Word);
     private async Task<bool> ExportHtmlAsync(IEnumerable<TItem>? items) => await ExportAutoAsync(items, ExportType.Html);
     private async Task<bool> ExportAutoAsync(IEnumerable<TItem>? items, ExportType exportType = ExportType.MiniExcel)
     {
