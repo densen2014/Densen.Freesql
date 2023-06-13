@@ -1463,22 +1463,14 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
                 }
                 memoryStream = (MemoryStream)res.Stream;
                 fileName = res.FileName;
+                await DownloadService.DownloadFromStreamAsync(Path.GetFileName(fileName) ?? "file", memoryStream);
             }
             else
             {
                 fileName = await Exporter.Export(fileName, items, exportType);
                 ToastService?.Success("提示", Path.GetFileName(fileName) + "已生成");
-                await Task.Delay(100);
-                MemoryStream ms = new MemoryStream();
-                using (FileStream file = File.Open(fileName, FileMode.Open, FileAccess.Read))
-                    await file.CopyToAsync(memoryStream);
-                memoryStream.Position = 0;
-#if DEBUG
-                System.Console.WriteLine($"导出文件大小:{memoryStream.Length}");
-#endif 
+                await DownloadService.DownloadFromFileAsync(Path.GetFileName(fileName) ?? "file", fileName);
             }
-
-            await DownloadService.DownloadFromStreamAsync(Path.GetFileName(fileName) ?? "file", memoryStream);
 
         }
         catch (Exception e)
