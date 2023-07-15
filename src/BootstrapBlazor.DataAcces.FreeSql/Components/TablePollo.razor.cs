@@ -782,7 +782,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     /// 获得/设置 导出按钮异步回调方法
     /// </summary>
     [Parameter]
-    public Func<IEnumerable<TItem>, QueryPageOptions, Task<bool>>? OnExportAsync { get; set; }
+    public Func<ITableExportDataContext<TItem>, Task<bool>>? OnExportAsync { get; set; }
 
     /// <summary>
     /// 获得/设置 是否显示每行的明细行展开图标
@@ -1372,16 +1372,16 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     /// <param name="Items"></param>
     /// <param name="opt"></param>
     /// <returns></returns>
-    protected async Task<bool> ExportAsync(IEnumerable<TItem> Items, QueryPageOptions opt)
+    protected async Task<bool> ExportAsync(ITableExportDataContext<TItem> items)
     {
         var ret = false;
         if (OnExportAsync != null)
         {
-            ret = await OnExportAsync(Items, opt);
+            ret = await OnExportAsync(items);
         }
         else
         {
-            ret = await ExportExcelAsync(Items);
+            ret = await ExportExcelAsync(items.Rows);
         }
         return ret;
     }
