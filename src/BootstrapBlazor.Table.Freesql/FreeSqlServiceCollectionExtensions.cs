@@ -25,7 +25,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IServiceCollection AddFreeSqlTables(this IServiceCollection services, Action<FreeSqlBuilder> optionsAction, Action<IFreeSql>? configureAction = null)
         {
-            services.AddSingleton<IFreeSql>(sp =>
+            services.AddSingleton(sp =>
             {
                 var builder = new FreeSqlBuilder();
                 optionsAction(builder);
@@ -35,8 +35,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 return instance;
             });
 
-            services.AddSingleton(typeof(IDataService<>), typeof(FreeSqlDataService<>));
-            services.AddSingleton(typeof(FreeSqlDataService<>));
+            services.AddTransient(typeof(IDataService<>), typeof(FreeSqlDataService<>));
+            services.AddTransient(typeof(FreeSqlDataService<>));
             //导入导出服务
             //services.AddTransient<IImportExport, ImportExportsMiniService>();
             services.AddTransient<IImportExport, ImportExportsService>();

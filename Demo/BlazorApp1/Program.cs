@@ -32,7 +32,7 @@ builder.Services.AddFreeSql(option =>
 });
 
 //全功能版
-builder.Services.AddSingleton(typeof(FreeSqlDataService<>));
+builder.Services.AddTransient(typeof(FreeSqlDataService<>));
 
 //builder.Services.AddTransient<IImportExport, ImportExportsMiniService>();
 builder.Services.AddTransient<IImportExport, ImportExportsService>();

@@ -41,7 +41,7 @@ public static class FreeSqlServiceCollectionExtensions
             return instance;
         });
 
-        services.AddSingleton(typeof(IDataService<>), typeof(FreeSqlDataService<>));
+        services.AddTransient(typeof(IDataService<>), typeof(FreeSqlDataService<>));
         services.TryAddTransient<IImportExport, ImportExportsMiniService>();
         return services;
     }

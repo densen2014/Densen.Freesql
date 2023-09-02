@@ -94,7 +94,7 @@ namespace Densen.Components
         /// 动态附加FreeSql实例
         /// </summary>
         [Parameter]
-        public IFreeSql? Fsql  { get; set; }  
+        public IFreeSql Fsql  { get; set; }  
         
         /// <summary>
         /// 级联保存字段名
@@ -376,7 +376,7 @@ namespace Densen.Components
             //items = SmartCombine(items_temp, items).ToList(); 新数据和老数据合并处理,略100字
             await fsql.Insert<TItem>().AppendData(items_temp!.items.ToList()).ExecuteAffrowsAsync();
             return true;
-        } 
+        }
 
         /// <summary>
         /// 导出数据方法
@@ -384,9 +384,9 @@ namespace Densen.Components
         /// <param name="Items"></param>
         /// <param name="opt"></param>
         /// <returns></returns>
-        protected async Task<bool> ExportAsync(IEnumerable<TItem> Items, QueryPageOptions opt)
+        protected async Task<bool> ExportAsync(ITableExportDataContext<TItem> items)
         {
-            var ret = await ExportExcelAsync(Items);
+            var ret = await ExportExcelAsync(items.Rows);
             return ret;
         }
         #endregion 
