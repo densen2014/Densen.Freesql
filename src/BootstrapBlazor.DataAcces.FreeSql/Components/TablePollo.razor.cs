@@ -11,7 +11,9 @@ using Densen.Service;
 using DocumentFormat.OpenXml.Spreadsheet;
 using FreeSql.Internal.Model;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using static AME.EnumsExtensions;
@@ -357,6 +359,62 @@ public partial class TbPolloBase : BootstrapComponentBase
     [Parameter]
     public bool EnableCascadeSave { get; set; } = false;
 
+    /// <summary>
+    /// 获得/设置 自动保存当前页码 默认 false
+    /// </summary>
+    [Parameter]
+    public bool AutoSavePageIndex { get; set; }
+
+    /// <summary>
+    /// 获得/设置 保存当前页码Key 默认 PageIndex
+    /// <para></para>多个表格请设置不同的key
+    /// </summary>
+    [Parameter]
+    public string AutoSavePageIndexKey { get; set; } = "PageIndex";
+
+    /// <summary>
+    /// 获得/设置 当前页码
+    /// </summary>
+    [Parameter]
+    public int? PageIndex { get; set; }
+
+    public int? PageIndexCache { get; set; }
+
+    #region StorageService
+    public async Task StorageSetValue<TValue>(string key, TValue value)
+    {
+        await JSRuntime.InvokeVoidAsync("eval", $"localStorage.setItem('{key}', '{value}')");
+    }
+
+    public async Task<TValue?> StorageGetValue<TValue>(string key, TValue? def)
+    {
+        try
+        {
+            var cValue = await JSRuntime.InvokeAsync<TValue>("eval", $"localStorage.getItem('{key}');");
+            return cValue ?? def;
+        }
+        catch
+        {
+            var cValue = await JSRuntime.InvokeAsync<string>("eval", $"localStorage.getItem('{key}');");
+            if (cValue == null)
+                return def;
+
+            var newValue = StorageGetValueI<TValue>(cValue);
+            return newValue ?? def;
+
+        }
+    }
+    public static T? StorageGetValueI<T>(string value)
+    {
+        TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
+        if (converter != null)
+        {
+            return (T?)converter.ConvertFrom(value);
+        }
+        return default;
+        //return (T)Convert.ChangeType(value, typeof(T));
+    }
+    #endregion
     #endregion
 
     #region 继承bb table的设置
@@ -721,7 +779,22 @@ public partial class TbPolloBase : BootstrapComponentBase
         base.OnAfterRender(firstRender);
         if (!firstRender) return;
     }
- 
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (!firstRender) return;
+
+        if (AutoSavePageIndex)
+        {
+            PageIndexCache = await StorageGetValue(AutoSavePageIndexKey, 1);
+        }
+        else
+        {
+            PageIndexCache = PageIndex;
+        }
+    }
+
 }
 
 /// <summary>
@@ -851,7 +924,12 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         if (!firstRender) return;
         System.Console.WriteLine($"TablePollo OnAfterRender=> Field: {Field}, FieldValue: {FieldValue}");
     }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
 
+        if (!firstRender) return;
+    }
 
     //protected Task<TItem> OnAddAsync() => Task.FromResult(new TItem());
     public async Task<TItem> OnAddAsync()
@@ -894,6 +972,24 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
 
     public async Task<QueryData<TItem>> OnQueryAsync(QueryPageOptions options)
     {
+        if (PageIndexCache != null)
+        {
+            options.PageIndex = PageIndexCache.Value;
+            PageIndexCache = null;
+        }
+        else
+        {
+            if (AutoSavePageIndex)
+            {
+                await StorageSetValue(AutoSavePageIndexKey, options.PageIndex);
+            }
+            else
+            {
+                PageIndex = options.PageIndex;
+            }
+        }
+
+
         var items1 = await GetDataService().QueryAsyncWithWhereCascade(
                 options,
                 dynamicFilterInfo,
@@ -1479,7 +1575,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         }
     }
 
-#endregion
+    #endregion
 
     private async Task 升级Cmd(IEnumerable<TItem> items)
     {
@@ -1566,7 +1662,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
                 WhereLamda
             );
 
-#endregion
+    #endregion
 
 
 }
