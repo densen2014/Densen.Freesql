@@ -11,7 +11,9 @@
                     ShowExportButton
                     UseMiniExcel="false"
                     UseFullExportService 
-                    ExportToStream="false"/>
+                    ExportToStream="false"
+                    AutoSavePageIndex
+                    PageItemsSource="new int[] {2, 20, 50, 100, 200, 500, 1000 }"/>
     </TabItem>
     <TabItem Text="用户">
 
@@ -150,7 +152,9 @@
                     FieldD="@nameof(AspNetUserRoles.RoleId)"
                     ExportToStream="false"
                     ExportBasePath="temp"
-                    RowButtons="list" />
+                    RowButtons="list" 
+                    PageIndex="2"
+                    PageItemsSource="new int[] {2, 20, 50, 100, 200, 500, 1000 }"/>
 
         @code{
         }
