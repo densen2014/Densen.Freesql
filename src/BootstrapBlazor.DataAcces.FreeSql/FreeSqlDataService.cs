@@ -169,7 +169,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
                 List<string>? WhereCascadeOr = null,
                 Expression<Func<TModel, bool>>? WhereLamda = null)
     {
-        var res = FsqlUtil.Fetch<TModel>(option, OptionsCache, TotalCount, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr,WhereLamda: WhereLamda);
+        var res = FsqlUtil.Fetch(option, OptionsCache, TotalCount, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, WhereLamda: WhereLamda);
         TotalCount = res.TotalCount;
         Items = res.Items?.ToList();
         OptionsCache = option;
@@ -271,7 +271,7 @@ public static class FsqlUtil
                     {
                         if (item.IndexOf(",") != -1 && item.Split(",").Length > 2)
                         {
-                            var t1s = item.Split(","); 
+                            var t1s = item.Split(",");
                             fsql_select = fsql_select.IncludeByPropertyName(t1s[0], then => then.IncludeByPropertyName(t1s[1], then => then.IncludeByPropertyName(t1s[2])));
                         }
                         else if (item.IndexOf(",") != -1 && item.Split(",").Length > 1)
@@ -325,16 +325,16 @@ public static class FsqlUtil
                     }
                 }
 
-                //分页==1才获取记录总数量,省点性能
+                //分页==1 or null 才获取记录总数量,省点性能
                 long count = 0;
-                if (options.PageIndex == 1) fsql_select = fsql_select.Count(out count);
+                if ((TotalCount??0)== 0 || options.PageIndex == 1) fsql_select = fsql_select.Count(out count);
 
                 //判断是否分页
                 if (options.IsPage) fsql_select = fsql_select.Page(options.PageIndex, options.PageItems);
 
                 items = fsql_select.ToList();
 
-                TotalCount = options.PageIndex == 1 ? count : TotalCount;
+                TotalCount = ((TotalCount ?? 0) == 0 || options.PageIndex == 1) ? count : TotalCount;
 
             }
         }
@@ -391,13 +391,13 @@ public static class FsqlUtil
                 {
                     var isInt = propertyinfo.PropertyType == typeof(int);
                     var propertyValue = propertyinfo.GetValue(searchModel)?.ToString();
-                    if (propertyValue ==null || (isInt && !propertyValue.IsNumeric())) continue;
+                    if (propertyValue == null || (isInt && !propertyValue.IsNumeric())) continue;
                     var attr = propertyinfo.GetCustomAttribute<ColumnAttribute>();
                     if (attr?.IsIgnore ?? false) continue;
                     object val;
                     try
                     {
-                        val =  isInt ? Convert.ToInt32(propertyValue) : propertyValue;
+                        val = isInt ? Convert.ToInt32(propertyValue) : propertyValue;
                     }
                     catch (Exception)
                     {
@@ -452,31 +452,33 @@ public static class FsqlUtil
         {
             foreach (var item in option.Filters)
             {
-                foreach (var filter in item.GetFilterConditions())
+                if (item.GetFilterConditions().Filters != null)
                 {
-                    var filterOperator = DynamicFilterOperator.Contains;
-
-                    filterOperator = filter.FilterAction switch
+                    foreach (var filter in item.GetFilterConditions().Filters!)
                     {
-                        FilterAction.Equal => DynamicFilterOperator.Equal,
-                        FilterAction.NotEqual => DynamicFilterOperator.NotEqual,
-                        FilterAction.Contains => DynamicFilterOperator.Contains,
-                        FilterAction.NotContains => DynamicFilterOperator.NotContains,
-                        FilterAction.GreaterThan => DynamicFilterOperator.GreaterThan,
-                        FilterAction.GreaterThanOrEqual => DynamicFilterOperator.GreaterThanOrEqual,
-                        FilterAction.LessThan => DynamicFilterOperator.LessThan,
-                        FilterAction.LessThanOrEqual => DynamicFilterOperator.LessThanOrEqual,
-                        _ => throw new System.NotSupportedException()
-                    };
+                        var filterOperator = DynamicFilterOperator.Contains;
 
-                    filters.Add(new DynamicFilterInfo()
-                    {
-                        Field = filter.FieldKey,
-                        Operator = filterOperator,
-                        Value = filter.FieldValue,
-                    });
+                        filterOperator = filter.FilterAction switch
+                        {
+                            FilterAction.Equal => DynamicFilterOperator.Equal,
+                            FilterAction.NotEqual => DynamicFilterOperator.NotEqual,
+                            FilterAction.Contains => DynamicFilterOperator.Contains,
+                            FilterAction.NotContains => DynamicFilterOperator.NotContains,
+                            FilterAction.GreaterThan => DynamicFilterOperator.GreaterThan,
+                            FilterAction.GreaterThanOrEqual => DynamicFilterOperator.GreaterThanOrEqual,
+                            FilterAction.LessThan => DynamicFilterOperator.LessThan,
+                            FilterAction.LessThanOrEqual => DynamicFilterOperator.LessThanOrEqual,
+                            _ => throw new System.NotSupportedException()
+                        };
+
+                        filters.Add(new DynamicFilterInfo()
+                        {
+                            Field = filter.FieldKey,
+                            Operator = filterOperator,
+                            Value = filter.FieldValue,
+                        });
+                    }
                 }
-
             }
         }
 
