@@ -325,20 +325,20 @@ public static class FsqlUtil
                     }
                 }
 
-                //分页==1 or null 才获取记录总数量,省点性能
+                //分页
                 long count = 0;
-                if ((TotalCount??0)== 0 || options.PageIndex == 1) fsql_select = fsql_select.Count(out count);
+                fsql_select = fsql_select.Count(out count);
 
                 //判断是否分页
                 if (options.IsPage) fsql_select = fsql_select.Page(options.PageIndex, options.PageItems);
 
                 items = fsql_select.ToList();
 
-                if (count==0) {
+                TotalCount = count;
+
+                if (TotalCount == 0) {
                     options.PageIndex = 1;
                 }
-
-                TotalCount = ((TotalCount ?? 0) == 0 || options.PageIndex == 1) ? count : TotalCount;
 
             }
         }
