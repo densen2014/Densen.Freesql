@@ -6,7 +6,7 @@
 		<AssemblyName>BootstrapBlazor.Table.ImportExportsMiniService</AssemblyName>
 		<RootNamespace>Densen.Service</RootNamespace>
         <TargetFrameworks>netstandard2.0;netstandard2.1;net7.0</TargetFrameworks>
-        <OutputPath>..\Bin</OutputPath>
+        <OutputPath>..\..\..\Bin</OutputPath>
         <Version>7.8.0</Version>
     </PropertyGroup>
 

@@ -7,17 +7,17 @@
 <Tab IsLazyLoadTabItem="true">
     <TabItem Text="基本">
         <TablePollo TItem="AspNetUsers" ItemDetails="NullClass" ItemDetailsII="NullClass"
-                    ItemDetailsIII="NullClass" ShowColumnList EditDialogItemsPerRow="1" EditDialogRowType="RowType.Normal"                  
+                    ItemDetailsIII="NullClass" ShowColumnList EditDialogItemsPerRow="1" EditDialogRowType="RowType.Normal"
                     ShowExportButton
                     UseMiniExcel="false"
-                    UseFullExportService 
+                    UseFullExportService
                     ExportToStream="false"
                     AutoSavePageIndex
-                    IsAutoCollapsedToolbarButton="false" 
+                    IsAutoCollapsedToolbarButton="false"
                     AllowDragColumn
                     ShowResetButton="false"
                     ShowAdvancedSearch="false"
-                    PageItemsSource="new int[] {2, 20, 50, 100, 200, 500, 1000 }"/>
+                    PageItemsSource="new int[] {1, 2, 20, 50, 100, 200, 500, 1000 }" />
     </TabItem>
     <TabItem Text="用户">
 
@@ -37,7 +37,7 @@
                     ShowColumnList
                     ShowDetailRowS
                     ExportToStream="false"
-                    ExportBasePath="temp"                    
+                    ExportBasePath="temp"
                     ShowExportButton
                     UseMiniExcel="false"
                     UseFullExportService />
@@ -156,9 +156,9 @@
                     FieldD="@nameof(AspNetUserRoles.RoleId)"
                     ExportToStream="false"
                     ExportBasePath="temp"
-                    RowButtons="list" 
+                    RowButtons="list"
                     PageIndex="2"
-                    PageItemsSource="new int[] {2, 20, 50, 100, 200, 500, 1000 }"/>
+                    PageItemsSource="new int[] {2, 20, 50, 100, 200, 500, 1000 }" />
 
         @code{
         }
