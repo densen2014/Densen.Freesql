@@ -544,6 +544,12 @@ public partial class TbPolloBase : BootstrapComponentBase
     public SearchMode SearchMode { get; set; } = SearchMode.Popup;
 
     /// <summary>
+    /// 获得/设置 是否显示搜索按钮 默认为 true 
+    /// </summary>
+    [Parameter]
+    public bool ShowSearchButton { get; set; } = true;
+
+    /// <summary>
     /// 获得/设置 是否显示高级搜索 默认为 true 
     /// </summary>
     [Parameter]
@@ -554,6 +560,12 @@ public partial class TbPolloBase : BootstrapComponentBase
     /// </summary>
     [Parameter]
     public bool ShowResetButton { get; set; } = true;
+
+    /// <summary>
+    /// 获得/设置 是否收缩顶部搜索框 默认为 true 不收缩搜索框 是否显示搜索框请设置 <see cref="SearchMode"/> 值 Top
+    /// </summary>
+    [Parameter]
+    public bool CollapsedTopSearch { get; set; } = true;
 
     /// <summary>
     /// 获得/设置 是否显示加载骨架屏 默认 false 不显示
