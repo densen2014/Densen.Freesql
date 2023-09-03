@@ -538,6 +538,24 @@ public partial class TbPolloBase : BootstrapComponentBase
     public bool ShowSearch { get; set; } = true;
 
     /// <summary>
+    /// 获得/设置 搜索栏渲染模式 默认 Popup 弹窗形式
+    /// </summary>
+    [Parameter]
+    public SearchMode SearchMode { get; set; } = SearchMode.Popup;
+
+    /// <summary>
+    /// 获得/设置 是否显示高级搜索 默认为 true 
+    /// </summary>
+    [Parameter]
+    public bool ShowAdvancedSearch { get; set; } = true;
+
+    /// <summary>
+    /// 获得/设置 是否显示清空搜索按钮 默认为 true 
+    /// </summary>
+    [Parameter]
+    public bool ShowResetButton { get; set; } = true;
+
+    /// <summary>
     /// 获得/设置 是否显示加载骨架屏 默认 false 不显示
     /// </summary>
     [Parameter]
@@ -771,6 +789,12 @@ public partial class TbPolloBase : BootstrapComponentBase
     /// </summary>
     [Parameter]
     public bool IsExtendButtonsInRowHeader { get; set; }
+
+    /// <summary>
+    /// 获得/设置 是否允许拖动列标题调整表格列顺序 默认 false
+    /// </summary>
+    [Parameter]
+    public bool AllowDragColumn { get; set; } 
 
     #endregion
 

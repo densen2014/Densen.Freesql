@@ -334,6 +334,10 @@ public static class FsqlUtil
 
                 items = fsql_select.ToList();
 
+                if (count==0) {
+                    options.PageIndex = 1;
+                }
+
                 TotalCount = ((TotalCount ?? 0) == 0 || options.PageIndex == 1) ? count : TotalCount;
 
             }

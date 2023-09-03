@@ -18,7 +18,7 @@ builder.Services.AddFreeSql(option =>
 })
 
 //全功能版
-builder.Services.AddSingleton(typeof(FreeSqlDataService<>));
+builder.Services.AddTransient(typeof(FreeSqlDataService<>));
 ```
 
 2. FreeSql ORM 的 IDataService 数据注入服务接口实现
