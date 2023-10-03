@@ -807,7 +807,13 @@ public partial class TbPolloBase : BootstrapComponentBase
     /// 获得/设置 是否允许拖动列标题调整表格列顺序 默认 false
     /// </summary>
     [Parameter]
-    public bool AllowDragColumn { get; set; } 
+    public bool AllowDragColumn { get; set; }
+
+    /// <summary>
+    /// 获得/设置 默认每页数据数量 默认 0 使用 <see cref="PageItemsSource"/> 第一个值
+    /// </summary>
+    [Parameter]
+    public int PageItems { get; set; }
 
     #endregion
 
