@@ -508,6 +508,7 @@ public partial class TbPolloBase : BootstrapComponentBase
     /// </summary>
     [Parameter]
     public bool ShowExcelModeButtons { get; set; } = true;
+
     /// <summary>
     /// 获得/设置 是否显示添加/编辑/删除按钮 默认为 true 显示
     /// </summary>
@@ -1052,9 +1053,12 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     /// <summary>
     /// 查询按钮调用此方法
     /// </summary>
+    /// <param name="whereLamda">附加and条件,如果传入值为空不使用</param>
+    /// <param name="force">强制使用附加and条件,即使传入值为空也使用</param>
     /// <returns></returns>
-    public async Task QueryAsync()
+    public async Task QueryAsync(Expression<Func<TItem, bool>>? whereLamda = null, bool force = false)
     {
+        if (whereLamda != null || force) WhereLamda = whereLamda;
         await mainTable!.QueryAsync();
     }
 
@@ -1333,9 +1337,9 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         if (SubTableImgField != null) builder.AddAttribute(17, nameof(TableImgField), SubTableImgField);
         if (SubRenderMode != null) builder.AddAttribute(18, nameof(RenderMode), SubRenderMode);
         if (ibstring != null) builder.AddAttribute(19, nameof(ibstring), ibstring);
-        if (SubTableFunctionsFields != null) builder.AddAttribute(16, nameof(TableFunctionsFields), SubTableFunctionsFields);
-        if (SubRowButtons != null) builder.AddAttribute(16, nameof(RowButtons), SubRowButtons);
-        builder.AddAttribute(17, nameof(IsExtendButtonsInRowHeader), IsExtendButtonsInRowHeader);
+        if (SubTableFunctionsFields != null) builder.AddAttribute(20, nameof(TableFunctionsFields), SubTableFunctionsFields);
+        if (SubRowButtons != null) builder.AddAttribute(21, nameof(RowButtons), SubRowButtons);
+        builder.AddAttribute(22, nameof(IsExtendButtonsInRowHeader), IsExtendButtonsInRowHeader);
         builder.CloseComponent();
     };
 

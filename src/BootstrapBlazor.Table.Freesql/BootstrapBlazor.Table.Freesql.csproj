@@ -7,7 +7,7 @@
 		<AssemblyName>BootstrapBlazor.Table.Freesql</AssemblyName>
 		<RootNamespace>Densen.Components</RootNamespace>
         <OutputPath>..\..\..\Bin</OutputPath>
-        <Version>7.10.4</Version>
+        <Version>7.11.0</Version>
     </PropertyGroup>
     
     <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
