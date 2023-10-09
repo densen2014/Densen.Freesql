@@ -132,7 +132,7 @@ public partial class AspNetUsers
     public string TaxNumber { get; set; }
 
     [DisplayName("提供者")]
-    [AutoGenerateColumn(Visible = false ,ComponentType = typeof(Select<string>), LookupServiceKey = "Provideres")] 
+    [AutoGenerateColumn(Visible = false , LookupServiceKey = "Provideres")] 
     [JsonProperty, Column(StringLength = -2)]
     public string provider { get; set; }
 

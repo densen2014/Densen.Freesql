@@ -25,6 +25,23 @@ internal class DemoLookupService : ILookupService
                 new() { Value = "True", Text = "真真" },
                 new() { Value = "False", Text = "假假" },
                 new() { Value = "Google", Text = "谷歌" },
+                new() { Value = "Google2", Text = "谷歌" },
+                new() { Value = "Google3", Text = "谷歌" },
+                new() { Value = "Google4", Text = "谷歌" },
+                new() { Value = "Google5", Text = "谷歌" },
+                new() { Value = "Google6", Text = "谷歌" },
+                new() { Value = "Google7", Text = "谷歌" },
+                new() { Value = "Google8", Text = "谷歌" },
+                new() { Value = "Google9", Text = "谷歌" },
+                new() { Value = "Googlea", Text = "谷歌" },
+                new() { Value = "Googleb", Text = "谷歌" },
+                new() { Value = "Googlec", Text = "谷歌" },
+                new() { Value = "Googled", Text = "谷歌" },
+                new() { Value = "Googlee", Text = "谷歌" },
+                new() { Value = "Googlef", Text = "谷歌" },
+                new() { Value = "Googlei", Text = "谷歌" },
+                new() { Value = "Googlej", Text = "谷歌" },
+                new() { Value = "Googlek", Text = "谷歌" },
             };
         }
         return items;
