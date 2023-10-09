@@ -8,7 +8,6 @@
 
     <ItemGroup>
         <!--<PackageReference Include="Densen.FreeSql.Extensions.BootstrapBlazor" Version="7.*" />-->
-        <PackageReference Include="BootstrapBlazor" Version="7.*" />
         <PackageReference Include="FreeSql.Provider.Sqlite" Version="3.*" />
     </ItemGroup>
 

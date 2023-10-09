@@ -247,7 +247,7 @@ public static class FsqlUtil
 
             var dynamicFilterInfo = MakeDynamicFilterInfo(options, out isSerach, WhereCascade, WhereCascadeOr);
 
-            if (TotalCount != null && !isSerach && options.PageItems != optionsLast.PageItems && TotalCount <= optionsLast.PageItems)
+            if (TotalCount != null && !options.IsVirtualScroll && !isSerach && options.PageItems != optionsLast.PageItems && TotalCount <= optionsLast.PageItems)
             {
                 //当选择的每页显示数量大于总数时，强制认为是一页
                 //无搜索,并且总数<=分页总数直接使用内存排序和搜索
@@ -330,7 +330,10 @@ public static class FsqlUtil
                 fsql_select = fsql_select.Count(out count);
 
                 //判断是否分页
-                if (options.IsPage) fsql_select = fsql_select.Page(options.PageIndex, options.PageItems);
+                if (options.IsPage)
+                    fsql_select = fsql_select.Page(options.PageIndex, options.PageItems);
+                else if (options.IsVirtualScroll)
+                    fsql_select = fsql_select.Skip(options.StartIndex).Take(options.PageItems);
 
                 items = fsql_select.ToList();
 
