@@ -1,4 +1,10 @@
-﻿using Magicodes.ExporterAndImporter.Excel;
+﻿// ********************************** 
+// Densen Informatica 中讯科技 
+// 作者：Alex Chow
+// e-mail:zhouchuanglin@gmail.com 
+// **********************************
+
+using Magicodes.ExporterAndImporter.Excel;
 using Magicodes.ExporterAndImporter.Html;
 using Magicodes.ExporterAndImporter.Pdf;
 using Magicodes.ExporterAndImporter.Word;
