@@ -30,14 +30,14 @@
        ShowLineNo="@ShowLineNo"
        ShowSkeleton="@ShowSkeleton"
        ShowToolbar="@ShowToolbar"
-       ShowAddButton="@ShowAddButton"
-       ShowEditButton="@ShowEditButton"
-       ShowDeleteButton="@ShowDeleteButton"
+       ShowAddButton="@(ShowAddButton &&!IsReadonly)"
+       ShowEditButton="@(ShowEditButton &&!IsReadonly)"
+       ShowDeleteButton="@(ShowDeleteButton &&!IsReadonly)"
        IsAutoCollapsedToolbarButton="@IsAutoCollapsedToolbarButton"
-       ShowExtendEditButton="@ShowExtendEditButton"
-       ShowExtendDeleteButton="@ShowExtendDeleteButton"
-       ShowDefaultButtons="@ShowDefaultButtons"
-       ShowExtendButtons="@ShowExtendButtons"
+       ShowExtendEditButton="@(ShowExtendEditButton &&!IsReadonly)"
+       ShowExtendDeleteButton="@(ShowExtendDeleteButton &&!IsReadonly)"
+       ShowDefaultButtons="@(ShowDefaultButtons &&!IsReadonly)"
+       ShowExtendButtons="@(ShowExtendButtons &&!IsReadonly)"
        ShowExportButton=ShowExportButton
        ShowSearch="@ShowSearch"
        SearchMode="@SearchMode"
@@ -80,7 +80,7 @@
         {
             @TableToolbarTemplate
         }
-        @if (ShowDefaultButtons && ShowExcelModeButtons)
+        @if (ShowDefaultButtons && ShowExcelModeButtons && !IsReadonly)
         {
             <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="自由编辑" OnClick="@IsExcelToggle" />
         }

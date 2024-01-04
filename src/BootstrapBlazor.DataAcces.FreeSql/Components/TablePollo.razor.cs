@@ -378,7 +378,12 @@ public partial class TbPolloBase : BootstrapComponentBase
     [Parameter]
     public int? PageIndex { get; set; }
 
-    public int? PageIndexCache { get; set; }
+    public int? PageIndexCache { get; set; } 
+
+    /// <summary>
+    /// 主表只读,默认为 false
+    /// </summary>
+    [Parameter] public bool IsReadonly { get; set; }  
 
     #region StorageService
     public async Task StorageSetValue<TValue>(string key, TValue value)
@@ -815,12 +820,18 @@ public partial class TbPolloBase : BootstrapComponentBase
     [Parameter]
     public int PageItems { get; set; }
 
+    /// <summary>
+    /// 获得/设置 详表组件工作模式为 Excel 模式 默认 false
+    /// </summary>
+    [Parameter]
+    public bool SubIsExcel { get; set; }
+
     #endregion
 
     protected override void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
-        if (!firstRender) return;
+        if (!firstRender) return; 
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -1346,6 +1357,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         if (SubTableFunctionsFields != null) builder.AddAttribute(20, nameof(TableFunctionsFields), SubTableFunctionsFields);
         if (SubRowButtons != null) builder.AddAttribute(21, nameof(RowButtons), SubRowButtons);
         builder.AddAttribute(22, nameof(IsExtendButtonsInRowHeader), IsExtendButtonsInRowHeader);
+        builder.AddAttribute(23, nameof(IsExcel), SubIsExcel);
         builder.CloseComponent();
     };
 
