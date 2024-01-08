@@ -11,7 +11,6 @@ using Densen.Service;
 using DocumentFormat.OpenXml.Spreadsheet;
 using FreeSql.Internal.Model;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -924,6 +923,12 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     public Func<TItem, Task<TItem>>? AddAsync { get; set; }
 
     /// <summary>
+    /// 获得/设置 编辑按钮回调方法
+    /// </summary>
+    [Parameter]
+    public Func<TItem, Task>? EditAsync { get; set; }
+
+    /// <summary>
     /// 获得/设置 保存按钮异步回调方法
     /// </summary>
     [Parameter]
@@ -952,9 +957,23 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     [Parameter]
     public RenderFragment<TItem>? EditTemplate { get; set; }
 
+    #endregion
+
     Table<TItem>? mainTable;
 
     TablePollo<ItemDetails, ItemDetailsII, ItemDetailsIII, NullClass>? detalisTable;
+
+    /// <summary>
+    /// 获得/设置 子表编辑按钮回调方法
+    /// </summary>
+    [Parameter]
+    public Func<ItemDetails, Task>? SubEditAsync { get; set; }
+
+    /// <summary>
+    /// 获得/设置 子表保存按钮异步回调方法
+    /// </summary>
+    [Parameter]
+    public Func<ItemDetails, ItemChangedType, Task<ItemDetails>>? SubSaveAsync { get; set; }
 
     public IEnumerable<TItem>? ItemsCache { get; set; }
 
@@ -995,6 +1014,15 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
             newone = await AddAsync(newone);
         }
         return newone;
+    }
+
+    public async Task<TItem> OnEditAsync(TItem item)
+    {
+        if (EditAsync != null)
+        {
+            await EditAsync(item);
+        }
+        return item;
     }
 
     public async Task<bool> OnSaveAsync(TItem item, ItemChangedType changedType)
@@ -1358,6 +1386,8 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         if (SubRowButtons != null) builder.AddAttribute(21, nameof(RowButtons), SubRowButtons);
         builder.AddAttribute(22, nameof(IsExtendButtonsInRowHeader), IsExtendButtonsInRowHeader);
         builder.AddAttribute(23, nameof(IsExcel), SubIsExcel);
+        if (SubSaveAsync != null) builder.AddAttribute(24, nameof(SaveAsync), SubSaveAsync);
+        if (SubEditAsync != null) builder.AddAttribute(25, nameof(EditAsync), SubEditAsync);
         builder.CloseComponent();
     };
 
@@ -1724,4 +1754,4 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
 
 
 }
-#endregion
+
