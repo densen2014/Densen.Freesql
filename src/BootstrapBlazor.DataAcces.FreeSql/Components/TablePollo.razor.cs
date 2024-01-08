@@ -1388,6 +1388,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         builder.AddAttribute(23, nameof(IsExcel), SubIsExcel);
         if (SubSaveAsync != null) builder.AddAttribute(24, nameof(SaveAsync), SubSaveAsync);
         if (SubEditAsync != null) builder.AddAttribute(25, nameof(EditAsync), SubEditAsync);
+        builder.AddAttribute(26, nameof(IsPagination), IsPagination);
         builder.CloseComponent();
     };
 
