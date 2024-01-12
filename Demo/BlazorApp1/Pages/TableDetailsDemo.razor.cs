@@ -6,8 +6,6 @@
 
 using AmeBlazor.Components;
 using Densen.Models.ids;
-using FreeSql;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
 namespace BlazorApp1.Pages;
@@ -18,7 +16,6 @@ public partial class TableDetailsDemo
     private bool IsDetails { get; set; }
     private bool IsFirstLoad { get; set; } = true;
 
-    [NotNull]
     protected TablePollo<AspNetUserRoles, NullClass, NullClass, NullClass>? TableDetails { get; set; }
 
     private Expression<Func<AspNetUserRoles, bool>>? DWhere1 { get; set; } = null;
@@ -28,7 +25,7 @@ public partial class TableDetailsDemo
         IsFirstLoad = false;
         IsDetails = true;
         DWhere1 = a => a.UserId == item.Id;
-        await TableDetails.QueryAsync();
+        if (TableDetails!=null) await TableDetails.QueryAsync();
         StateHasChanged();
     }
 
