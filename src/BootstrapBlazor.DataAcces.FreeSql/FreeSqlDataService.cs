@@ -6,11 +6,9 @@
 
 using BootstrapBlazor.Components;
 using FreeSql;
-using FreeSql.DataAnnotations;
 using FreeSql.Internal.Model;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using System.Reflection;
 using Console = System.Console;
 
 namespace Densen.DataAcces.FreeSql;
@@ -21,7 +19,14 @@ namespace Densen.DataAcces.FreeSql;
 public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel : class, new()
 {
     [NotNull]
-    public IFreeSql? fsql;
+    public IFreeSql? fsql { get; set; }
+
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    public FreeSqlDataService()
+    {
+    }
 
     /// <summary>
     /// 构造函数
@@ -30,6 +35,50 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
     {
         this.fsql = fsql;
     }
+
+    /// <summary>
+    /// 指定数据库连接字符串 [预留功能]
+    /// </summary>
+    public string? ibstring { get; set; }
+
+    /// <summary>
+    /// 级联保存字段名
+    /// </summary>
+    public string? SaveManyChildsPropertyName { get; set; }
+
+    /// <summary>
+    /// 缓存记录总数
+    /// </summary>
+    private long? TotalCount { get; set; }
+
+    /// <summary>
+    /// 缓存记录
+    /// </summary>
+    public List<TModel>? Items { get; set; }
+
+    /// <summary>
+    /// 合计列名
+    /// </summary>
+    public string? TotalColName { get; set; }
+
+    /// <summary>
+    /// 缓存合计
+    /// </summary>
+    public decimal Total { get; set; }
+
+    /// <summary>
+    /// 缓存查询条件
+    /// </summary>
+    QueryPageOptions OptionsCache { get; set; } = new QueryPageOptions();
+
+    /// <summary>
+    /// 是否开启 一对一(OneToOne)、一对多(OneToMany)、多对多(ManyToMany) 级联保存功能<para></para>
+    /// <para></para>
+    /// 【一对一】模型下，保存时级联保存 OneToOne 属性。
+    /// <para></para>
+    /// 【一对多】模型下，保存时级联保存 OneToMany 集合属性。出于安全考虑我们没做完整对比，只针对实体属性集合的添加或更新操作，因此不会删除数据库表已有的数据。<para></para>
+    /// </summary>
+    public bool EnableCascadeSave { get; set; } = false;
 
     /// <summary>
     /// 删除方法
@@ -44,25 +93,6 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
         TotalCount = null;
         return true;
     }
-
-    /// <summary>
-    /// 指定数据库连接字符串 [预留功能]
-    /// </summary>
-    public string? ibstring { get; set; }
-
-    /// <summary>
-    /// 级联保存字段名
-    /// </summary>
-    public string? SaveManyChildsPropertyName { get; set; }
-
-    /// <summary>
-    /// 是否开启 一对一(OneToOne)、一对多(OneToMany)、多对多(ManyToMany) 级联保存功能<para></para>
-    /// <para></para>
-    /// 【一对一】模型下，保存时级联保存 OneToOne 属性。
-    /// <para></para>
-    /// 【一对多】模型下，保存时级联保存 OneToMany 集合属性。出于安全考虑我们没做完整对比，只针对实体属性集合的添加或更新操作，因此不会删除数据库表已有的数据。<para></para>
-    /// </summary>
-    public bool EnableCascadeSave { get; set; } = false;
 
     /// <summary>
     /// 保存方法
@@ -96,28 +126,6 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
         return true;
     }
 
-
-    /// <summary>
-    /// 缓存记录总数
-    /// </summary>
-    private long? TotalCount { get; set; }
-
-    /// <summary>
-    /// 缓存记录
-    /// </summary>
-    public List<TModel>? Items { get; set; }
-
-    /// <summary>
-    /// 合计列名
-    /// </summary>
-    public string? TotalColName { get; set; }
-
-    /// <summary>
-    /// 缓存合计
-    /// </summary>
-    public decimal Total { get; set; }
-
-
     /// <summary>
     /// 获得查询子句
     /// </summary>
@@ -149,11 +157,6 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
         var res = FreeSqlUtil.Fetch(OptionsCache, OptionsCache, null, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, true, WhereLamda);
         return res.Items?.ToList();
     }
-
-    /// <summary>
-    /// 缓存查询条件
-    /// </summary>
-    QueryPageOptions OptionsCache { get; set; } = new QueryPageOptions();
 
     /// <summary>
     /// 查询方法
