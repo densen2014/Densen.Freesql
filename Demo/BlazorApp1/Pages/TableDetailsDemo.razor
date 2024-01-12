@@ -5,63 +5,69 @@
 
 <Tab IsLazyLoadTabItem>
     <TabItem Text="明细表格">
+
+        <div style="@(IsDetails?"display: none;":"height: calc(100vh - 150px);") ">
+            <TablePollo TItem="AspNetUsers"
+                        ItemDetails="NullClass"
+                        ItemDetailsII="NullClass"
+                        ItemDetailsIII="NullClass"
+                        IsReadonly
+                        IsExcel="false"
+                        SubIsExcel="true"
+                        ShowExcelModeButtons="false"
+                        ShowAddButton="false"
+                        ShowDeleteButton="false"
+                        ShowDefaultButtons="false"
+                        ShowExtendButtons="false"
+                        IsMultipleSelect="false"
+                        RenderMode="TableRenderMode.Table"
+                        IsPagination="false"
+                        IsFixedHeader
+                        AllowDragColumn
+                        AllowResizing
+                        ScrollMode="ScrollMode.Virtual"
+                        OnClickRowCallback="ClickRow">
+                <TableToolbarTemplate>
+                    <TableToolbarButton TItem="AspNetUsers" Color="Color.Secondary" Text="明细" OnClick="明细" />
+                </TableToolbarTemplate>
+            </TablePollo>
+        </div>
+
+        @if (!IsFirstLoad)
+        {
+            <div style="@(!IsDetails?"display: none;":"height: calc(100vh - 150px);") ">
+                <TablePollo @ref="TableDetails"
+                            TItem="AspNetUserRoles"
+                            ItemDetails="NullClass"
+                            ItemDetailsII="NullClass"
+                            ItemDetailsIII="NullClass"
+                            ShowColumnList
+                            IsExcel="true"
+                            ShowExcelModeButtons="false"
+                            ShowAddButton="false"
+                            ShowDeleteButton="false"
+                            ShowDefaultButtons="false"
+                            ShowExtendButtons="false"
+                            IsMultipleSelect="false"
+                            RenderMode="TableRenderMode.Table"
+                            IsPagination="false"
+                            AllowDragColumn
+                            AllowResizing
+                            ScrollMode="ScrollMode.Virtual"
+                            WhereLamda="DWhere1"
+                            IncludeByPropertyNames="@IncludeAspNetUsers">
+                    <TableToolbarTemplate>
+                        <div class="d-none d-sm-inline-flex">
+                            <BootstrapInputGroup>
+                                <Button Color="Color.Secondary" Text="总表" OnClick="总表" />
+                                <Select @bind-Value="RolesName" Items="RolesNameList" ShowSearch OnSelectedItemChanged="OnCascadeBindSelectClick" />
+                                <BootstrapInputGroupLabel DisplayText="@SelectedUser?.UserName" />
+                            </BootstrapInputGroup>
+                        </div>
+                    </TableToolbarTemplate>
+                </TablePollo>
+            </div>
+        }
     </TabItem>
 </Tab>
-<div style="@(IsDetails?"display: none;":"height: calc(100vh - 150px);") ">
-    <TablePollo TItem="AspNetUsers"
-                ItemDetails="NullClass"
-                ItemDetailsII="NullClass"
-                ItemDetailsIII="NullClass"
-                IsReadonly
-                IsExcel="false"
-                SubIsExcel="true"
-                ShowExcelModeButtons="false"
-                ShowAddButton="false"
-                ShowDeleteButton="false"
-                ShowDefaultButtons="false"
-                ShowExtendButtons="false"
-                IsMultipleSelect="false"
-                RenderMode="TableRenderMode.Table"
-                IsPagination="false"
-                IsFixedHeader
-                AllowDragColumn
-                AllowResizing
-                ScrollMode="ScrollMode.Virtual"
-                OnClickRowCallback="ClickRow">
-        <TableToolbarTemplate>
-            <TableToolbarButton TItem="AspNetUsers" Color="Color.Secondary" Text="明细" OnClick="明细" />
-        </TableToolbarTemplate>
-    </TablePollo>
-</div>
-
-@if (!IsFirstLoad)
-{
-    <div style="@(!IsDetails?"display: none;":"height: calc(100vh - 150px);") ">
-        <TablePollo @ref="TableDetails"
-                    TItem="AspNetUserRoles"
-                    ItemDetails="NullClass"
-                    ItemDetailsII="NullClass"
-                    ItemDetailsIII="NullClass"
-                    ShowColumnList
-                    IsExcel="true"
-                    ShowExcelModeButtons="false"
-                    ShowAddButton="false"
-                    ShowDeleteButton="false"
-                    ShowDefaultButtons="false"
-                    ShowExtendButtons="false"
-                    IsMultipleSelect="false"
-                    RenderMode="TableRenderMode.Table"
-                    IsPagination="false"
-                    AllowDragColumn
-                    AllowResizing
-                    ScrollMode="ScrollMode.Virtual"
-                    WhereLamda="DWhere1"
-                    IncludeByPropertyNames="@IncludeAspNetUsers">
-            <TableToolbarTemplate>
-                <TableToolbarButton TItem="AspNetUserRoles" Color="Color.Secondary" Text="总表" OnClick="总表" />
-            </TableToolbarTemplate>
-        </TablePollo>
-    </div>
-}
-
 

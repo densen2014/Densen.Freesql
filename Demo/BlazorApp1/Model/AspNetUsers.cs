@@ -1,5 +1,4 @@
 ﻿using BootstrapBlazor.Components;
-using DocumentFormat.OpenXml.Vml.Spreadsheet;
 using FreeSql.DataAnnotations;
 using Newtonsoft.Json;
 using System.ComponentModel;
@@ -22,7 +21,7 @@ public partial class AspNetUsers
 
     [JsonProperty, Column(StringLength = -2)]
     [DisplayName("用户名")]
-    [AutoGenerateColumn(LookupServiceKey = nameof(UserName), ShowSearchWhenSelect = true)]
+    //[AutoGenerateColumn(LookupServiceKey = nameof(UserName), ShowSearchWhenSelect = true)]
     public string UserName { get; set; }
 
     [JsonProperty, Column(IsIgnore = true)]
