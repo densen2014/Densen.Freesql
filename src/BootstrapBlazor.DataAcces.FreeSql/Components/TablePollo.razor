@@ -2,9 +2,8 @@
 @typeparam ItemDetails
 @typeparam ItemDetailsII
 @typeparam ItemDetailsIII
-@inherits TbPolloBase
+@inherits TableAmeProDetails<TItem, ItemDetails>
 @namespace AmeBlazor.Components
-@using AME
 
 <Table TItem="TItem" @ref="@TableMain"
        IsStriped="@IsStriped"

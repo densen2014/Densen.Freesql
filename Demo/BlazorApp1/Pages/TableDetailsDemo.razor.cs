@@ -35,11 +35,13 @@ public partial class TableDetailsDemo
 
     private async Task ClickRow(AspNetUsers item)
     {
+        System.Console.WriteLine($"* 选择 {item.UserName} - {item.Id}");
+
         SelectedUser = item;
         IsFirstLoad = false;
         IsDetails = true;
         DWhere1 = a => a.UserId == item.Id;
-        if (TableDetails!=null) await TableDetails.QueryAsync();
+        if (TableDetails!=null) await TableDetails.QueryAsync(DWhere1);
 
         var list = fsql.Select<AspNetUserRoles>().Where(DWhere1).Distinct().ToList(d => d.AspNetRoless.Name);
         RolesNameList.AddRange(list.Select(d => new SelectedItem(d, d)));
@@ -51,7 +53,7 @@ public partial class TableDetailsDemo
     {
         if (SelectedUser != null)
         {
-            System.Console.WriteLine($"选择 {item.Value}");
+            System.Console.WriteLine($"下拉选择 {item.Value}");
             DWhere1 = a => a.UserId == SelectedUser.Id;
             if (item.Value != "")
             {
@@ -62,19 +64,19 @@ public partial class TableDetailsDemo
         }
     }
 
-    Task 总表()
+    private Task 总表()
     {
         IsDetails = false;
         return Task.CompletedTask;
     }
 
-    Task 明细()
+    private Task 明细()
     {
         IsDetails = true;
         return Task.CompletedTask;
     }
 
-    List<string> IncludeAspNetUsers
+    private List<string> IncludeAspNetUsers
     {
         get => new List<string> {
                 nameof(AspNetUserRoles.AspNetRoless) ,
