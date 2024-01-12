@@ -1,7 +1,5 @@
 ﻿using BootstrapBlazor.Components;
 using FreeSql.DataAnnotations;
-using Magicodes.ExporterAndImporter.Excel;
-using OfficeOpenXml.Table;
 using System.ComponentModel;
 
 namespace BlazorApp1.Data;
