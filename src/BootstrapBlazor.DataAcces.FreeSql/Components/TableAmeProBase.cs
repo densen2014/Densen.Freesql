@@ -184,7 +184,6 @@ public partial class TableAmeProBase<TItem>: TableAmeBase where TItem : class, n
         base.OnAfterRender(firstRender);
 
         if (!firstRender) return;
-        System.Console.WriteLine($"TableAme OnAfterRender=> Field: {Field}, FieldValue: {FieldValue}");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
