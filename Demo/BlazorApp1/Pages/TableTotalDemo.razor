@@ -1,0 +1,34 @@
+﻿@page "/tableTotal"
+@using Densen.Models.ids
+
+<PageTitle>带合计表格</PageTitle>
+
+<Tab IsLazyLoadTabItem>
+    <TabItem Text="带合计表格">
+        <TablePollo @ref="TableMain"
+                    TItem="AspNetUsers"
+                    ItemDetails="NullClass"
+                    ItemDetailsII="NullClass"
+                    ItemDetailsIII="NullClass"
+                    EnableCascadeSave
+                    AfterQueryAsync="@OnAfterQueryAsync"
+                    ShowFooter="true"
+                    ShowFloatPanel="true"
+                    PageItemsSourceStart="3" />
+    </TabItem>
+    <TabItem Text="显示过滤表头">
+        <TablePollo @ref="TableMain2"
+                    TItem="AspNetUsers"
+                    ItemDetails="NullClass"
+                    ItemDetailsII="NullClass"
+                    ItemDetailsIII="NullClass"
+                    EnableCascadeSave
+                    AfterQueryAsync="@OnAfterQueryAsync2"
+                    ShowFooter="true"
+                    ShowFloatPanel="true"
+                    PageItemsSourceStart="3"
+                    ShowFilterHeader />
+    </TabItem>
+</Tab>
+
+

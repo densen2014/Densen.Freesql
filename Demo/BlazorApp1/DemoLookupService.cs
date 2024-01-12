@@ -2,7 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // Website: https://www.blazor.zone or https://argozhang.github.io/
 
-using BootstrapBlazor.Components; 
+using BootstrapBlazor.Components;
+using Densen.Models.ids;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -12,8 +13,13 @@ namespace Microsoft.Extensions.DependencyInjection;
 internal class DemoLookupService : ILookupService
 {
     private IServiceProvider Provider { get; }
+    private IFreeSql fsql { get; set; }
 
-    public DemoLookupService(IServiceProvider provider) => Provider = provider;
+    public DemoLookupService(IServiceProvider provider, IFreeSql fsql)
+    {
+        Provider = provider;
+        this.fsql = fsql;
+    }
 
     public IEnumerable<SelectedItem>? GetItemsByKey(string? key)
     {
@@ -43,6 +49,9 @@ internal class DemoLookupService : ILookupService
                 new() { Value = "Googlej", Text = "谷歌" },
                 new() { Value = "Googlek", Text = "谷歌" },
             };
+        }else if (key == nameof(AspNetUsers.UserName))
+        {
+            items = fsql.Select<AspNetUsers>().ToList().Select(a => new SelectedItem() { Value = a.UserName, Text = a.UserName }).ToList();
         }
         return items;
     }
