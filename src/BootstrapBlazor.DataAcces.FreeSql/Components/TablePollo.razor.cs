@@ -30,7 +30,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     where ItemDetailsIII : class, new()
 {
 
-    TablePollo<ItemDetails, ItemDetailsII, ItemDetailsIII, NullClass>? detalisTable;
+    private TablePollo<ItemDetails, ItemDetailsII, ItemDetailsIII, NullClass>? detalisTable;
 
     #region 数据服务
     /// <summary>
