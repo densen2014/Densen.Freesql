@@ -1,0 +1,33 @@
+﻿@namespace AmeBlazor.Components
+
+<div class="@CssClass">
+    @Label @Value
+</div>
+
+@code {
+    [Parameter] public string CssClass { get; set; } = "m-2";
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? Value { get; set; }
+
+    public void Set(string label, string value)
+    {
+        Label = label;
+        Value = value;
+        StateHasChanged();
+    }
+
+    public void Clear()
+    {
+        Label = null;
+        Value = null;
+        StateHasChanged();
+    }
+
+    public void Set(string value)
+    {
+        Value = value;
+        StateHasChanged();
+    }
+
+
+}

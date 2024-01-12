@@ -23,8 +23,10 @@ public static class FreeSqlServiceCollectionExtensions
     /// <param name="services"></param>
     /// <param name="optionsAction"></param>
     /// <param name="configureAction"></param>
+    /// <param name="configEntityPropertyImage"></param>
+    /// <param name="configureOptions"></param>
     /// <returns></returns>
-    public static IServiceCollection AddFreeSql(this IServiceCollection services, Action<FreeSqlBuilder> optionsAction, Action<IFreeSql>? configureAction = null, bool configEntityPropertyImage=false)
+    public static IServiceCollection AddFreeSql(this IServiceCollection services, Action<FreeSqlBuilder> optionsAction, Action<IFreeSql>? configureAction = null, bool configEntityPropertyImage=false, FreeSqlServiceOptions? configureOptions = null)
     {
         services.AddSingleton(sp =>
         {
@@ -32,11 +34,11 @@ public static class FreeSqlServiceCollectionExtensions
             optionsAction(builder);
             var instance = builder.Build();
             instance.UseJsonMap();
-            if (configEntityPropertyImage)
+            if (configEntityPropertyImage || (configureOptions?.ConfigEntityPropertyImage??false))
             {
                 instance.Aop.AuditValue += AuditValue;
                 instance.Aop.ConfigEntityProperty += ConfigEntityProperty;
-            }
+            } 
             configureAction?.Invoke(instance);
             return instance;
         });
@@ -44,6 +46,17 @@ public static class FreeSqlServiceCollectionExtensions
         services.AddTransient(typeof(IDataService<>), typeof(FreeSqlDataService<>));
         services.TryAddTransient<IImportExport, ImportExportsMiniService>();
         return services;
+    }
+
+    /// <summary>
+    /// 配置类
+    /// </summary>
+    public class FreeSqlServiceOptions
+    {
+        /// <summary>
+        /// 获得/设置 自定义Enum支持和Image支持
+        /// </summary>
+        public bool ConfigEntityPropertyImage { get; set; }
     }
 
     #region 自定义Guid支持

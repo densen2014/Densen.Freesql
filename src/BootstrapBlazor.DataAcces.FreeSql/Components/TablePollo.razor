@@ -6,7 +6,7 @@
 @namespace AmeBlazor.Components
 @using AME
 
-<Table TItem="TItem" @ref="@mainTable"
+<Table TItem="TItem" @ref="@TableMain"
        IsStriped="@IsStriped"
        IsBordered="@IsBordered"
        IsPagination="@IsPagination"
@@ -74,7 +74,11 @@
        IsExtendButtonsInRowHeader="@IsExtendButtonsInRowHeader"
        PageItems="@PageItems"
        AllowResizing="@AllowResizing"
-       AllowDragColumn="@AllowDragColumn">
+       AllowDragColumn="@AllowDragColumn"
+       HeaderTextWrap="@HeaderTextWrap"
+       ShowFilterHeader="@ShowFilterHeader"
+       OnColumnCreating="@OnColumnCreating"
+       GetAdvancedSearchFilterCallback="@GetAdvancedSearchFilterCallback">
 
     <TableToolbarTemplate>
         @if (TableToolbarTemplate != null)
@@ -85,23 +89,27 @@
         {
             <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="自由编辑" OnClick="@IsExcelToggle" />
         }
-        @if (Excel导入.HasDelegate)
+        @if (ShowScrollModeButtons)
+        {
+            <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="@(scrollMode == ScrollMode.Virtual ?"长滚动":"分页")" OnClick="@ScrollModeToggle" />
+        }
+        @if (Excel导入 != null)
         {
             <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="@Excel导入文本" IsAsync OnClick="@ImportExcel" />
         }
-        @if (导入.HasDelegate)
+        @if (导入 != null)
         {
             <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="@导入文本" IsAsync OnClick="@ImportItems" />
         }
-        @if (导入II.HasDelegate)
+        @if (导入II != null)
         {
             <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="@导入II文本" IsAsync OnClick="@ImportItemsII" />
         }
-        @if (执行添加.HasDelegate)
+        @if (执行添加 != null)
         {
             <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="@执行添加文本" IsAsync OnClick="@执行添加Cmd" />
         }
-        @if (ShowExportExcelButtons || 导出.HasDelegate)
+        @if (ShowExportExcelButtons || 导出 != null)
         {
             <TableToolbarButton TItem="TItem" Color="Color.Success" Text="@导出文本" IsAsync OnClickCallback="@ExportExcelAsync" />
             if (ShowExportMoreButtons)
@@ -119,11 +127,11 @@
         {
             <TableToolbarButton TItem="TItem" Color="Color.Secondary" Text="@批量按钮文字" IsAsync OnClickCallback="@批量执行" />
         }
-        @if (升级.HasDelegate)
+        @if (升级 != null)
         {
             <TableToolbarButton TItem="TItem" Color="Color.Secondary" Text="@升级按钮文字" IsAsync OnClickCallback="@升级Cmd" />
         }
-        @if (升级II.HasDelegate)
+        @if (升级II != null)
         {
             <TableToolbarButton TItem="TItem" Color="Color.Secondary" Text="@升级按钮II文字" IsAsync OnClickCallback="@升级IICmd" />
         }
@@ -134,6 +142,12 @@
         @if (!string.IsNullOrEmpty(查找文本I))
         {
             <TableToolbarButton TItem="TItem" Color="Color.Secondary" Text="@查找文本I文字" IsAsync OnClick="@查找文本Icmd" />
+        }
+        @if (ShowFloatPanelToolbar)
+        {
+            <div class="d-none d-sm-inline-flex">
+                <FloatPanel @ref="FloatPanelUp" CssClass="btn btn-light" Value="@cacheFooterValue" />
+            </div>
         }
     </TableToolbarTemplate>
 
@@ -213,7 +227,7 @@
     </DetailRowTemplate>
 
     <TableFooter Context="context1">
-        @if (!string.IsNullOrEmpty(FooterText))
+        @if (string.IsNullOrEmpty(FooterTotalColName) && !ShowFloatPanel && !ShowFloatPanelToolbar && !string.IsNullOrEmpty(FooterText))
         {
             <TableFooterCell colspan="@Footercolspan1" Text="@FooterText" />
         }
@@ -229,33 +243,58 @@
         {
             <TableFooterCell colspan="@FootercolspanTotal" Text="@FooterTotal" />
         }
+        @if (!string.IsNullOrEmpty(FooterTotalColName))
+        {
+            var cols = TableMain.Columns.Where(a => a.Visible == true).Count() - 3;
+
+            <TableFooterCell Text="当前页合计：" colspan="@cols" Align="@FooterAlign" />
+            <TableFooterCell Aggregate="@FooterAggregate" colspan="3" Field="@FooterTotalColName" Align="@FooterAlign" />
+        }
+        @if (ShowFloatPanel)
+        {
+            var cols = TableMain.Columns.Where(a => a.Visible == true).Count();
+            if (ShowExtendButtons && !IsReadonly)
+            {
+                cols += 1;
+            }
+            if (IsMultipleSelect || IsExcel)
+            {
+                cols += 1;
+            }
+            <td colspan="@cols">
+                <div class="table-cell justify-content-end">
+                    <FloatPanel @ref="FloatPanel" Value="@cacheFooterValue" />
+                </div>
+            </td>
+        }
+
     </TableFooter>
 
 
     <ExportButtonDropdownTemplate>
         <h6 class="dropdown-header">当前页数据</h6>
-        <div class="dropdown-item" @onclick="_=>ExportExcelAsync(mainTable!.Rows)">
+        <div class="dropdown-item" @onclick="_=>ExportExcelAsync(TableMain.Rows)">
             <i class="fas fa-file-excel"></i>
             <span>Excel</span>
         </div>
         @if (UseMiniWord && !string.IsNullOrEmpty(MiniWordTemplatePath))
         {
-            <div class="dropdown-item" @onclick="_ => ExportWordAsync(mainTable!.Rows)">
+            <div class="dropdown-item" @onclick="_ => ExportWordAsync(TableMain.Rows)">
                 <i class="fas fa-file-word"></i>
                 <span>Word</span>
             </div>
         }
         @if (UseFullExportService)
         {
-            <div class="dropdown-item" @onclick="_ => ExportWordAsync(mainTable!.Rows)">
+            <div class="dropdown-item" @onclick="_ => ExportWordAsync(TableMain.Rows)">
                 <i class="fas fa-file-word"></i>
                 <span>Word</span>
             </div>
-            <div class="dropdown-item" @onclick="_=>ExportHtmlAsync(mainTable!.Rows)">
+            <div class="dropdown-item" @onclick="_=>ExportHtmlAsync(TableMain.Rows)">
                 <i class="fa-brands fa-html5"></i>
                 <span>Html</span>
             </div>
-            <div class="dropdown-item" @onclick="_=>ExportPDFAsync(mainTable!.Rows)">
+            <div class="dropdown-item" @onclick="_=>ExportPDFAsync(TableMain.Rows)">
                 <i class="fas fa-file-pdf"></i>
                 <span>PDF</span>
             </div>
