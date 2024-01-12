@@ -120,8 +120,9 @@ public static partial class FreeSqlUtil
 
         try
         {
+            var isSearch = option.Searches.Any() || option.CustomerSearches.Any() || option.AdvanceSearches.Any();
 
-            if (TotalCount != null && !option.IsVirtualScroll && !(option.Searches.Any() || option.CustomerSearches.Any()) && option.PageItems != optionsLast.PageItems && TotalCount <= optionsLast.PageItems)
+            if (TotalCount != null && !option.IsVirtualScroll && !isSearch && option.PageItems == optionsLast.PageItems && TotalCount <= optionsLast.PageItems)
             {
                 //当选择的每页显示数量大于总数时，强制认为是一页
                 //无搜索,并且总数<=分页总数直接使用内存排序和搜索
