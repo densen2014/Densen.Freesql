@@ -150,4 +150,16 @@ FsqlUtil
 ```
 
 ## 更新日志
-- 2023-6-3 添加 ItemDetailsIII , 选项卡3, 附加查询条件III
+
+2024-1-12
+- 修复分页数量由大切小导致不刷新项目的错误
+- DataAcces.FreeSql 支持更多功能
+
+2024-1-3
+- TablePollo 添加主表只读 IsReadonly 属性, 详表组件工作模式为 Excel 模式SubIsExcel
+
+2023-09-30
+- TablePollo 添加参数 自动保存当前页码 AutoSavePageIndex, 当前页码 PageIndex
+
+2023-6-3
+- 添加 ItemDetailsIII , 选项卡3, 附加查询条件III
