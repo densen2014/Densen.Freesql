@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
-        <Description>BootstrapBlazor 的 FreeSql 数据注入服务扩展包</Description>
+        <Description>BootstrapBlazor 的 FreeSql 数据注入服务以及表格组件扩展包</Description>
         <PackageTags>FreeSql DataAcces for BootstrapBlazor</PackageTags>
         <AssemblyName>Densen.FreeSql.Extensions.BootstrapBlazor</AssemblyName>
         <RootNamespace>Densen.Extensions.Freesql.BootstrapBlazor</RootNamespace>
         <OutputPath>..\..\..\Bin</OutputPath>
-        <Version>8.1.5</Version>
+        <Version>8.1.6</Version>
     </PropertyGroup>
 
     <ItemGroup>

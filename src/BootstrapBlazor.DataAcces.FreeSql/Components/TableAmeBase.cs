@@ -41,22 +41,22 @@ public partial class TableAmeBase : BootstrapComponentBase
 
     [Inject]
     [NotNull]
-    protected DialogService? DialogService { get; set; }
+    public DialogService? DialogService { get; set; }
 
     [Inject]
     [NotNull]
-    protected ToastService? ToastService { get; set; }
+    public ToastService? ToastService { get; set; }
 
     /// <summary>
     /// 获得/设置 IJSRuntime 实例
     /// </summary>
     [Inject]
     [NotNull]
-    protected IJSRuntime? JsRuntime { get; set; }
+    public IJSRuntime? JsRuntime { get; set; }
 
     [Inject]
     [NotNull]
-    protected IImportExport? Exporter { get; set; }
+    public IImportExport? Exporter { get; set; }
 
     /// <summary>
     /// 动态附加查询条件, 主键字段名称
@@ -889,6 +889,9 @@ public partial class TableAmeBase : BootstrapComponentBase
 
     [Parameter]
     public bool AutoPageHeight { get; set; } = true;
+
+    [Parameter]
+    public bool IsFixedFooter { get; set; } = true;
 
     #endregion
 
