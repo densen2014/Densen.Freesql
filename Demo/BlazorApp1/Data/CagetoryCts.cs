@@ -1,4 +1,10 @@
-﻿using BootstrapBlazor.Components;
+﻿// ********************************** 
+// Densen Informatica 中讯科技 
+// 作者：Alex Chow
+// e-mail:zhouchuanglin@gmail.com 
+// **********************************
+
+using BootstrapBlazor.Components;
 using FreeSql.DataAnnotations;
 using System.ComponentModel;
 
@@ -17,7 +23,7 @@ public class Remarks
 /// OneToMany 一对多,CTS
 /// </summary>
 /// <param name="fsql"></param>
-class Cagetory
+internal class Cagetory
 {
     public Guid Id { get; set; }
 
@@ -38,7 +44,8 @@ class Cagetory
             }
         }
     }
-    string? subName;
+
+    private string? subName;
 
     [Navigate(nameof(ParentId))]
     public List<Cagetory>? Childs { get; set; }
@@ -47,7 +54,11 @@ class Cagetory
     public static void GenDemoDatas(IFreeSql fsql)
     {
         var repo = fsql.GetRepository<Cagetory>();
-        if (repo.Select.Any()) return;
+        if (repo.Select.Any())
+        {
+            return;
+        }
+
         repo.DbContextOptions.EnableCascadeSave = true;
         var cts = new[]
         {
@@ -82,7 +93,7 @@ class Cagetory
 /// OneToMany 子表
 /// </summary>
 /// <param name="fsql"></param>
-class Cagetory2
+internal class Cagetory2
 {
     public Guid Id { get; set; }
 
@@ -103,7 +114,8 @@ class Cagetory2
             }
         }
     }
-    string? subName;
+
+    private string? subName;
 
     [Navigate(nameof(ParentId))]
     public List<SubCagetory>? Childs { get; set; }
@@ -111,7 +123,11 @@ class Cagetory2
     public static void GenDemoDatas(IFreeSql fsql)
     {
         var repo = fsql.GetRepository<Cagetory2>();
-        if (repo.Select.Any()) return;
+        if (repo.Select.Any())
+        {
+            return;
+        }
+
         repo.DbContextOptions.EnableCascadeSave = true;
         var cts = new[]
         {
@@ -141,7 +157,7 @@ class Cagetory2
     }
 }
 
-class SubCagetory
+internal class SubCagetory
 {
     public Guid Id { get; set; }
 
@@ -155,7 +171,7 @@ class SubCagetory
 /// <summary>
 /// OneToOne, 两边都用 pk 作为关联，才是绝对的1v1, 否则是 ManyToOne
 /// </summary>
-class Cagetory3
+internal class Cagetory3
 {
 
     public Guid Id { get; set; }
@@ -175,7 +191,8 @@ class Cagetory3
             Ext!.Remark = value;
         }
     }
-    string? subName;
+
+    private string? subName;
 
     /// <summary>
     /// 垂直分表,扩展字段
@@ -187,7 +204,11 @@ class Cagetory3
     public static void GenDemoDatas(IFreeSql fsql)
     {
         var repo = fsql.GetRepository<Cagetory3>();
-        if (repo.Select.Any()) return;
+        if (repo.Select.Any())
+        {
+            return;
+        }
+
         repo.DbContextOptions.EnableCascadeSave = true;
 
         //OneToOne 关键点
@@ -206,7 +227,7 @@ class Cagetory3
                 Id=uid2, //OneToOne 关键点
                 Name = "oto分类2",
                 Ext = new SubCagetory3PK {Id=uid2, Remark = "扩展备注2" }
-            } ,                  
+            } ,
         };
         repo.Insert(cts);
 
@@ -214,7 +235,7 @@ class Cagetory3
     }
 }
 
-class SubCagetory3PK
+internal class SubCagetory3PK
 {
     [Column(IsPrimary = true)]
     public Guid Id { get; set; }

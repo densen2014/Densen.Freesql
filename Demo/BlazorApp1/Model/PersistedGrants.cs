@@ -1,4 +1,10 @@
-﻿using FreeSql.DataAnnotations;
+﻿// ********************************** 
+// Densen Informatica 中讯科技 
+// 作者：Alex Chow
+// e-mail:zhouchuanglin@gmail.com 
+// **********************************
+
+using FreeSql.DataAnnotations;
 using Newtonsoft.Json;
 using System.ComponentModel;
 #nullable disable

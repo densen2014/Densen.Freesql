@@ -1,4 +1,10 @@
-﻿using BootstrapBlazor.Components;
+﻿// ********************************** 
+// Densen Informatica 中讯科技 
+// 作者：Alex Chow
+// e-mail:zhouchuanglin@gmail.com 
+// **********************************
+
+using BootstrapBlazor.Components;
 using FreeSql.DataAnnotations;
 using Newtonsoft.Json;
 using System.ComponentModel;
@@ -26,7 +32,8 @@ public partial class AspNetUsers
     [JsonProperty, Column(IsIgnore = true)]
     [DisplayName("角色")]
     public string RoleName { get => roleName ?? (AspNetUserRoless != null ? string.Join(",", AspNetUserRoless?.Select(a => a.RoleName ?? a.RoleId).ToList()) : ""); set => roleName = value; }
-    string roleName;
+
+    private string roleName;
 
     [JsonProperty, Column(StringLength = -2)]
     public string Email { get; set; }
@@ -164,11 +171,12 @@ public partial class AspNetUsers
     [AutoGenerateColumn(Ignore = true)]
     [Navigate(nameof(AspNetUserLogins.UserId))]
     [DisplayName("用户登录")]
-    public virtual List<AspNetUserLogins> AspNetUserLoginss { get; set; } 
+    public virtual List<AspNetUserLogins> AspNetUserLoginss { get; set; }
 
     [JsonProperty, Column(IsIgnore = true)]
     [DisplayName("1st角色")]
-    public string RoleName1st { get => roleName1st ?? ((AspNetUserRoless != null && AspNetUserRoless.Any ()) ? AspNetUserRoless?.Select(a => a.RoleName ?? a.RoleId??"").First() : ""); set => roleName1st = value; }
-    string roleName1st;
+    public string RoleName1st { get => roleName1st ?? ((AspNetUserRoless != null && AspNetUserRoless.Any()) ? AspNetUserRoless?.Select(a => a.RoleName ?? a.RoleId ?? "").First() : ""); set => roleName1st = value; }
+
+    private string roleName1st;
 
 }

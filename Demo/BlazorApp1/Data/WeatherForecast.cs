@@ -1,4 +1,10 @@
-﻿using BootstrapBlazor.Components;
+﻿// ********************************** 
+// Densen Informatica 中讯科技 
+// 作者：Alex Chow
+// e-mail:zhouchuanglin@gmail.com 
+// **********************************
+
+using BootstrapBlazor.Components;
 using FreeSql.DataAnnotations;
 using Magicodes.ExporterAndImporter.Excel;
 using OfficeOpenXml.Table;
@@ -28,7 +34,7 @@ public class WeatherForecast
     //public string? Remarks { get; set; }
 
     [DisplayName("备注表")]
-    [Navigate ("ID")]
-    public virtual  Remarks? Remark { get; set; }
+    [Navigate("ID")]
+    public virtual Remarks? Remark { get; set; }
     //在 本实体 查找 ID 属性，与 Remarks 主键 关联
 }

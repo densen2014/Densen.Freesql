@@ -26,7 +26,7 @@ public partial class TableTotalDemo
 
         }
     }
-    
+
     /// <summary>
     /// 查询后计算合计
     /// </summary>
@@ -38,7 +38,7 @@ public partial class TableTotalDemo
         var _sum2 = select.Sum(d => d.AccessFailedCount);
         //FloatPanel.Set($"佣金：{_sum2:N2}  合计金额：{_sum1:N2}");
         TableMain.SetFooter($"已确认：{_sum2:N2}  访问失败：{_sum1:N2}");
-    } 
+    }
 
     /// <summary>
     /// 查询后计算合计
@@ -51,7 +51,7 @@ public partial class TableTotalDemo
         var _sum2 = select.Sum(d => d.AccessFailedCount);
         //FloatPanel.Set($"佣金：{_sum2:N2}  合计金额：{_sum1:N2}");
         TableMain2.SetFooter($"已确认：{_sum2:N2}  访问失败：{_sum1:N2}");
-    } 
+    }
 
 
 }

@@ -18,7 +18,7 @@ public partial class TableDetailsDemo
 {
     [NotNull]
     [Inject]
-    IFreeSql? fsql { get; set; }
+    private IFreeSql? fsql { get; set; }
 
     private bool IsDetails { get; set; }
     private bool IsFirstLoad { get; set; } = true;
@@ -31,7 +31,7 @@ public partial class TableDetailsDemo
     private SelectedItem? RolesName { get; set; }
     private AspNetUsers? SelectedUser { get; set; }
 
-    private List<SelectedItem> RolesNameList { get; set; } = new() { new SelectedItem() { Text = "角色", Value = "" }, };
+    private List<SelectedItem> RolesNameList { get; set; } = [new SelectedItem() { Text = "角色", Value = "" },];
 
     private async Task ClickRow(AspNetUsers item)
     {
@@ -41,7 +41,10 @@ public partial class TableDetailsDemo
         IsFirstLoad = false;
         IsDetails = true;
         DWhere1 = a => a.UserId == item.Id;
-        if (TableDetails!=null) await TableDetails.QueryAsync(DWhere1);
+        if (TableDetails != null)
+        {
+            await TableDetails.QueryAsync(DWhere1);
+        }
 
         var list = fsql.Select<AspNetUserRoles>().Where(DWhere1).Distinct().ToList(d => d.AspNetRoless.Name);
         RolesNameList.AddRange(list.Select(d => new SelectedItem(d, d)));
@@ -59,7 +62,10 @@ public partial class TableDetailsDemo
             {
                 DWhere1 = DWhere1.And(a => a.AspNetRoless.Name == item.Value);
             }
-            if (TableDetails != null) await TableDetails.QueryAsync(DWhere1);
+            if (TableDetails != null)
+            {
+                await TableDetails.QueryAsync(DWhere1);
+            }
             //StateHasChanged();
         }
     }

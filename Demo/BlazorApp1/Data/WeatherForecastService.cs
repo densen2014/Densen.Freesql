@@ -1,4 +1,10 @@
-﻿namespace BlazorApp1.Data;
+﻿// ********************************** 
+// Densen Informatica 中讯科技 
+// 作者：Alex Chow
+// e-mail:zhouchuanglin@gmail.com 
+// **********************************
+
+namespace BlazorApp1.Data;
 
 public class WeatherForecastService
 {
@@ -14,7 +20,7 @@ public class WeatherForecastService
             Date = startDate.AddDays(index),
             TemperatureC = Random.Shared.Next(-20, 55),
             Summary = Summaries[Random.Shared.Next(Summaries.Length)],
-            Remark= new Remarks {Remark = "Remark" + index }
+            Remark = new Remarks { Remark = "Remark" + index }
         }).ToArray());
     }
 }

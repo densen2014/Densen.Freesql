@@ -12,24 +12,26 @@ namespace BlazorApp1.Pages;
 
 public partial class Index
 {
-    List<RowButtonField>? list;
+    private List<RowButtonField>? list;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
 
-        list = list?? new List<RowButtonField>(){
-                            new RowButtonField() {
-                                Title ="例1",
+        list = list ?? [
+                            new RowButtonField()
+                            {
+                                Title = "例1",
                                 Color = Color.Success,
-                                CallbackFunc =  升级,
+                                CallbackFunc = 升级,
                             },
-                            new RowButtonField() {
-                                Title ="例2" ,
-                                Color = Color.Info,
-                                CallbackFunc =  升级,
-                            }
-                        };
+            new RowButtonField()
+            {
+                Title = "例2",
+                Color = Color.Info,
+                CallbackFunc = 升级,
+            }
+                        ];
     }
 
     private async Task<bool> 升级(object obj)

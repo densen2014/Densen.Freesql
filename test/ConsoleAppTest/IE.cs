@@ -30,7 +30,7 @@ public partial class Program
         public decimal? UnitPrice2 { get; set; } = null;
         public decimal UnitPrice3 { get; set; } = 1;
         public decimal UnitPrice4 { get; set; } = 1;
-        public decimal UnitPrice5 { get; set; } = 1; 
+        public decimal UnitPrice5 { get; set; } = 1;
 
     }
 
@@ -42,23 +42,23 @@ public partial class Program
         {
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
         }
-        var items = new List<Foo>()  ;
+        var items = new List<Foo>();
         for (int i = 0; i < 10; i++)
         {
-            items.Add(new Foo() { UnitPrice1 =i+1});
+            items.Add(new Foo() { UnitPrice1 = i + 1 });
         }
         Console.WriteLine("生成数据" + sw.Elapsed.TotalSeconds);
         sw.Restart();
 
         var exporter2 = new ImportExportsService();
 
-        Console.WriteLine(await exporter2.Export(filePath+"mini", items, ExportType.MiniExcel));
+        Console.WriteLine(await exporter2.Export(filePath + "mini", items, ExportType.MiniExcel));
         Console.WriteLine(await exporter2.Export(filePath, items, ExportType.Excel));
         Console.WriteLine(await exporter2.Export(filePath, items, ExportType.Word));
         Console.WriteLine(await exporter2.Export(filePath, items, ExportType.Pdf));
         Console.WriteLine(await exporter2.Export(filePath, items, ExportType.Html));
 
-        Console.WriteLine((await exporter2.Export2Stream(  items, ExportType.MiniExcel)).FileName);
+        Console.WriteLine((await exporter2.Export2Stream(items, ExportType.MiniExcel)).FileName);
         Console.WriteLine((await exporter2.Export2Stream(items, ExportType.Excel)).FileName);
         //Console.WriteLine((await exporter2.Export2Stream(items, ExportType.Word)).FileName);
         //Console.WriteLine((await exporter2.Export2Stream(items, ExportType.Pdf)).FileName);

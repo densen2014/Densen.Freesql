@@ -9,38 +9,37 @@ using Densen.DataAcces.FreeSql;
 using Densen.Service;
 using FreeSql;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Microsoft.Extensions.DependencyInjection;
+
+/// <summary>
+/// BootstrapBlazor 服务扩展类
+/// </summary>
+public static class FreeSqlServiceCollectionExtensions
 {
     /// <summary>
-    /// BootstrapBlazor 服务扩展类
+    /// 增加 FreeSql 数据库操作服务+Table 扩展
     /// </summary>
-    public static class FreeSqlServiceCollectionExtensions
+    /// <param name="services"></param>
+    /// <param name="optionsAction"></param>
+    /// <param name="configureAction"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddFreeSqlTables(this IServiceCollection services, Action<FreeSqlBuilder> optionsAction, Action<IFreeSql>? configureAction = null)
     {
-        /// <summary>
-        /// 增加 FreeSql 数据库操作服务+Table 扩展
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="optionsAction"></param>
-        /// <param name="configureAction"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddFreeSqlTables(this IServiceCollection services, Action<FreeSqlBuilder> optionsAction, Action<IFreeSql>? configureAction = null)
+        services.AddSingleton(sp =>
         {
-            services.AddSingleton(sp =>
-            {
-                var builder = new FreeSqlBuilder();
-                optionsAction(builder);
-                var instance = builder.Build();
-                instance.UseJsonMap();
-                configureAction?.Invoke(instance);
-                return instance;
-            });
+            var builder = new FreeSqlBuilder();
+            optionsAction(builder);
+            var instance = builder.Build();
+            instance.UseJsonMap();
+            configureAction?.Invoke(instance);
+            return instance;
+        });
 
-            services.AddTransient(typeof(IDataService<>), typeof(FreeSqlDataService<>));
-            services.AddTransient(typeof(FreeSqlDataService<>));
-            //导入导出服务
-            //services.AddTransient<IImportExport, ImportExportsMiniService>();
-            services.AddTransient<IImportExport, ImportExportsService>();
-            return services;
-        }
+        services.AddTransient(typeof(IDataService<>), typeof(FreeSqlDataService<>));
+        services.AddTransient(typeof(FreeSqlDataService<>));
+        //导入导出服务
+        //services.AddTransient<IImportExport, ImportExportsMiniService>();
+        services.AddTransient<IImportExport, ImportExportsService>();
+        return services;
     }
 }

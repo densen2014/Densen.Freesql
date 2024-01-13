@@ -11,9 +11,9 @@ public partial class Program
 {
     private static async Task Main(string[] args)
     {
-        Console.WriteLine("Hello, World!"); 
+        Console.WriteLine("Hello, World!");
         await 测试IE();
     }
 
-   
+
 }

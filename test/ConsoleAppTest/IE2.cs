@@ -78,10 +78,10 @@ public partial class Program2
     {
         var sw = Stopwatch.StartNew();
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "xxxx");
-        var items = new List<Foo>()  ;
+        var items = new List<Foo>();
         for (int i = 0; i < 20000; i++)
         {
-            items.Add(new Foo() { UnitPrice1 =i+1});
+            items.Add(new Foo() { UnitPrice1 = i + 1 });
         }
         Console.WriteLine("生成数据" + sw.Elapsed.TotalSeconds);
         sw.Restart();

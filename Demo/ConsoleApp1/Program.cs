@@ -6,8 +6,6 @@
 
 using Densen.Models.ids;
 using FreeSql;
-using FreeSql.Internal.Model;
-using System.Linq.Expressions;
 
 var fsql = new FreeSqlBuilder().UseConnectionString(FreeSql.DataType.Sqlite, "Data Source=../../../../BlazorApp1/demo.db;")
          //开发环境:自动同步实体
@@ -30,7 +28,7 @@ List<AspNetUsers>? users = new List<AspNetUsers>();
 //users.ForEach(a => System.Console.WriteLine($"\n用户 {a.Email} 角色名称 {a.RoleName}\n"));
 
 ////列出Admin的用户
-users = fsql.Select<AspNetUsers>().IncludeMany(a => a.AspNetUserRoless, then => then.Include(c => c.AspNetRoless).Where (d=>d.AspNetRoless.Name== "Admin")).ToList();
+users = fsql.Select<AspNetUsers>().IncludeMany(a => a.AspNetUserRoless, then => then.Include(c => c.AspNetRoless).Where(d => d.AspNetRoless.Name == "Admin")).ToList();
 users.ForEach(a => System.Console.WriteLine($"\n用户 {a.Email} 角色名称 {a.RoleName}\n"));
 
 ////var users3 = fsql.Select<AspNetUsers>().IncludeMany(a => a.AspNetUserRoless, then => then.Include(c => c.AspNetRoless)).Where (d=>d.AspNetUserRoless.First().RoleName == "Admin").ToSql ();

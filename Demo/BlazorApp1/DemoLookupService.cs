@@ -1,6 +1,8 @@
-﻿// Copyright (c) Argo Zhang (argo@163.com). All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// Website: https://www.blazor.zone or https://argozhang.github.io/
+﻿// ********************************** 
+// Densen Informatica 中讯科技 
+// 作者：Alex Chow
+// e-mail:zhouchuanglin@gmail.com 
+// **********************************
 
 using BootstrapBlazor.Components;
 using Densen.Models.ids;
@@ -49,7 +51,8 @@ internal class DemoLookupService : ILookupService
                 new() { Value = "Googlej", Text = "谷歌" },
                 new() { Value = "Googlek", Text = "谷歌" },
             };
-        }else if (key == nameof(AspNetUsers.UserName))
+        }
+        else if (key == nameof(AspNetUsers.UserName))
         {
             items = fsql.Select<AspNetUsers>().ToList().Select(a => new SelectedItem() { Value = a.UserName, Text = a.UserName }).ToList();
         }

@@ -8,7 +8,6 @@ using BlazorApp1.Data;
 using BootstrapBlazor.Components;
 using Densen.DataAcces.FreeSql;
 using Densen.Service;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +19,7 @@ builder.Services.AddSingleton<WeatherForecastService>();
 //添加FreeSql服务
 builder.Services.AddFreeSql(option =>
 {
-    option.UseConnectionString(FreeSql.DataType.Sqlite, "Data Source=demo.db;") 
+    option.UseConnectionString(FreeSql.DataType.Sqlite, "Data Source=demo.db;")
 #if DEBUG
          //开发环境:自动同步实体
          .UseAutoSyncStructure(true)

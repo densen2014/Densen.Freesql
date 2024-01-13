@@ -1,4 +1,10 @@
-﻿using BootstrapBlazor.Components;
+﻿// ********************************** 
+// Densen Informatica 中讯科技 
+// 作者：Alex Chow
+// e-mail:zhouchuanglin@gmail.com 
+// **********************************
+
+using BootstrapBlazor.Components;
 using FreeSql.DataAnnotations;
 using Newtonsoft.Json;
 using System.ComponentModel;
@@ -23,7 +29,8 @@ public partial class AspNetUserRoles
     [JsonProperty, Column(IsIgnore = true)]
     [DisplayName("用户")]
     public string UserName { get => roleName ?? (AspNetUserss?.UserName); set => userName = value; }
-    string userName;
+
+    private string userName;
 
     [AutoGenerateColumn(Visible = false, Order = -1, Width = 30, TextEllipsis = true)]
     [DisplayName("角色ID")]
@@ -34,7 +41,8 @@ public partial class AspNetUserRoles
     [JsonProperty, Column(IsIgnore = true)]
     [DisplayName("角色名称")]
     public string RoleName { get => roleName ?? (AspNetRoless?.Name); set => roleName = value; }
-    string roleName;
+
+    private string roleName;
 
     [DisplayName("角色定义")]
     [AutoGenerateColumn(Ignore = true)]

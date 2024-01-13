@@ -1,4 +1,10 @@
-﻿using BootstrapBlazor.Components;
+﻿// ********************************** 
+// Densen Informatica 中讯科技 
+// 作者：Alex Chow
+// e-mail:zhouchuanglin@gmail.com 
+// **********************************
+
+using BootstrapBlazor.Components;
 using FreeSql.DataAnnotations;
 using Newtonsoft.Json;
 using System.ComponentModel;
@@ -18,7 +24,7 @@ public partial class AspNetUserLogins
     [JsonProperty, Column(StringLength = -2, IsPrimary = true, IsNullable = false)]
     public string LoginProvider { get; set; }
 
-    [AutoGenerateColumn(Visible = false,  Width = 30, TextEllipsis = true)]
+    [AutoGenerateColumn(Visible = false, Width = 30, TextEllipsis = true)]
     [DisplayName("用户ID")]
     [JsonProperty, Column(StringLength = -2, IsNullable = false)]
     public string UserId { get; set; }
