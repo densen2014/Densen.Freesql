@@ -29,7 +29,7 @@ public class ImportExportsService : IImportExport
     /// <returns></returns>
     public async Task<string> Export<T>(string filePath, List<T>? items = null, ExportType exportType = ExportType.Excel, string? templatePath = null) where T : class, new()
     {
-        items ??= new List<T>();
+        items ??= [];
         switch (exportType)
         {
             case ExportType.Excel:
@@ -67,7 +67,7 @@ public class ImportExportsService : IImportExport
     {
         MemoryStream memoryStream;
         fileName ??= "";
-        items ??= new List<T>();
+        items ??= [];
         switch (exportType)
         {
             case ExportType.Excel:

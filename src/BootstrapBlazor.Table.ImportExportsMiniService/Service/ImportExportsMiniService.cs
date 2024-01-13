@@ -1,4 +1,10 @@
-﻿using MiniExcelLibs;
+﻿// ********************************** 
+// Densen Informatica 中讯科技 
+// 作者：Alex Chow
+// e-mail:zhouchuanglin@gmail.com 
+// **********************************
+
+using MiniExcelLibs;
 using MiniSoftware;
 
 namespace Densen.Service;
@@ -20,7 +26,7 @@ public class ImportExportsMiniService : IImportExport
     /// <returns></returns>
     public Task<string> Export<T>(string filePath, List<T>? items = null, ExportType exportType = ExportType.MiniExcel, string? templatePath = null) where T : class, new()
     {
-        items ??= new List<T>();
+        items ??= [];
         switch (exportType)
         {
             case ExportType.Word:
@@ -51,7 +57,7 @@ public class ImportExportsMiniService : IImportExport
         var memoryStream = new MemoryStream();
         fileName ??= "";
 
-        items ??= new List<T>();
+        items ??= [];
         switch (exportType)
         {
             case ExportType.Word:
