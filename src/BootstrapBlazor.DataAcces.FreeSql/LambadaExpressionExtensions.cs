@@ -58,7 +58,7 @@ public static partial class LambadaExpression
     //    var invokedExpression = Expression.Invoke(expression2, expression1.Parameters.Cast<Expression>());
     //    return Expression.Lambda<Func<T, bool>>(Expression.And(expression1.Body, invokedExpression), expression1.Parameters);
     //}
-    
+
     /// <summary>
     /// 创建lambda表达式：p=>p.propertyName 
     /// </summary>
@@ -84,7 +84,7 @@ public static partial class LambadaExpression
         MemberExpression member = Expression.PropertyOrField(parameter, propertyName);
         ConstantExpression constant = Expression.Constant(propertyValue);//创建常数
         return Expression.Lambda<Func<T, bool>>(Expression.Equal(member, constant), parameter);
-    } 
+    }
 
     /// <summary>
     /// 创建lambda表达式：p=>p.propertyName != propertyValue

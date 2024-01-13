@@ -17,7 +17,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 namespace AmeBlazor.Components;
-public partial class TableAmeProBase<TItem>: TableAmeBase where TItem : class, new ()
+public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, new()
 {
 
     public TItem? SelectOneItem { get; set; }
@@ -56,6 +56,8 @@ public partial class TableAmeProBase<TItem>: TableAmeBase where TItem : class, n
     public FloatPanel? FloatPanelUp { get; set; }
 
     public FloatPanel? FloatPanel { get; set; }
+
+    public string? cacheFooterValue;
 
     #region 继承bb table的设置
 
@@ -166,7 +168,9 @@ public partial class TableAmeProBase<TItem>: TableAmeBase where TItem : class, n
     {
         base.OnInitialized();
         if (ShowDetailRowS)
+        {
             ShowDetailRow = _ => true;
+        }
 
         if (PageItemsSourceStart != null && PageItemsSourceStart < PageItemsSource.FirstOrDefault())
         {
@@ -183,14 +187,20 @@ public partial class TableAmeProBase<TItem>: TableAmeBase where TItem : class, n
     {
         base.OnAfterRender(firstRender);
 
-        if (!firstRender) return;
+        if (!firstRender)
+        {
+            return;
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        if (!firstRender) return;
+        if (!firstRender)
+        {
+            return;
+        }
     }
 
     /// <summary>
@@ -201,7 +211,11 @@ public partial class TableAmeProBase<TItem>: TableAmeBase where TItem : class, n
     /// <returns></returns>
     public async Task QueryAsync(Expression<Func<TItem, bool>>? whereLamda = null, bool force = false)
     {
-        if (whereLamda != null || force) WhereLamda = whereLamda;
+        if (whereLamda != null || force)
+        {
+            WhereLamda = whereLamda;
+        }
+
         await TableMain.QueryAsync();
     }
 
@@ -256,11 +270,23 @@ public partial class TableAmeProBase<TItem>: TableAmeBase where TItem : class, n
               buttonBuilder.AddAttribute(2, nameof(ImgColumn.Name), tableImgField.Name);
               var value = (context.Row).GetIdentityKey(tableImgField.Field);
               buttonBuilder.AddAttribute(3, nameof(ImgColumn.Url), value);
-              if (!string.IsNullOrEmpty(tableImgField.BaseUrl)) buttonBuilder.AddAttribute(4, nameof(ImgColumn.BaseUrl), tableImgField.BaseUrl);
-              if (!string.IsNullOrEmpty(tableImgField.Style)) buttonBuilder.AddAttribute(5, nameof(ImgColumn.Style), tableImgField.Style);
+              if (!string.IsNullOrEmpty(tableImgField.BaseUrl))
+              {
+                  buttonBuilder.AddAttribute(4, nameof(ImgColumn.BaseUrl), tableImgField.BaseUrl);
+              }
+
+              if (!string.IsNullOrEmpty(tableImgField.Style))
+              {
+                  buttonBuilder.AddAttribute(5, nameof(ImgColumn.Style), tableImgField.Style);
+              }
+
               buttonBuilder.CloseComponent();
           }));
-          if (!string.IsNullOrEmpty(tableImgField.ColumnText)) builder.AddAttribute(4, "Text", tableImgField.ColumnText);
+          if (!string.IsNullOrEmpty(tableImgField.ColumnText))
+          {
+              builder.AddAttribute(4, "Text", tableImgField.ColumnText);
+          }
+
           builder.CloseComponent();
       };
 
@@ -297,10 +323,18 @@ public partial class TableAmeProBase<TItem>: TableAmeBase where TItem : class, n
                     await tableImgField.Callback.InvokeAsync(value);
                 }));
             }
-            if (!string.IsNullOrEmpty(tableImgField.Style)) buttonBuilder.AddAttribute(5, nameof(ImgColumn.Style), tableImgField.Style);
+            if (!string.IsNullOrEmpty(tableImgField.Style))
+            {
+                buttonBuilder.AddAttribute(5, nameof(ImgColumn.Style), tableImgField.Style);
+            }
+
             buttonBuilder.CloseComponent();
         }));
-        if (!string.IsNullOrEmpty(tableImgField.ColumnText)) builder.AddAttribute(4, "Text", tableImgField.ColumnText);
+        if (!string.IsNullOrEmpty(tableImgField.ColumnText))
+        {
+            builder.AddAttribute(4, "Text", tableImgField.ColumnText);
+        }
+
         builder.CloseComponent();
     };
 
@@ -328,9 +362,13 @@ public partial class TableAmeProBase<TItem>: TableAmeBase where TItem : class, n
 
         // 开启后台进程进行数据处理
         if (Excel导入 == null)
+        {
             await MockDownLoadAsync();
+        }
         else
+        {
             await Excel导入();
+        }
 
         // 关闭 option 相关联的弹窗
         option.Close();
@@ -446,9 +484,13 @@ public partial class TableAmeProBase<TItem>: TableAmeBase where TItem : class, n
 
         // 开启后台进程进行数据处理
         if (执行添加 == null)
+        {
             await MockDownLoadAsync();
+        }
         else
+        {
             await 执行添加();
+        }
 
         // 关闭 option 相关联的弹窗
         option.Close();
@@ -515,9 +557,13 @@ public partial class TableAmeProBase<TItem>: TableAmeBase where TItem : class, n
 
         // 开启后台进程进行数据处理
         if (导出 == null)
+        {
             await Export(items!.ToList(), expType);
+        }
         else
+        {
             await 导出(items!, expType);
+        }
 
         // 关闭 option 相关联的弹窗
         option.Close();
@@ -549,12 +595,17 @@ public partial class TableAmeProBase<TItem>: TableAmeBase where TItem : class, n
             if (ExportBasePath != null)
             {
                 if (Directory.Exists(ExportBasePath) == false)
+                {
                     Directory.CreateDirectory(ExportBasePath);
+                }
 
                 fileName = Path.Combine(ExportBasePath, fileName);
             }
 
-            if (items == null || !items.Any()) items = ItemsCache?.ToList();
+            if (items == null || !items.Any())
+            {
+                items = ItemsCache?.ToList();
+            }
 
             var memoryStream = new MemoryStream();
             if (ExportToStream)
@@ -669,7 +720,11 @@ public partial class TableAmeProBase<TItem>: TableAmeBase where TItem : class, n
         scrollMode = scrollMode == ScrollMode.Virtual ? ScrollMode.None : ScrollMode.Virtual;
 
         ScrollMode = scrollMode;
-        if (AutoPageHeight) Height = PageHeight - 150;
+        if (AutoPageHeight)
+        {
+            Height = PageHeight - 150;
+        }
+
         IsPagination = scrollMode == ScrollMode.None;
         PageItems = scrollMode == ScrollMode.Virtual ? 30 : 15;
         AllowDragColumn = !IsPagination;
@@ -678,7 +733,6 @@ public partial class TableAmeProBase<TItem>: TableAmeBase where TItem : class, n
         return Task.CompletedTask;
     }
 
-    public string? cacheFooterValue;
     public void SetFooter(string value)
     {
         //FooterTotalOneLine = value;

@@ -69,7 +69,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
     /// <summary>
     /// 缓存查询条件
     /// </summary>
-    QueryPageOptions OptionsCache { get; set; } = new QueryPageOptions();
+    private QueryPageOptions OptionsCache { get; set; } = new QueryPageOptions();
 
     /// <summary>
     /// 是否开启 一对一(OneToOne)、一对多(OneToMany)、多对多(ManyToMany) 级联保存功能<para></para>

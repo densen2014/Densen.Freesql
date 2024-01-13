@@ -26,7 +26,7 @@ public partial class TableTotalDemo
 
         }
     }
-
+    
     /// <summary>
     /// 查询后计算合计
     /// </summary>

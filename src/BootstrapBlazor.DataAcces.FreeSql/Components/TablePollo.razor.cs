@@ -137,7 +137,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         }
 
         return items1;
-    } 
+    }
 
     /// <summary>
     /// 获得查询子句
@@ -203,14 +203,19 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
                         if (DetailsDialogCloseAsync != null)
                         {
                             if (await DetailsDialogCloseAsync(context.Row))
+                            {
                                 await TableMain.QueryAsync();
+                            }
                         }
                     },
-                    OnSaveAsync = async () => {
+                    OnSaveAsync = async () =>
+                    {
                         if (DetailsDialogSaveAsync != null)
                         {
                             if (await DetailsDialogSaveAsync(context.Row))
+                            {
                                 await TableMain.QueryAsync();
+                            }
                         }
                         return true;
                     },
@@ -323,7 +328,11 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
             _Field = FieldD ?? Field;
         }
         builder.AddAttribute(0, nameof(Field), _Field);
-        if (IsDebug) ToastService.Success($"展开详情行 {_Field} : _FieldValue");
+        if (IsDebug)
+        {
+            ToastService.Success($"展开详情行 {_Field} : _FieldValue");
+        }
+
         builder.AddAttribute(1, nameof(FieldValue), _FieldValue);
         builder.AddAttribute(2, nameof(IsBordered), true);
         builder.AddAttribute(3, nameof(ShowToolbar), ShowToolbar);
@@ -384,7 +393,8 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         {
             builder.AddAttribute(24, nameof(IsPagination), IsPagination);
         }
-        if (SubPageItems != null) {
+        if (SubPageItems != null)
+        {
             builder.AddAttribute(25, nameof(PageItems), SubPageItems);
         }
         if (SubHeight != null)
@@ -412,7 +422,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     };
 
     #endregion
-     
+
 
 
 

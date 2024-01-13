@@ -26,7 +26,7 @@ public static class FreeSqlServiceCollectionExtensions
     /// <param name="configEntityPropertyImage"></param>
     /// <param name="configureOptions"></param>
     /// <returns></returns>
-    public static IServiceCollection AddFreeSql(this IServiceCollection services, Action<FreeSqlBuilder> optionsAction, Action<IFreeSql>? configureAction = null, bool configEntityPropertyImage=false, FreeSqlServiceOptions? configureOptions = null)
+    public static IServiceCollection AddFreeSql(this IServiceCollection services, Action<FreeSqlBuilder> optionsAction, Action<IFreeSql>? configureAction = null, bool configEntityPropertyImage = false, FreeSqlServiceOptions? configureOptions = null)
     {
         services.AddSingleton(sp =>
         {
@@ -34,11 +34,11 @@ public static class FreeSqlServiceCollectionExtensions
             optionsAction(builder);
             var instance = builder.Build();
             instance.UseJsonMap();
-            if (configEntityPropertyImage || (configureOptions?.ConfigEntityPropertyImage??false))
+            if (configEntityPropertyImage || (configureOptions?.ConfigEntityPropertyImage ?? false))
             {
                 instance.Aop.AuditValue += AuditValue;
                 instance.Aop.ConfigEntityProperty += ConfigEntityProperty;
-            } 
+            }
             configureAction?.Invoke(instance);
             return instance;
         });
@@ -70,7 +70,7 @@ public static class FreeSqlServiceCollectionExtensions
         if (e!.Column.CsType == typeof(Guid) && e.Column.Attribute.MapType == typeof(string) && e.Value?.ToString() == Guid.Empty.ToString())
         {
             e.Value = FreeUtil.NewMongodbId();
-        } 
+        }
     }
     #endregion 
 

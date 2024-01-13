@@ -413,7 +413,9 @@ public partial class TableAmeBase : BootstrapComponentBase
         {
             var cValue = await JSRuntime.InvokeAsync<string>("eval", $"localStorage.getItem('{key}');");
             if (cValue == null)
+            {
                 return def;
+            }
 
             var newValue = StorageGetValueI<TValue>(cValue);
             return newValue ?? def;
@@ -898,13 +900,19 @@ public partial class TableAmeBase : BootstrapComponentBase
     protected override void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
-        if (!firstRender) return;
+        if (!firstRender)
+        {
+            return;
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-        if (!firstRender) return;
+        if (!firstRender)
+        {
+            return;
+        }
 
         if (AutoSavePageIndex)
         {

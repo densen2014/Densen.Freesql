@@ -11,7 +11,6 @@ using FreeSql.Internal.Model;
 using System.Linq.Expressions;
 using System.Reflection;
 using Console = System.Console;
-#nullable enable
 
 namespace Densen.DataAcces.FreeSql;
 
@@ -74,7 +73,9 @@ public static partial class FreeSqlUtil
         }
 
         if (dynamicFilterInfo != null)
+        {
             fsql_select = fsql_select.WhereDynamicFilter(dynamicFilterInfo);
+        }
 
         return fsql_select;
     }
@@ -178,9 +179,13 @@ public static partial class FreeSqlUtil
 
                 //判断是否分页
                 if (option.IsPage)
+                {
                     fsql_select = fsql_select.Page(option.PageIndex, option.PageItems);
+                }
                 else if (option.IsVirtualScroll)
+                {
                     fsql_select = fsql_select.Skip(option.StartIndex).Take(option.PageItems);
+                }
 
                 items = fsql_select.ToList();
 
@@ -196,7 +201,7 @@ public static partial class FreeSqlUtil
         catch (Exception e)
         {
             Console.WriteLine("FreeSqlDataService Error: " + e.Message);
-            items = new List<TModel>();
+            items = [];
             TotalCount = 0;
         }
         var ret = new QueryData<TModel>()
@@ -400,17 +405,29 @@ public static partial class FreeSqlUtil
     {
         var isNumber = propertyinfo.PropertyType.IsNumberType();
         var isDateTime = propertyinfo.PropertyType.IsDateTimeType();
-        if (isNumber && !SearchText.IsNumeric()) return null;
-        if (isDateTime && !SearchText.IsDatetime()) return null;
+        if (isNumber && !SearchText.IsNumeric())
+        {
+            return null;
+        }
+
+        if (isDateTime && !SearchText.IsDatetime())
+        {
+            return null;
+        }
+
         object val;
         try
         {
             if (propertyinfo.PropertyType.IsIntegerType())
             {
                 if (SearchText.IsInt())
+                {
                     val = Convert.ToInt32(SearchText);
+                }
                 else
+                {
                     return null;
+                }
             }
             else if (propertyinfo.PropertyType.IsNumberType())
             {
