@@ -132,21 +132,6 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     [Parameter]
     public RenderFragment<TItem>? EditTemplate { get; set; }
 
-    #endregion
-
-    /// <summary>
-    /// Reset all Columns Filter
-    /// </summary>
-    public async Task ResetFilters()
-    {
-        await TableMain.ResetFilters();
-    }
-
-    /// <summary>
-    /// 获得 表头集合
-    /// </summary>
-    public List<ITableColumn> Columns { get => TableMain.Columns; }
-
     /// <summary>
     /// 获得/设置 列创建时回调委托方法
     /// </summary>
@@ -160,9 +145,55 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     public Func<PropertyInfo, TItem, List<SearchFilterAction>?>? GetAdvancedSearchFilterCallback { get; set; }
 
     /// <summary>
+    /// 获得/设置 分页信息内容模板
+    /// </summary>
+    [Parameter]
+    public RenderFragment? PageInfoBodyTemplate { get; set; }
+
+    /// <summary>
+    /// 获得/设置 明细行模板 <see cref="IsDetails" />
+    /// </summary>
+    [Parameter]
+    public RenderFragment<TItem>? DetailRowTemplate { get; set; }
+
+    /// <summary>
+    /// 获得/设置 TableFooter 实例
+    /// </summary>
+    [Parameter]
+    public RenderFragment<IEnumerable<TItem>>? TableFooter { get; set; }
+
+    /// <summary>
+    /// 获得/设置 Table Footer 模板
+    /// </summary>
+    [Parameter]
+    public RenderFragment<IEnumerable<TItem>>? FooterTemplate { get; set; }
+
+    /// <summary>
+    /// 获得/设置 双击行回调委托方法
+    /// </summary>
+    [Parameter]
+    public Func<TItem, Task>? OnDoubleClickRowCallback { get; set; }
+
+
+    #endregion
+    
+    /// <summary>
     /// 附加复杂查询条件
     /// </summary>
     [Parameter] public DynamicFilterInfo? DynamicFilterInfo { get; set; }
+
+    /// <summary>
+    /// Reset all Columns Filter
+    /// </summary>
+    public async Task ResetFilters()
+    {
+        await TableMain.ResetFilters();
+    }
+
+    /// <summary>
+    /// 获得 表头集合
+    /// </summary>
+    public List<ITableColumn> Columns { get => TableMain.Columns; }
 
     protected override void OnInitialized()
     {

@@ -895,6 +895,31 @@ public partial class TableAmeBase : BootstrapComponentBase
     [Parameter]
     public bool IsFixedFooter { get; set; } = true;
 
+    /// <summary>
+    /// 获得/设置 滚动条宽度 默认为 6
+    /// </summary>
+    [Parameter]
+    public int ScrollWidth { get; set; } = 6;
+
+    /// <summary>
+    /// 获得/设置 无数据时是否隐藏表格 Footer 默认为 false 不隐藏
+    /// </summary>
+    [Parameter]
+    public bool IsHideFooterWhenNoData { get; set; }
+
+    /// <summary>
+    /// 获得/设置 是否显示过滤表头 默认 false 不显示
+    /// </summary>
+    [Parameter]
+    public bool ShowMultiFilterHeader { get; set; }
+
+    /// <summary>
+    /// 获得/设置 首次加载时是否自动查询数据 默认 true <see cref="Items"/> 模式下此参数不起作用
+    /// </summary>
+    [Parameter]
+    public bool IsAutoQueryFirstRender { get; set; } = true;
+
+
     #endregion
 
     protected override void OnAfterRender(bool firstRender)

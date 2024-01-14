@@ -78,7 +78,14 @@
        ShowFilterHeader="@ShowFilterHeader"
        OnColumnCreating="@OnColumnCreating"
        GetAdvancedSearchFilterCallback="@GetAdvancedSearchFilterCallback"
-       IsFixedFooter="@IsFixedFooter">
+       IsFixedFooter="@IsFixedFooter"
+       PageInfoBodyTemplate="PageInfoBodyTemplate"
+       OnDoubleClickRowCallback="OnDoubleClickRowCallback"
+       ScrollWidth="ScrollWidth"
+       IsHideFooterWhenNoData="IsHideFooterWhenNoData"
+       ShowMultiFilterHeader="ShowMultiFilterHeader"
+       IsAutoQueryFirstRender="IsAutoQueryFirstRender"
+       >
 
     <TableToolbarTemplate>
         @if (TableToolbarTemplate != null)
@@ -203,6 +210,11 @@
     </RowButtonTemplate>
 
     <DetailRowTemplate>
+        @if (DetailRowTemplate != null)
+        {
+            @DetailRowTemplate
+        }
+
         @if (ShowDetailRowType == ShowDetailRowType.选项卡)
         {
             <Tab IsLazyLoadTabItem="true">
@@ -227,6 +239,10 @@
     </DetailRowTemplate>
 
     <TableFooter Context="context1">
+        @if (FooterTemplate != null)
+        {
+            @FooterTemplate
+        }
         @if (string.IsNullOrEmpty(FooterTotalColName) && !ShowFloatPanel && !ShowFloatPanelToolbar && !string.IsNullOrEmpty(FooterText))
         {
             <TableFooterCell colspan="@Footercolspan1" Text="@FooterText" />
