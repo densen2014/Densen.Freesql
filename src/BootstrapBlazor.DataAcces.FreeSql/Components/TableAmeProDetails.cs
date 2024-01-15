@@ -31,6 +31,12 @@ public partial class TableAmeProDetails<TItem, ItemDetails> : TableAmeProBase<TI
     public Func<ItemDetails, Task>? SubEditAsync { get; set; }
 
     /// <summary>
+    /// 获得/设置 子表新建按钮回调方法
+    /// </summary>
+    [Parameter]
+    public Func<ItemDetails, Task<ItemDetails>>? SubAddAsync { get; set; }
+
+    /// <summary>
     /// 获得/设置 子表保存按钮异步回调方法
     /// </summary>
     [Parameter]

@@ -418,6 +418,10 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         {
             builder.AddAttribute(31, nameof(EditAsync), SubEditAsync);
         }
+        if (SubAddAsync != null)
+        {
+            builder.AddAttribute(32, nameof(AddAsync), SubAddAsync);
+        }
         builder.CloseComponent();
     };
 
