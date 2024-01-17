@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <LangVersion>latest</LangVersion>
+        <Configurations>Debug;Release;DebugSC</Configurations>
     </PropertyGroup>
 
     <ItemGroup>

@@ -8,6 +8,7 @@
 		<RootNamespace>Densen.Components</RootNamespace>
         <OutputPath>..\..\..\Bin</OutputPath>
         <Version>8.0.0</Version>
+        <Configurations>Debug;Release;DebugSC</Configurations>
     </PropertyGroup>
     
     <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">

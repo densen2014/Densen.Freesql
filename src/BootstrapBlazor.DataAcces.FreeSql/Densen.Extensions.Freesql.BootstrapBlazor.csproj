@@ -7,6 +7,7 @@
         <RootNamespace>Densen.Extensions.Freesql.BootstrapBlazor</RootNamespace>
         <OutputPath>..\..\..\Bin</OutputPath>
         <Version>8.1.8</Version>
+        <Configurations>Debug;Release;DebugSC</Configurations>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,10 +16,14 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.*" />
     </ItemGroup>
 
-    <!--<ItemGroup>-->
     <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-        <ProjectReference Include="..\..\..\Densen.Extensions\Blazor\Densen.Extensions.BootstrapBlazor.csproj" />
+        <PackageReference Include="Densen.Extensions.BootstrapBlazor" Version="*" />
         <ProjectReference Include="..\BootstrapBlazor.Table.ImportExportsMiniService\BootstrapBlazor.Table.ImportExportsMiniService.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'DebugSC'">
+        <!--带外部源码调试环境-->
+        <ProjectReference Include="..\..\..\Densen.Extensions\Blazor\Densen.Extensions.BootstrapBlazor.csproj" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Release'">

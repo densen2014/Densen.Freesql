@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net7.0;net48</TargetFrameworks>
+    <Configurations>Debug;Release;DebugSC</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
