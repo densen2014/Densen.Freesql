@@ -6,14 +6,14 @@
 
 using BootstrapBlazor.Components;
 using FreeSql.DataAnnotations;
-using Magicodes.ExporterAndImporter.Excel;
-using OfficeOpenXml.Table;
+//using Magicodes.ExporterAndImporter.Excel;
+//using OfficeOpenXml.Table;
 using System.ComponentModel;
 
 namespace BlazorApp1.Data;
 
-[ExcelImporter(IsLabelingError = true)]
-[ExcelExporter(Name = "导入商品中间表", TableStyle = TableStyles.Light10, AutoFitAllColumn = true)]
+//[ExcelImporter(IsLabelingError = true)]
+//[ExcelExporter(Name = "导入商品中间表", TableStyle = TableStyles.Light10, AutoFitAllColumn = true)]
 [AutoGenerateClass(Searchable = true, Filterable = true, Sortable = true)]
 public class WeatherForecast
 {
