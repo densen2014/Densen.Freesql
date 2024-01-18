@@ -52,6 +52,11 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
     private long? TotalCount { get; set; }
 
     /// <summary>
+    /// 缓存当前编辑实体
+    /// </summary>
+    public TModel? ItemCache { get; set; }
+
+    /// <summary>
     /// 缓存记录
     /// </summary>
     public List<TModel>? Items { get; set; }
@@ -106,6 +111,16 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
 
         //一对一(OneToOne)、一对多(OneToMany)、多对多(ManyToMany) 级联保存功能
         repo.DbContextOptions.EnableCascadeSave = EnableCascadeSave;
+
+        if (ItemCache != null)
+        { 
+            //多主键实体,保存前先删除
+            var keys = fsql.CodeFirst.GetTableByEntity(typeof(TModel));
+            if (keys.Primarys.Any() && keys.Primarys.Length >1)
+            {
+                await fsql.Delete<TModel>(ItemCache).ExecuteAffrowsAsync();
+            }
+        }
 
         await repo.InsertOrUpdateAsync(model);
 
@@ -182,6 +197,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
         TotalCount = res.TotalCount;
         Items = res.Items?.ToList();
         OptionsCache = option;
+        ItemCache = null;
         return Task.FromResult(res);
     }
 

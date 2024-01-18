@@ -123,80 +123,80 @@ public static partial class FreeSqlUtil
         {
             var isSearch = option.Searches.Any() || option.CustomerSearches.Any() || option.AdvanceSearches.Any();
 
-            if (TotalCount != null && !option.IsVirtualScroll && !isSearch && option.PageItems == optionsLast.PageItems && TotalCount <= optionsLast.PageItems)
+            //if (TotalCount != null && !option.IsVirtualScroll && !isSearch && option.PageItems == optionsLast.PageItems && TotalCount <= optionsLast.PageItems)
+            //{
+            //    //当选择的每页显示数量大于总数时，强制认为是一页
+            //    //无搜索,并且总数<=分页总数直接使用内存排序和搜索
+            //    Console.WriteLine($"无搜索,分页数相等{option.PageItems}/{optionsLast.PageItems},直接使用内存排序和搜索");
+            //}
+            //else
+            //{
+
+            var fsql_select = BuildWhere(option, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, WhereCascadeOr, WhereLamda);
+
+            fsql_select = fsql_select.OrderByPropertyNameIf(option.SortOrder != SortOrder.Unset, option.SortName, option.SortOrder == SortOrder.Asc);
+
+            #region "处理手动排序条件"
+            if (OrderByPropertyName != null)
             {
-                //当选择的每页显示数量大于总数时，强制认为是一页
-                //无搜索,并且总数<=分页总数直接使用内存排序和搜索
-                Console.WriteLine($"无搜索,分页数相等{option.PageItems}/{optionsLast.PageItems},直接使用内存排序和搜索");
-            }
-            else
-            {
-
-                var fsql_select = BuildWhere(option, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, WhereCascadeOr, WhereLamda);
-
-                fsql_select = fsql_select.OrderByPropertyNameIf(option.SortOrder != SortOrder.Unset, option.SortName, option.SortOrder == SortOrder.Asc);
-
-                #region "处理手动排序条件"
-                if (OrderByPropertyName != null)
+                foreach (var itemtemp in OrderByPropertyName)
                 {
-                    foreach (var itemtemp in OrderByPropertyName)
+                    try
                     {
-                        try
+                        var item = itemtemp;
+                        var isAscending = true;
+                        if (item.EndsWith(" desc"))
                         {
-                            var item = itemtemp;
-                            var isAscending = true;
-                            if (item.EndsWith(" desc"))
-                            {
-                                isAscending = false;
-                                item = item.Replace(" desc", "");
-                            }
-                            if (item.StartsWith("len("))
-                            {
-                                fsql_select = fsql_select.OrderBy(item);
-                            }
-                            else if (option.SortOrder == SortOrder.Unset)
-                            {
-                                fsql_select = fsql_select.OrderByPropertyName(item, isAscending);
-                            }
-                            else if (option.SortOrder != SortOrder.Unset && option.SortName != null && !item.Equals(option.SortName))
-                            {
-                                //过滤预设排序名称和点击排序名称一致的情况
-                                fsql_select = fsql_select.OrderByPropertyName(item, isAscending);
-                            }
+                            isAscending = false;
+                            item = item.Replace(" desc", "");
                         }
-                        catch
+                        if (item.StartsWith("len("))
                         {
-                            fsql_select = fsql_select.OrderBy(itemtemp);
+                            fsql_select = fsql_select.OrderBy(item);
+                        }
+                        else if (option.SortOrder == SortOrder.Unset)
+                        {
+                            fsql_select = fsql_select.OrderByPropertyName(item, isAscending);
+                        }
+                        else if (option.SortOrder != SortOrder.Unset && option.SortName != null && !item.Equals(option.SortName))
+                        {
+                            //过滤预设排序名称和点击排序名称一致的情况
+                            fsql_select = fsql_select.OrderByPropertyName(item, isAscending);
                         }
                     }
+                    catch
+                    {
+                        fsql_select = fsql_select.OrderBy(itemtemp);
+                    }
                 }
-                #endregion
-
-                //分页
-                long count = 0;
-                fsql_select = fsql_select.Count(out count);
-
-
-                //判断是否分页
-                if (option.IsPage)
-                {
-                    fsql_select = fsql_select.Page(option.PageIndex, option.PageItems);
-                }
-                else if (option.IsVirtualScroll)
-                {
-                    fsql_select = fsql_select.Skip(option.StartIndex).Take(option.PageItems);
-                }
-
-                items = fsql_select.ToList();
-
-                TotalCount = count;
-
-                if (TotalCount == 0)
-                {
-                    option.PageIndex = 1;
-                }
-
             }
+            #endregion
+
+            //分页
+            long count = 0;
+            fsql_select = fsql_select.Count(out count);
+
+
+            //判断是否分页
+            if (option.IsPage)
+            {
+                fsql_select = fsql_select.Page(option.PageIndex, option.PageItems);
+            }
+            else if (option.IsVirtualScroll)
+            {
+                fsql_select = fsql_select.Skip(option.StartIndex).Take(option.PageItems);
+            }
+
+            items = fsql_select.ToList();
+
+            TotalCount = count;
+
+            if (TotalCount == 0)
+            {
+                option.PageIndex = 1;
+            }
+
+            //}
         }
         catch (Exception e)
         {

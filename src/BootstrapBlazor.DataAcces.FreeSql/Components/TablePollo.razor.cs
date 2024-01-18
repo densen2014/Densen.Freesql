@@ -75,6 +75,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
         {
             await EditAsync(item);
         }
+        GetDataService().ItemCache = item.Clone();
         return item;
     }
 
@@ -113,7 +114,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
             }
         }
 
-        var items1 = await GetDataService().QueryAsyncWithWhereCascade(
+        var itemsOrm = await GetDataService().QueryAsyncWithWhereCascade(
                 options,
                 dynamicFilterInfo,
                 IncludeByPropertyNames,
@@ -123,8 +124,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
                 WhereLamda
             );
 
-        ItemsCache = items1.Items;
-        System.Console.WriteLine($"[展开]TablePollo OnQueryAsync => Field:{dynamicFilterInfo?.Field} /Value: {dynamicFilterInfo?.Value} , itemsTotalCount: {items1.TotalCount}");
+        ItemsCache = itemsOrm.Items;
 
         if (AfterQueryAsync != null)
         {
@@ -136,7 +136,7 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
             }
         }
 
-        return items1;
+        return itemsOrm;
     }
 
     /// <summary>
