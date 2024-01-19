@@ -6,6 +6,7 @@
 
 using AME;
 using BootstrapBlazor.Components;
+using Densen.DataAcces.FreeSql;
 using Densen.Service;
 using DocumentFormat.OpenXml.Spreadsheet;
 using FreeSql;
@@ -176,11 +177,143 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
 
 
     #endregion
-    
+
     /// <summary>
     /// 附加复杂查询条件
     /// </summary>
     [Parameter] public DynamicFilterInfo? DynamicFilterInfo { get; set; }
+
+    #region 数据服务
+    /// <summary>
+    /// 获得/设置 注入数据服务
+    /// </summary>
+    [Inject]
+    [NotNull]
+    public virtual IEnumerable<FreeSqlDataService<TItem>>? DataServices { get; set; }
+
+    public virtual FreeSqlDataService<TItem> GetDataService()
+    {
+        if (DataServices.Any())
+        {
+            DataServices.Last().SaveManyChildsPropertyName = SaveManyChildsPropertyName;
+            DataServices.Last().ibstring = ibstring;
+            DataServices.Last().EnableCascadeSave = EnableCascadeSave;
+            return DataServices.Last();
+        }
+        else
+        {
+            throw new InvalidOperationException("DataServiceInvalidOperationText");
+        }
+    }
+
+    public async Task<TItem> OnAddAsync()
+    {
+        var newone = new TItem();
+        if (FieldValue != null || FieldValueD != null)
+        {
+            newone.FieldSetValue(Field, FieldValue ?? FieldValueD);
+        }
+        if (AddAsync != null)
+        {
+            newone = await AddAsync(newone);
+        }
+        return newone;
+    }
+
+    public async Task<TItem> OnEditAsync(TItem item)
+    {
+        if (EditAsync != null)
+        {
+            await EditAsync(item);
+        }
+        GetDataService().ItemCache = item.Clone();
+        return item;
+    }
+
+    public async Task<bool> OnSaveAsync(TItem item, ItemChangedType changedType)
+    {
+        if (SaveAsync != null)
+        {
+            item = await SaveAsync(item, changedType);
+        }
+        var res = await GetDataService().SaveAsync(item, changedType);
+        if (AfterSaveAsync != null)
+        {
+            await AfterSaveAsync(item, changedType);
+        }
+        return res;
+    }
+
+    public async Task<bool> OnDeleteAsync(IEnumerable<TItem> items) => await GetDataService().DeleteAsync(items);
+
+    public async Task<QueryData<TItem>> OnQueryAsync(QueryPageOptions options)
+    {
+        if (PageIndexCache != null)
+        {
+            options.PageIndex = PageIndexCache.Value;
+            PageIndexCache = null;
+        }
+        else
+        {
+            if (AutoSavePageIndex)
+            {
+                await StorageSetValue(AutoSavePageIndexKey, options.PageIndex);
+            }
+            else
+            {
+                PageIndex = options.PageIndex;
+            }
+        }
+
+        var itemsOrm = await GetDataService().QueryAsyncWithWhereCascade(
+                options,
+                dynamicFilterInfo,
+                IncludeByPropertyNames,
+                LeftJoinString,
+                OrderByPropertyName,
+                WhereCascadeOr,
+                WhereLamda
+            );
+
+        ItemsCache = itemsOrm.Items;
+
+        if (AfterQueryAsync != null)
+        {
+            var select = ISelectCache();
+            if (SelectCache != select)
+            {
+                SelectCache = select;
+                AfterQueryAsync(ISelectCache());
+            }
+        }
+
+        return itemsOrm;
+    }
+
+    /// <summary>
+    /// 获得查询子句
+    /// </summary>
+    public ISelect<TItem> ISelectCache() => GetDataService().ISelectCache(
+                dynamicFilterInfo,
+                IncludeByPropertyNames,
+                LeftJoinString,
+                WhereCascadeOr,
+                WhereLamda
+            );
+
+    /// <summary>
+    /// 全部记录
+    /// </summary>
+    public List<TItem>? GetAllItems() => GetDataService().GetAllItems(
+                dynamicFilterInfo,
+                IncludeByPropertyNames,
+                LeftJoinString,
+                OrderByPropertyName,
+                WhereCascadeOr,
+                WhereLamda
+            );
+
+    #endregion
 
     /// <summary>
     /// Reset all Columns Filter

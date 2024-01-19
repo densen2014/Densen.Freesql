@@ -13,15 +13,13 @@ namespace AmeBlazor.Components;
 /// <summary>
 /// TablePollo 组件,使用Idlebus注入服务维护表以及详表
 /// <para></para>
-/// 后两个参数可用NullClass空类
+/// 后一个参数可用NullClass空类
 /// </summary>
 /// <typeparam name="TItem">主表类名</typeparam>
 /// <typeparam name="ItemDetails">详表类名</typeparam>
-/// <typeparam name="ItemDetailsII">详表的详表类名</typeparam>
-/// <typeparam name="ItemDetailsII">详表3类名</typeparam>
 public partial class TableAmeProDetails<TItem, ItemDetails> : TableAmeProBase<TItem>
-    where TItem : class, new()
-    where ItemDetails : class, new()
+where TItem : class, new()
+where ItemDetails : class, new()
 {
 
     /// <summary>

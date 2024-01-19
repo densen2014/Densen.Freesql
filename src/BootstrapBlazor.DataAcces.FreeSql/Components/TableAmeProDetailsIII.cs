@@ -6,163 +6,26 @@
 
 using AME;
 using BootstrapBlazor.Components;
-using Densen.DataAcces.FreeSql;
-using FreeSql;
 using Microsoft.AspNetCore.Components;
-using System.Diagnostics.CodeAnalysis;
 using static AME.EnumsExtensions;
 
 namespace AmeBlazor.Components;
 
 /// <summary>
-/// TablePollo 组件,使用Idlebus注入服务维护表以及详表
+/// TableAmePro 组件,使用 FreeSqlDataService 注入服务维护表以及详表
 /// <para></para>
-/// 后两个参数可用NullClass空类
+/// 后三个参数可用NullClass空类
 /// </summary>
 /// <typeparam name="TItem">主表类名</typeparam>
 /// <typeparam name="ItemDetails">详表类名</typeparam>
 /// <typeparam name="ItemDetailsII">详表的详表类名</typeparam>
 /// <typeparam name="ItemDetailsII">详表3类名</typeparam>
-public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsIII> : TableAmeProDetails<TItem, ItemDetails>
+public partial class TableAmeProDetailsIII<TItem, ItemDetails, ItemDetailsII, ItemDetailsIII> : TableAmeProDetails<TItem, ItemDetails>
     where TItem : class, new()
     where ItemDetails : class, new()
     where ItemDetailsII : class, new()
     where ItemDetailsIII : class, new()
 {
-
-    private TablePollo<ItemDetails, ItemDetailsII, ItemDetailsIII, NullClass>? detalisTable;
-
-    #region 数据服务
-    /// <summary>
-    /// 获得/设置 注入数据服务
-    /// </summary>
-    [Inject]
-    [NotNull]
-    protected IEnumerable<FreeSqlDataService<TItem>>? DataServices { get; set; }
-
-    protected FreeSqlDataService<TItem> GetDataService()
-    {
-        if (DataServices.Any())
-        {
-            DataServices.Last().SaveManyChildsPropertyName = SaveManyChildsPropertyName;
-            DataServices.Last().ibstring = ibstring;
-            DataServices.Last().EnableCascadeSave = EnableCascadeSave;
-            return DataServices.Last();
-        }
-        else
-        {
-            throw new InvalidOperationException("DataServiceInvalidOperationText");
-        }
-    }
-
-    public async Task<TItem> OnAddAsync()
-    {
-        var newone = new TItem();
-        if (FieldValue != null || FieldValueD != null)
-        {
-            newone.FieldSetValue(Field, FieldValue ?? FieldValueD);
-        }
-        if (AddAsync != null)
-        {
-            newone = await AddAsync(newone);
-        }
-        return newone;
-    }
-
-    public async Task<TItem> OnEditAsync(TItem item)
-    {
-        if (EditAsync != null)
-        {
-            await EditAsync(item);
-        }
-        GetDataService().ItemCache = item.Clone();
-        return item;
-    }
-
-    public async Task<bool> OnSaveAsync(TItem item, ItemChangedType changedType)
-    {
-        if (SaveAsync != null)
-        {
-            item = await SaveAsync(item, changedType);
-        }
-        var res = await GetDataService().SaveAsync(item, changedType);
-        if (AfterSaveAsync != null)
-        {
-            await AfterSaveAsync(item, changedType);
-        }
-        return res;
-    }
-
-    public async Task<bool> OnDeleteAsync(IEnumerable<TItem> items) => await GetDataService().DeleteAsync(items);
-
-    public async Task<QueryData<TItem>> OnQueryAsync(QueryPageOptions options)
-    {
-        if (PageIndexCache != null)
-        {
-            options.PageIndex = PageIndexCache.Value;
-            PageIndexCache = null;
-        }
-        else
-        {
-            if (AutoSavePageIndex)
-            {
-                await StorageSetValue(AutoSavePageIndexKey, options.PageIndex);
-            }
-            else
-            {
-                PageIndex = options.PageIndex;
-            }
-        }
-
-        var itemsOrm = await GetDataService().QueryAsyncWithWhereCascade(
-                options,
-                dynamicFilterInfo,
-                IncludeByPropertyNames,
-                LeftJoinString,
-                OrderByPropertyName,
-                WhereCascadeOr,
-                WhereLamda
-            );
-
-        ItemsCache = itemsOrm.Items;
-
-        if (AfterQueryAsync != null)
-        {
-            var select = ISelectCache();
-            if (SelectCache != select)
-            {
-                SelectCache = select;
-                AfterQueryAsync(ISelectCache());
-            }
-        }
-
-        return itemsOrm;
-    }
-
-    /// <summary>
-    /// 获得查询子句
-    /// </summary>
-    public ISelect<TItem> ISelectCache() => GetDataService().ISelectCache(
-                dynamicFilterInfo,
-                IncludeByPropertyNames,
-                LeftJoinString,
-                WhereCascadeOr,
-                WhereLamda
-            );
-
-    /// <summary>
-    /// 全部记录
-    /// </summary>
-    public List<TItem>? GetAllItems() => GetDataService().GetAllItems(
-                dynamicFilterInfo,
-                IncludeByPropertyNames,
-                LeftJoinString,
-                OrderByPropertyName,
-                WhereCascadeOr,
-                WhereLamda
-            );
-
-    #endregion
 
     #region 动态生成控件 
 
@@ -172,25 +35,34 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
-    private RenderFragment RenderTableColumn(TItem model) => builder =>
+    public virtual RenderFragment RenderTableColumn(TItem model) => builder =>
     {
-        var fieldExpresson = GetExpression(model, FieldD ?? Field ?? "ID"); // 刚才你的那个获取表达式 GetExpression() 的返回值的
-        builder.OpenComponent(0, typeof(TableColumn<,>).MakeGenericType(typeof(TItem), FieldType));
+        var fieldExpresson = Utility.GenerateValueExpression(model, Field ?? FieldD ?? "ID", FieldType);
+        var typeTableColumn = typeof(TableColumn<,>).MakeGenericType(typeof(TItem), FieldType);
+        builder.OpenComponent(0, typeTableColumn);
         builder.AddAttribute(1, "FieldExpression", fieldExpresson);
-        // 这里继续添加你原来 Razor 文件中的哪些属性
+        var tDelegate = typeof(Func<>).MakeGenericType(FieldType ?? typeof(int));
+        builder.AddAttribute(2, "Template", DialogTableDetails());
+        builder.AddAttribute(3, "Visible", true);
+        builder.CloseComponent();
+    };
 
-        // 添加模板
-        builder.AddAttribute(2, "Template", new RenderFragment<TableColumnContext<TItem, int>>(context => buttonBuilder =>
+    /// <summary>
+    /// 动态生成明细弹窗控件
+    /// </summary>
+    /// <returns></returns>
+    public virtual RenderFragment<TableColumnContext<TItem, string>> DialogTableDetails()
+    {
+        return new RenderFragment<TableColumnContext<TItem, string>>(context => buttonBuilder =>
         {
-            // 这里写按钮的
             buttonBuilder.OpenComponent<Button>(0);
-            buttonBuilder.AddAttribute(2, nameof(Button.Text), "明细");
-            buttonBuilder.AddAttribute(1, nameof(Button.OnClickWithoutRender), new Func<Task>(async () =>
+            buttonBuilder.AddAttribute(1, nameof(Button.Text), "明细");
+            buttonBuilder.AddAttribute(2, nameof(Button.OnClickWithoutRender), new Func<Task>(async () =>
             {
                 var op = new DialogOption()
                 {
                     BodyContext = context,
-                    BodyTemplate = RenderTableDetailRow(context.Row),
+                    BodyTemplate = RenderTableDetails(context.Row),
                     Size = Size.Large,
                     ShowMaximizeButton = true,
                     ShowResize = true,
@@ -221,83 +93,41 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
                     },
                 };
                 await DialogService.Show(op);
-                //detalisTable!.FieldValueD = (context.Row).GetIdentityKey(Field);
-                //await ExtraLargeModal!.Toggle();
-                //await detalisTable.QueryAsync();
 
             }));
             buttonBuilder.CloseComponent();
-        }));
-        builder.CloseComponent();
-    };
-
-    //<TableColumn @bind-Field="@context1.PhotoUrl" Text="图" Width="60" Visible="true">
-    //    <Template Context = "value" >
-    //        <img class="category-image"
-    //             onerror="onerror=null;src='images/blank.jpg'"
-    //             src="@CheckPhoto(((AppCollects)value.Row))"
-    //             title="@value.Value"
-    //             @onclick='(() => dataService.ItemPhoto(((AppCollects)value.Row)))'>
-    //    </Template>
-    //</TableColumn>
-
+        });
+    }
 
     /// <summary>
     /// 动态生成控件 TableColumn 图片列
     /// </summary>
     /// <returns></returns>
-    private RenderFragment RenderTableColumnPhotoUrl(TItem model) => builder =>
+    public virtual RenderFragment RenderTableColumnPhotoUrl(TItem model) => builder =>
     {
         var fieldExpresson = GetExpression(model); // 刚才你的那个获取表达式 GetExpression() 的返回值的
         builder.OpenComponent(0, typeof(TableColumn<,>).MakeGenericType(typeof(TItem), FieldType));
         builder.AddAttribute(1, "FieldExpression", fieldExpresson);
-        // 这里继续添加你原来 Razor 文件中的哪些属性
 
         // 添加模板
-        builder.AddAttribute(2, "Template", new RenderFragment<TableColumnContext<TItem, int>>(context => buttonBuilder =>
-        {
-            // 这里写按钮的
-            buttonBuilder.OpenComponent<Button>(0);
-            buttonBuilder.AddAttribute(2, nameof(Button.Text), "明细行");
-            buttonBuilder.AddAttribute(1, nameof(Button.OnClickWithoutRender), new Func<Task>(async () =>
-            {
-                //var op = new DialogOption()
-                //{
-                //    BodyContext = context
-                //};
-                //await DialogService.Show(op);
-                detalisTable!.FieldValueD = (context.Row).GetIdentityKey(Field);
-                await ExtraLargeModal!.Toggle();
-                await detalisTable.QueryAsync();
-
-            }));
-            buttonBuilder.CloseComponent();
-        }));
+        builder.AddAttribute(2, "Template", DialogTableDetails());
         builder.CloseComponent();
     };
 
-
-
-    //<TablePollo TItem = "@ItemDetails"
-    //            Field="@(FieldD??Field)"
-    //            FieldValue="@context.GetIdentityKey(Field)"
-    //            ItemDetails="NullClass"
-    //            IsBordered="false" />
-
     /// <summary>
-    /// 动态生成控件 TablePollo
+    /// 动态生成明细表控件 TableAmePro
     /// </summary>
     /// <param name="model"></param>
     /// <param name="rowType"></param>
     /// <returns></returns>
-    private RenderFragment RenderTableDetailRow(object model, TableDetailRowType rowType = TableDetailRowType.选项卡1) => builder =>
+    public virtual RenderFragment RenderTableDetails(object model, TableDetailRowType rowType = TableDetailRowType.选项卡1) => builder =>
     {
         var _Field = Field;
         var _FieldValue = model.GetIdentityKey(Field);
         if (rowType == TableDetailRowType.选项卡2)
         {
             //第二选项卡
-            builder.OpenComponent<TablePollo<ItemDetailsII, NullClass, NullClass, NullClass>>(0);
+            builder.OpenComponent<TableAmePro<ItemDetailsII, NullClass, NullClass, NullClass>>(0);
             if (FieldII != null && FieldII != Field)
             {
                 _Field = FieldII ?? Field;
@@ -306,9 +136,14 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
             _Field = FieldIID ?? Field;
 
         }
+        else if (ShowDetailRowType == ShowDetailRowType.表内明细II)
+        {
+            builder.OpenComponent<TableAmePro<ItemDetails, ItemDetailsII, NullClass, NullClass>>(0);
+            _Field = FieldD ?? Field;
+        }
         else if (rowType == TableDetailRowType.选项卡3)
         {
-            builder.OpenComponent<TablePollo<ItemDetailsIII, NullClass, NullClass, NullClass>>(0);
+            builder.OpenComponent<TableAmePro<ItemDetailsIII, NullClass, NullClass, NullClass>>(0);
             if (FieldII != null && FieldII != Field)
             {
                 _Field = FieldIII ?? Field;
@@ -317,17 +152,13 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
             _Field = FieldIIID ?? Field;
 
         }
-        else if (ShowDetailRowType == ShowDetailRowType.表内明细II)
-        {
-            builder.OpenComponent<TablePollo<ItemDetails, ItemDetailsII, NullClass, NullClass>>(0);
-            _Field = FieldD ?? Field;
-        }
         else
         {
-            builder.OpenComponent<TablePollo<ItemDetails, NullClass, NullClass, NullClass>>(0);
+            builder.OpenComponent<TableAmePro<ItemDetails, NullClass, NullClass, NullClass>>(0);
             _Field = FieldD ?? Field;
         }
         builder.AddAttribute(0, nameof(Field), _Field);
+
         if (IsDebug)
         {
             ToastService.Success($"展开详情行 {_Field} : _FieldValue");
@@ -428,7 +259,4 @@ public partial class TablePollo<TItem, ItemDetails, ItemDetailsII, ItemDetailsII
     #endregion
 
 
-
-
 }
-

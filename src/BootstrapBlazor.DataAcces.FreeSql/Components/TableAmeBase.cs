@@ -232,8 +232,6 @@ public partial class TableAmeBase : BootstrapComponentBase
     /// </summary>
     [Parameter] public ShowToolbarType ShowToolbarType { get; set; } = ShowToolbarType.无;
 
-    protected Modal? ExtraLargeModal { get; set; }
-
     [Parameter] public Func<Task>? Excel导入 { get; set; }
 
     [Parameter] public string? Excel导入文本 { get; set; } = "Excel导入";

@@ -2,7 +2,7 @@
 @typeparam ItemDetails
 @typeparam ItemDetailsII
 @typeparam ItemDetailsIII
-@inherits TableAmeProDetails<TItem, ItemDetails>
+@inherits TableAmeProDetailsIII<TItem, ItemDetails, ItemDetailsII, ItemDetailsIII>
 @namespace AmeBlazor.Components
 
 <Table TItem="TItem" @ref="@TableMain"
@@ -219,22 +219,22 @@
         {
             <Tab IsLazyLoadTabItem="true">
                 <TabItem Text="@DetailRowsName1">
-                    @RenderTableDetailRow(context)
+                    @RenderTableDetails(context)
                 </TabItem>
                 <TabItem Text="@DetailRowsName2">
-                    @RenderTableDetailRow(context, TableDetailRowType.选项卡2)
+                    @RenderTableDetails(context, TableDetailRowType.选项卡2)
                 </TabItem>
                 @if (DetailRowsName3 != null)
                 {
                     <TabItem Text="@DetailRowsName3">
-                        @RenderTableDetailRow(context, TableDetailRowType.选项卡3)
+                        @RenderTableDetails(context, TableDetailRowType.选项卡3)
                     </TabItem>
                 }
             </Tab>
         }
         else
         {
-            @RenderTableDetailRow(context)
+            @RenderTableDetails(context)
         }
     </DetailRowTemplate>
 
@@ -346,35 +346,4 @@
         }
     </ExportButtonDropdownTemplate>
 
-</Table>
-
-@if (ShowDetailRowType == ShowDetailRowType.弹窗)
-{
-    <Modal @ref="ExtraLargeModal">
-        <ModalDialog Size="Size.Large" Title="子项目" IsDraggable="true">
-            <BodyTemplate>
-
-                @*<TablePollo @ref="@detalisTable"
-                    TItem="@ItemDetails"
-                    ItemDetails="ItemDetailsII"
-                    ItemDetailsII="ItemDetailsIII"
-                    ItemDetailsIII="NullClass"
-                    Field="@(FieldD??Field)"
-                    FieldValue="@SelectOneItem!.GetIdentityKey(Field)"
-                    IsBordered="false"
-                    ShowToolbar="@ShowToolbar"
-                    ShowDefaultButtons="@ShowDefaultButtons"
-                    ShowExtendButtons="@ShowExtendButtons"
-                    ShowSearch="@ShowSearch"
-                    DoubleClickToEdit="@DoubleClickToEdit"
-                    TableSize="@TableSize"
-                    HeaderStyle="@HeaderStyle"
-                    ShowLineNo="@ShowLineNo"
-                    ShowSkeleton="@ShowSkeleton"
-                    ShowRefresh="@ShowRefresh" />*@
-
-            </BodyTemplate>
-
-        </ModalDialog>
-    </Modal>
-}
+</Table> 
