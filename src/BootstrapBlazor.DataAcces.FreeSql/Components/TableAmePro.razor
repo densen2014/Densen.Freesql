@@ -20,6 +20,10 @@
        OnQueryAsync="@OnQueryAsync"
        OnSaveAsync="@OnSaveAsync"
        OnDeleteAsync="@OnDeleteAsync"
+       OnExportAsync="ExportAsync"
+       OnClickRowCallback="ClickRow"
+       OnAfterDeleteAsync="OnAfterDeleteAsync"
+       OnAfterModifyAsync="OnAfterModifyAsync"
        DoubleClickToEdit="@DoubleClickToEdit"
        IsMultipleSelect="@IsMultipleSelect"
        IsTracking="@IsTracking"
@@ -64,8 +68,6 @@
        EditDialogSize="EditDialogSize"
        EditDialogShowMaximizeButton="EditDialogShowMaximizeButton"
        ExportButtonIcon=@ExportButtonIcon
-       OnExportAsync="ExportAsync"
-       OnClickRowCallback="ClickRow"
        TableToolbarBeforeTemplate="@TableToolbarBeforeTemplate"
        EditTemplate="@EditTemplate"
        TableExtensionToolbarBeforeTemplate="@TableExtensionToolbarBeforeTemplate"
@@ -85,6 +87,8 @@
        IsHideFooterWhenNoData="IsHideFooterWhenNoData"
        ShowMultiFilterHeader="ShowMultiFilterHeader"
        IsAutoQueryFirstRender="IsAutoQueryFirstRender"
+       SelectedRows="SelectedRows"
+       SelectedRowsChanged="SelectedRowsChanged"
        >
 
     <TableToolbarTemplate>

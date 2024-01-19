@@ -915,8 +915,7 @@ public partial class TableAmeBase : BootstrapComponentBase
     /// 获得/设置 首次加载时是否自动查询数据 默认 true <see cref="Items"/> 模式下此参数不起作用
     /// </summary>
     [Parameter]
-    public bool IsAutoQueryFirstRender { get; set; } = true;
-
+    public bool IsAutoQueryFirstRender { get; set; } = true; 
 
     #endregion
 

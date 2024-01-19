@@ -4,11 +4,10 @@
 // e-mail:zhouchuanglin@gmail.com 
 // **********************************
 
-using AME;
 using BootstrapBlazor.Components;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Components;
-using static AME.EnumsExtensions;
+using Microsoft.AspNetCore.Components.Rendering;
 
 namespace AmeBlazor.Components;
 
@@ -25,16 +24,16 @@ where ItemDetails : class, new()
 {
 
     /// <summary>
-    /// 获得/设置 子表编辑按钮回调方法
-    /// </summary>
-    [Parameter]
-    public Func<ItemDetails, Task>? SubEditAsync { get; set; }
-
-    /// <summary>
     /// 获得/设置 子表新建按钮回调方法
     /// </summary>
     [Parameter]
     public Func<ItemDetails, Task<ItemDetails>>? SubAddAsync { get; set; }
+
+    /// <summary>
+    /// 获得/设置 子表编辑按钮回调方法
+    /// </summary>
+    [Parameter]
+    public Func<ItemDetails, Task>? SubEditAsync { get; set; }
 
     /// <summary>
     /// 获得/设置 子表保存按钮异步回调方法
@@ -43,9 +42,32 @@ where ItemDetails : class, new()
     public Func<ItemDetails, ItemChangedType, Task<ItemDetails>>? SubSaveAsync { get; set; }
 
     /// <summary>
-    /// 获得/设置 明细表保存按钮异步回调方法
+    /// 获得/设置 子表删除按钮异步回调方法
     /// </summary>
     [Parameter]
-    public Func<ItemDetails, ItemChangedType, Task<ItemDetails>>? DetailsSaveAsync { get; set; }
+    public Func<IEnumerable<TItem>, Task<bool>>? SubDeleteAsync { get; set; }
 
+    /// <summary>
+    /// 附加属性
+    /// </summary>
+    /// <param name="builder"></param>
+    public override void TRenderTableAdditionalAttributes(RenderTreeBuilder builder)
+    {
+        if (SubAddAsync != null)
+        {
+            builder.AddAttribute(50, nameof(AddAsync), SubAddAsync);
+        }
+        if (SubEditAsync != null)
+        {
+            builder.AddAttribute(51, nameof(EditAsync), SubEditAsync);
+        }
+        if (SubSaveAsync != null)
+        {
+            builder.AddAttribute(52, nameof(SaveAsync), SubSaveAsync);
+        }
+        if (SubDeleteAsync != null)
+        {
+            builder.AddAttribute(52, nameof(DeleteAsync), SubDeleteAsync);
+        }
+    }
 }
