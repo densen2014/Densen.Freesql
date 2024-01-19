@@ -181,3 +181,17 @@ public partial class AspNetUsers
     private string roleName1st;
 
 }
+
+/// <summary>
+/// 用户表 Dto
+/// </summary>
+[JsonObject(MemberSerialization.OptIn), Table(DisableSyncStructure = true,Name = "AspNetUsers")]
+[AutoGenerateClass(Searchable = true, Filterable = true, Sortable = true, ShowTips = true)]
+public partial class AspNetUsersDto: AspNetUsers
+{
+    [AutoGenerateColumn(Visible = true, Order = 1)]
+    [DisplayName("用户ID")]
+    [JsonProperty, Column(StringLength = -2, IsPrimary = true, IsNullable = false)]
+    public new string Id { get; set; }
+
+}

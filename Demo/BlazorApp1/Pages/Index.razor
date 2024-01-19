@@ -6,41 +6,45 @@
 
 <Tab IsLazyLoadTabItem>
     <TabItem Text="基本">
-        <TablePollo TItem="AspNetUsers" ItemDetails="NullClass" ItemDetailsII="NullClass"
-                    ItemDetailsIII="NullClass" ShowColumnList EditDialogItemsPerRow="1" EditDialogRowType="RowType.Normal"
-                    ShowExportButton
-                    UseMiniExcel="false"
-                    UseFullExportService
-                    ExportToStream="false"
-                    AutoSavePageIndex
-                    IsAutoCollapsedToolbarButton="false"
-                    AllowDragColumn
-                    ShowResetButton="false"
-                    ShowAdvancedSearch="false"
-                    PageItemsSource="new int[] {5, 20, 50, 100, 200, 500, 1000 }" />
+        <TableAmePro TItem="AspNetUsers" 
+                     ItemDetails="NullClass" 
+                     ItemDetailsII="NullClass"
+                     ItemDetailsIII="NullClass"
+                      ShowColumnList EditDialogItemsPerRow="1" EditDialogRowType="RowType.Normal"
+                      ShowExportButton
+                      UseMiniExcel="false"
+                      UseFullExportService
+                      ExportToStream="false"
+                      AutoSavePageIndex
+                      IsAutoCollapsedToolbarButton="false"
+                      AllowDragColumn
+                      ShowResetButton="false"
+                      ShowAdvancedSearch="false"
+                      PageItemsSource="new int[] {5, 20, 50, 100, 200, 500, 1000 }" />
     </TabItem>
     <TabItem Text="用户">
 
-        <TablePollo TItem="AspNetUsers"
-                    ShowDetailRowType=AME.EnumsExtensions.ShowDetailRowType.选项卡
-                    IncludeByPropertyNames="@IncludeAspNetUsers"
-                    Field="@nameof(AspNetUsers.Id)"
-                    DetailRowsName1="角色表"
-                    FieldD="@nameof(AspNetUserRoles.UserId)"
-                    ItemDetails="AspNetUserRoles"
-                    SubIncludeByPropertyNames="@SubIncludeByPropertyNames"
-                    DetailRowsName2="用户声明"
-                    FieldIID="@nameof(AspNetUserClaims.UserId)"
-                    ItemDetailsII="AspNetUserClaims"
-                    SubIncludeByPropertyNamesII="new List<string> {}"
-                    ItemDetailsIII="NullClass"
-                    ShowColumnList
-                    ShowDetailRowS
-                    ExportToStream="false"
-                    ExportBasePath="temp"
-                    ShowExportButton
-                    UseMiniExcel="false"
-                    UseFullExportService />
+        <TableAmePro TItem="AspNetUsers"
+                      ShowDetailRowType=ShowDetailRowType.选项卡
+                      IncludeByPropertyNames="@IncludeAspNetUsers"
+                      Field="@nameof(AspNetUsers.Id)"
+                      FieldType="typeof(string)"
+                      DetailRowsName1="角色表"
+                      FieldD="@nameof(AspNetUserRoles.UserId)"
+                      ItemDetails="AspNetUserRoles"
+                      SubIncludeByPropertyNames="@SubIncludeByPropertyNames"
+                      DetailRowsName2="用户声明"
+                      FieldIID="@nameof(AspNetUserClaims.UserId)"
+                      ItemDetailsII="AspNetUserClaims"
+                      SubIncludeByPropertyNamesII="new List<string> {}"
+                      ItemDetailsIII="NullClass"
+                      ShowColumnList
+                      ShowDetailRowS
+                      ExportToStream="false"
+                      ExportBasePath="temp"
+                      ShowExportButton
+                      UseMiniExcel="false"
+                      UseFullExportService />
         @code{
 
             //通过 UserId 联表读取角色表 AspNetUserRoles 指定用户数据, 但是AspNetUsers表主键是 Id 字段, 详表指定 FieldD="UserId"
@@ -162,6 +166,35 @@
 
         @code{
         }
+    </TabItem>
+    <TabItem Text="测试">
+
+        <TableAmePro TItem="AspNetUsersDto"
+                      ShowDetailRowType=ShowDetailRowType.弹窗
+                      Field="@nameof(AspNetUsers.Id)"
+                      FieldType="typeof(string)"
+                      FieldD="@nameof(AspNetUserRoles.UserId)"
+                      ItemDetails="AspNetUserRoles"
+                      ItemDetailsII="NullClass"
+                      ItemDetailsIII="NullClass"
+                      ShowColumnList
+                      ShowFooter>
+            @*<RowButtonTemplate>
+                    <Button Text="测试1" />
+                </RowButtonTemplate>
+                <TableToolbarTemplate>
+                    <Button Text="测试2" />
+                </TableToolbarTemplate>
+                <TableColumnsTemplate>
+                    <Button Text="测试3" />
+                </TableColumnsTemplate>
+                <DetailRowTemplate>
+                    <Button Text="测试4" />
+                </DetailRowTemplate>
+                <FooterTemplate>
+                    <TableFooterCell Text="测试5" />
+                </FooterTemplate>*@
+        </TableAmePro>
     </TabItem>
 </Tab>
 
