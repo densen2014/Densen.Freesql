@@ -4,9 +4,11 @@
 // e-mail:zhouchuanglin@gmail.com 
 // **********************************
 
+using AME;
 using BootstrapBlazor.Components;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Components;
+using static AME.EnumsExtensions;
 
 namespace AmeBlazor.Components;
 
@@ -45,4 +47,5 @@ where ItemDetails : class, new()
     /// </summary>
     [Parameter]
     public Func<ItemDetails, ItemChangedType, Task<ItemDetails>>? DetailsSaveAsync { get; set; }
+
 }

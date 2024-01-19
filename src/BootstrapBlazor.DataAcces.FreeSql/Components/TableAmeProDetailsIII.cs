@@ -5,8 +5,9 @@
 // **********************************
 
 using AME;
-using BootstrapBlazor.Components;
+using BootstrapBlazor.Components; 
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering; 
 using static AME.EnumsExtensions;
 
 namespace AmeBlazor.Components;
@@ -19,7 +20,7 @@ namespace AmeBlazor.Components;
 /// <typeparam name="TItem">主表类名</typeparam>
 /// <typeparam name="ItemDetails">详表类名</typeparam>
 /// <typeparam name="ItemDetailsII">详表的详表类名</typeparam>
-/// <typeparam name="ItemDetailsII">详表3类名</typeparam>
+/// <typeparam name="ItemDetailsIII">详表3类名</typeparam>
 public partial class TableAmeProDetailsIII<TItem, ItemDetails, ItemDetailsII, ItemDetailsIII> : TableAmeProDetails<TItem, ItemDetails>
     where TItem : class, new()
     where ItemDetails : class, new()
@@ -41,8 +42,14 @@ public partial class TableAmeProDetailsIII<TItem, ItemDetails, ItemDetailsII, It
         var typeTableColumn = typeof(TableColumn<,>).MakeGenericType(typeof(TItem), FieldType);
         builder.OpenComponent(0, typeTableColumn);
         builder.AddAttribute(1, "FieldExpression", fieldExpresson);
-        var tDelegate = typeof(Func<>).MakeGenericType(FieldType ?? typeof(int));
-        builder.AddAttribute(2, "Template", DialogTableDetails());
+        if (Type.GetTypeCode(FieldType) == TypeCode.Int32)
+        {
+            builder.AddAttribute(2, "Template", DialogTableDetails<int>());
+        }
+        else
+        {
+            builder.AddAttribute(2, "Template", DialogTableDetails<string>());
+        }
         builder.AddAttribute(3, "Visible", true);
         builder.CloseComponent();
     };
@@ -51,9 +58,9 @@ public partial class TableAmeProDetailsIII<TItem, ItemDetails, ItemDetailsII, It
     /// 动态生成明细弹窗控件
     /// </summary>
     /// <returns></returns>
-    public virtual RenderFragment<TableColumnContext<TItem, string>> DialogTableDetails()
+    public virtual RenderFragment<TableColumnContext<TItem, TValue>> DialogTableDetails<TValue>() 
     {
-        return new RenderFragment<TableColumnContext<TItem, string>>(context => buttonBuilder =>
+        return new RenderFragment<TableColumnContext<TItem, TValue>>(context => buttonBuilder =>
         {
             buttonBuilder.OpenComponent<Button>(0);
             buttonBuilder.AddAttribute(1, nameof(Button.Text), "明细");
@@ -105,12 +112,19 @@ public partial class TableAmeProDetailsIII<TItem, ItemDetails, ItemDetailsII, It
     /// <returns></returns>
     public virtual RenderFragment RenderTableColumnPhotoUrl(TItem model) => builder =>
     {
-        var fieldExpresson = GetExpression(model); // 刚才你的那个获取表达式 GetExpression() 的返回值的
+        var fieldExpresson = Utility.GenerateValueExpression(model, Field ?? FieldD ?? "ID", FieldType); // 刚才你的那个获取表达式 GetExpression() 的返回值的
         builder.OpenComponent(0, typeof(TableColumn<,>).MakeGenericType(typeof(TItem), FieldType));
         builder.AddAttribute(1, "FieldExpression", fieldExpresson);
 
         // 添加模板
-        builder.AddAttribute(2, "Template", DialogTableDetails());
+        if (Type.GetTypeCode(FieldType) == TypeCode.Int32)
+        {
+            builder.AddAttribute(2, "Template", DialogTableDetails<int>());
+        }
+        else
+        {
+            builder.AddAttribute(2, "Template", DialogTableDetails<string>());
+        }
         builder.CloseComponent();
     };
 
@@ -124,10 +138,12 @@ public partial class TableAmeProDetailsIII<TItem, ItemDetails, ItemDetailsII, It
     {
         var _Field = Field;
         var _FieldValue = model.GetIdentityKey(Field);
+
+        TRenderTable(rowType, builder);
+
         if (rowType == TableDetailRowType.选项卡2)
         {
             //第二选项卡
-            builder.OpenComponent<TableAmePro<ItemDetailsII, NullClass, NullClass, NullClass>>(0);
             if (FieldII != null && FieldII != Field)
             {
                 _Field = FieldII ?? Field;
@@ -138,25 +154,22 @@ public partial class TableAmeProDetailsIII<TItem, ItemDetails, ItemDetailsII, It
         }
         else if (ShowDetailRowType == ShowDetailRowType.表内明细II)
         {
-            builder.OpenComponent<TableAmePro<ItemDetails, ItemDetailsII, NullClass, NullClass>>(0);
             _Field = FieldD ?? Field;
         }
         else if (rowType == TableDetailRowType.选项卡3)
         {
-            builder.OpenComponent<TableAmePro<ItemDetailsIII, NullClass, NullClass, NullClass>>(0);
             if (FieldII != null && FieldII != Field)
             {
                 _Field = FieldIII ?? Field;
                 _FieldValue = model.GetIdentityKey(FieldIII);
             }
             _Field = FieldIIID ?? Field;
-
         }
         else
         {
-            builder.OpenComponent<TableAmePro<ItemDetails, NullClass, NullClass, NullClass>>(0);
             _Field = FieldD ?? Field;
         }
+
         builder.AddAttribute(0, nameof(Field), _Field);
 
         if (IsDebug)
@@ -255,6 +268,32 @@ public partial class TableAmeProDetailsIII<TItem, ItemDetails, ItemDetailsII, It
         }
         builder.CloseComponent();
     };
+
+    /// <summary>
+    /// 明细表控件
+    /// </summary>
+    /// <param name="rowType"></param>
+    /// <param name="builder"></param>
+    public virtual void TRenderTable(TableDetailRowType rowType, RenderTreeBuilder builder)
+    {
+        if (rowType == TableDetailRowType.选项卡2)
+        {
+            builder.OpenComponent<TableAmePro<ItemDetailsII, NullClass, NullClass, NullClass>>(0);
+        }
+        else if (ShowDetailRowType == ShowDetailRowType.表内明细II)
+        {
+            builder.OpenComponent<TableAmePro<ItemDetails, ItemDetailsII, NullClass, NullClass>>(0);
+        }
+        else if (rowType == TableDetailRowType.选项卡3)
+        {
+            builder.OpenComponent<TableAmePro<ItemDetailsIII, NullClass, NullClass, NullClass>>(0);
+        }
+        else
+        {
+            builder.OpenComponent<TableAmePro<ItemDetails, NullClass, NullClass, NullClass>>(0);
+        }
+    }
+
 
     #endregion
 

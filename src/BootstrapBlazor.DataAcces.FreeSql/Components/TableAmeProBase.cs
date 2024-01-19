@@ -423,7 +423,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     protected RenderFragment RenderTableImgColumn(TItem model, TableImgField? tableImgField = null) => builder =>
       {
           tableImgField = tableImgField ?? TableImgField ?? new TableImgField();
-          var fieldExpresson = GetExpression(model, tableImgField.Field, tableImgField.FieldType);
+          var fieldExpresson = Utility.GenerateValueExpression(model, tableImgField.Field, tableImgField.FieldType);
           builder.OpenComponent(0, typeof(TableColumn<,>).MakeGenericType(typeof(TItem), tableImgField.FieldType));
           builder.AddAttribute(1, "FieldExpression", fieldExpresson);
           //builder.AddAttribute(2, "Width", 200);
@@ -471,7 +471,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// <returns></returns>
     protected RenderFragment RenderTableFunctionsColumn(TItem model, TableImgField tableImgField) => builder =>
     {
-        var fieldExpresson = GetExpression(model, tableImgField.Field, tableImgField.FieldType);
+        var fieldExpresson = Utility.GenerateValueExpression(model, tableImgField.Field, tableImgField.FieldType);
         builder.OpenComponent(0, typeof(TableColumn<,>).MakeGenericType(typeof(TItem), tableImgField.FieldType));
         builder.AddAttribute(1, "FieldExpression", fieldExpresson);
         //builder.AddAttribute(2, "Width", 200);
