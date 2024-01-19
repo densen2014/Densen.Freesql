@@ -19,6 +19,7 @@ namespace Densen.DataAcces.FreeSql;
 /// </summary>
 public static partial class FreeSqlUtil
 {
+
     /// <summary>
     /// 获得查询子句
     /// </summary>
@@ -84,7 +85,7 @@ public static partial class FreeSqlUtil
     /// 执行查询
     /// </summary>
     /// <param name="option">查询条件</param>
-    /// <param name="optionsLast">缓存查询条件</param>
+    /// <param name="optionsLast">(已弃用)缓存查询条件</param>
     /// <param name="TotalCount"></param> 
     /// <param name="fsql"></param>
     /// <param name="WhereCascade">附加查询条件使用and结合</param>
@@ -117,7 +118,7 @@ public static partial class FreeSqlUtil
             option.IsVirtualScroll = false;
         }
 
-        optionsLast = optionsLast ?? option;
+        //optionsLast = optionsLast ?? option;
 
         try
         {
@@ -520,6 +521,51 @@ public static partial class FreeSqlUtil
         }
         return defaultValue;
     }
+    #endregion
+
+    #region "删除方法"
+    public static async Task<int> Delete<TModel>(this IFreeSql fsql, IEnumerable<TModel> models) where TModel : class, new()
+    {
+        return await fsql.Delete<TModel>(models).ExecuteAffrowsAsync();
+    }
+    #endregion
+
+    #region "保存方法"
+    public static async Task<TModel?> Save<TModel>(this IFreeSql fsql, TModel model, bool EnableCascadeSave, TModel? ItemCache, string? SaveManyChildsPropertyName) where TModel : class, new()
+    {
+        var repo = fsql.GetRepository<TModel>();
+
+        //一对一(OneToOne)、一对多(OneToMany)、多对多(ManyToMany) 级联保存功能
+        repo.DbContextOptions.EnableCascadeSave = EnableCascadeSave;
+
+        if (ItemCache != null)
+        {
+            //多主键实体,保存前先删除
+            var keys = fsql.CodeFirst.GetTableByEntity(typeof(TModel));
+            if (keys.Primarys.Any() && keys.Primarys.Length > 1)
+            {
+                await fsql.Delete<TModel>(ItemCache).ExecuteAffrowsAsync();
+            }
+        }
+
+        var res = await repo.InsertOrUpdateAsync(model);
+
+        if (!string.IsNullOrEmpty(SaveManyChildsPropertyName))
+        {
+            try
+            {
+                //联级保存
+                repo.SaveMany(model, SaveManyChildsPropertyName);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"FreeSqlDataService联级保存 error , {ex.Message}");
+            }
+        }
+
+        return res;
+    }
+
     #endregion
 }
 

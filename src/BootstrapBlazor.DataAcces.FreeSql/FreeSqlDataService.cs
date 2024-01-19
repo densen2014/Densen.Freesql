@@ -9,7 +9,6 @@ using FreeSql;
 using FreeSql.Internal.Model;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using Console = System.Console;
 
 namespace Densen.DataAcces.FreeSql;
 
@@ -94,9 +93,9 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
     {
         // 通过模型获取主键列数据
         // 支持批量删除
-        await fsql.Delete<TModel>(models).ExecuteAffrowsAsync();
+        var res=await FreeSqlUtil.Delete(fsql, models);
         TotalCount = null;
-        return true;
+        return res>0;
     }
 
     /// <summary>
@@ -106,39 +105,11 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
     /// <param name="changedType">数据变化类型</param>
     /// <returns></returns>
     public override async Task<bool> SaveAsync(TModel model, ItemChangedType changedType)
-    {
-        var repo = fsql.GetRepository<TModel>();
-
-        //一对一(OneToOne)、一对多(OneToMany)、多对多(ManyToMany) 级联保存功能
-        repo.DbContextOptions.EnableCascadeSave = EnableCascadeSave;
-
-        if (ItemCache != null)
-        { 
-            //多主键实体,保存前先删除
-            var keys = fsql.CodeFirst.GetTableByEntity(typeof(TModel));
-            if (keys.Primarys.Any() && keys.Primarys.Length >1)
-            {
-                await fsql.Delete<TModel>(ItemCache).ExecuteAffrowsAsync();
-            }
-        }
-
-        await repo.InsertOrUpdateAsync(model);
-
-        if (!string.IsNullOrEmpty(SaveManyChildsPropertyName))
-        {
-            try
-            {
-                //联级保存
-                repo.SaveMany(model, SaveManyChildsPropertyName);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"FreeSqlDataService联级保存 error , {ex.Message}");
-            }
-        }
-
+    { 
+        var res=await FreeSqlUtil.Save(fsql, model, EnableCascadeSave, ItemCache,SaveManyChildsPropertyName);
+         
         TotalCount = null;
-        return true;
+        return res!=null;
     }
 
     /// <summary>
