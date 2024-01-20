@@ -278,9 +278,9 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
 
     public async Task<bool> OnDeleteAsync(IEnumerable<TItem> items)
     {
-        if (OnDeleteAsync != null)
+        if (DeleteAsync != null)
         {
-            if (!await OnDeleteAsync(items))
+            if (!await DeleteAsync(items))
             {
                 return false;
             }
