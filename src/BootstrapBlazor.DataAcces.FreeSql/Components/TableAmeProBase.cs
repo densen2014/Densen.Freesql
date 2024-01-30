@@ -13,7 +13,7 @@ using FreeSql;
 using FreeSql.Internal.Model;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.JSInterop;
+using Microsoft.JSInterop; 
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -545,16 +545,24 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     {
         var fieldExpresson = Utility.GenerateValueExpression(model, Field ?? FieldD ?? "ID", FieldType);
         var typeTableColumn = typeof(TableColumn<,>).MakeGenericType(typeof(TItem), FieldType);
+        var value= Utility.GetPropertyValue(model, Field ?? FieldD ?? "ID");
+        //if (value == null)
+        //{
+        //    return;
+        //}
+        //var valueType=value.GetType();
         builder.OpenComponent(0, typeTableColumn);
         builder.AddAttribute(1, "FieldExpression", fieldExpresson);
-        if (Type.GetTypeCode(FieldType) == TypeCode.Int32)
-        {
-            builder.AddAttribute(2, "Template", DialogTableDetails<int>());
-        }
-        else
-        {
-            builder.AddAttribute(2, "Template", DialogTableDetails<string>());
-        }
+        var typeTableColumnContext = typeof(TableColumnContext<,>).MakeGenericType(typeof(TItem), FieldType);
+        builder.AddAttribute(2, "Template", DialogTableDetails(FieldType));
+        //if (Type.GetTypeCode(FieldType) == TypeCode.Int32)
+        //{
+        //    builder.AddAttribute(2, "Template", DialogTableDetails<int>());
+        //}
+        //else
+        //{
+        //    builder.AddAttribute(2, "Template", DialogTableDetails<string>());
+        //}
         builder.AddAttribute(3, "Visible", true);
         builder.CloseComponent();
     };
@@ -563,7 +571,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// 动态生成明细弹窗控件
     /// </summary>
     /// <returns></returns>
-    public virtual RenderFragment<TableColumnContext<TItem, TValue>> DialogTableDetails<TValue>()
+    public virtual object DialogTableDetails(Type type) 
     {
         return new RenderFragment<TableColumnContext<TItem, TValue>>(context => buttonBuilder =>
         {
@@ -618,18 +626,21 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     public virtual RenderFragment RenderTableColumnPhotoUrl(TItem model) => builder =>
     {
         var fieldExpresson = Utility.GenerateValueExpression(model, Field ?? FieldD ?? "ID", FieldType); // 刚才你的那个获取表达式 GetExpression() 的返回值的
+        var value = Utility.GetPropertyValue<object, object>(model, Field ?? FieldD ?? "ID");
+        var valueType = value.GetType();
         builder.OpenComponent(0, typeof(TableColumn<,>).MakeGenericType(typeof(TItem), FieldType));
         builder.AddAttribute(1, "FieldExpression", fieldExpresson);
+        //builder.AddAttribute(2, "Template", DialogTableDetails(valueType, value));
 
-        // 添加模板
-        if (Type.GetTypeCode(FieldType) == TypeCode.Int32)
-        {
-            builder.AddAttribute(2, "Template", DialogTableDetails<int>());
-        }
-        else
-        {
-            builder.AddAttribute(2, "Template", DialogTableDetails<string>());
-        }
+        //// 添加模板
+        //if (Type.GetTypeCode(FieldType) == TypeCode.Int32)
+        //{
+        //    builder.AddAttribute(2, "Template", DialogTableDetails<int>());
+        //}
+        //else
+        //{
+        //    builder.AddAttribute(2, "Template", DialogTableDetails<string>());
+        //}
         builder.CloseComponent();
     };
 

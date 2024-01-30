@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <LangVersion>latest</LangVersion>
         <Configurations>Debug;Release;DebugSC</Configurations>
+        <UserSecretsId>68449065-3877-4d07-ab01-296f677a0656</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
