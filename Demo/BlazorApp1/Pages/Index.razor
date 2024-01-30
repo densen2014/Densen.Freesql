@@ -2,201 +2,38 @@
 @using Densen.Models.ids
 @using System.Linq.Expressions
 
-<PageTitle>管理</PageTitle>
+<PageTitle>测试RenderTableColumn</PageTitle>
 
-<Tab IsLazyLoadTabItem>
-    <TabItem Text="基本">
-        <TableAmePro TItem="AspNetUsers" 
-                     ItemDetails="NullClass" 
-                     ItemDetailsII="NullClass"
-                     ItemDetailsIII="NullClass"
-                      ShowColumnList EditDialogItemsPerRow="1" EditDialogRowType="RowType.Normal"
-                      ShowExportButton
-                      UseMiniExcel="false"
-                      UseFullExportService
-                      ExportToStream="false"
-                      AutoSavePageIndex
-                      IsAutoCollapsedToolbarButton="false"
-                      AllowDragColumn
-                      ShowResetButton="false"
-                      ShowAdvancedSearch="false"
-                      PageItemsSource="new int[] {5, 20, 50, 100, 200, 500, 1000 }" />
-    </TabItem>
-    <TabItem Text="用户">
+<TabItem Text="测试">
 
-        <TableAmePro TItem="AspNetUsers"
-                      ShowDetailRowType=ShowDetailRowType.选项卡
-                      IncludeByPropertyNames="@IncludeAspNetUsers"
-                      Field="@nameof(AspNetUsers.Id)"
-                      FieldType="typeof(string)"
-                      DetailRowsName1="角色表"
-                      FieldD="@nameof(AspNetUserRoles.UserId)"
-                      ItemDetails="AspNetUserRoles"
-                      SubIncludeByPropertyNames="@SubIncludeByPropertyNames"
-                      DetailRowsName2="用户声明"
-                      FieldIID="@nameof(AspNetUserClaims.UserId)"
-                      ItemDetailsII="AspNetUserClaims"
-                      SubIncludeByPropertyNamesII="new List<string> {}"
-                      ItemDetailsIII="NullClass"
-                      ShowColumnList
-                      ShowDetailRowS
-                      ExportToStream="false"
-                      ExportBasePath="temp"
-                      ShowExportButton
-                      UseMiniExcel="false"
-                      UseFullExportService />
-        @code{
+    <TableAmePro TItem="AspNetUsersDto"
+                 ShowDetailRowType=ShowDetailRowType.弹窗
+                 Field="@nameof(AspNetUsers.TwoFactorEnabled)"
+                 FieldType="typeof(int)"
+                 FieldD="@nameof(AspNetUserRoles.UserId)"
+                 ItemDetails="AspNetUserRoles"
+                 ItemDetailsII="NullClass"
+                 ItemDetailsIII="NullClass"
+                 ShowColumnList
+                 ShowFooter>
+        @*<RowButtonTemplate>
+                <Button Text="测试1" />
+            </RowButtonTemplate>
+            <TableToolbarTemplate>
+                <Button Text="测试2" />
+            </TableToolbarTemplate>
+            <TableColumnsTemplate>
+                <Button Text="测试3" />
+            </TableColumnsTemplate>
+            <DetailRowTemplate>
+                <Button Text="测试4" />
+            </DetailRowTemplate>
+            <FooterTemplate>
+                <TableFooterCell Text="测试5" />
+            </FooterTemplate>*@
+    </TableAmePro>
+</TabItem>
 
-            //通过 UserId 联表读取角色表 AspNetUserRoles 指定用户数据, 但是AspNetUsers表主键是 Id 字段, 详表指定 FieldD="UserId"
-
-            //附加导航IncludeByPropertyName查询条件
-            List<string> IncludeAspNetUsers
-            {
-                get => new List<string> {
-                    $"{nameof(AspNetUsers.AspNetUserRoless)},{nameof(AspNetUserRoles.AspNetRoless)}" ,
-                };
-            }
-
-            List<string> SubIncludeByPropertyNames = new List<string> {
-                nameof(AspNetUserRoles.AspNetRoless) ,
-            };
-
-
-        }
-        <hr />
-        <p>只显示某Id</p>
-        <TablePollo TItem="AspNetUsers"
-                    WhereLamda="DWhere1"
-                    IncludeByPropertyNames="@IncludeAspNetUsers"
-                    ItemDetails="AspNetUserRoles"
-                    SubIncludeByPropertyNames="@SubIncludeByPropertyNames"
-                    ItemDetailsII="NullClass"
-                    ItemDetailsIII="NullClass"
-                    ShowColumnList
-                    ShowExportButton
-                    ShowDetailRowS
-                    Field="@nameof(AspNetUsers.Id)"
-                    FieldD="@nameof(AspNetUserRoles.UserId)"
-                    ExportToStream="false"
-                    ExportBasePath="temp" />
-        @code{
-            Expression<Func<AspNetUsers, bool>>? DWhere1 { get => dwhere1.And(d => d.Id == "19f37cba-1779-410f-850d-1e80a0ec7c21"); }
-            Expression<Func<AspNetUsers, bool>>? dwhere1;
-        }
-
-        <hr />
-        <p>显示一组Id</p>
-        @{
-            var users = fsql.Select<AspNetUserRoles>().Where(d => d.AspNetRoless.Name == "Admin").ToList(a => a.UserId);
-            Expression<Func<AspNetUsers, bool>>? DWhere2 = null;
-            DWhere2 = DWhere2.And(d => users.Contains(d.Id));
-
-        }
-        <TablePollo TItem="AspNetUsers"
-                    WhereLamda="DWhere2"
-                    IncludeByPropertyNames="@IncludeAspNetUsers"
-                    ItemDetails="AspNetUserRoles"
-                    SubIncludeByPropertyNames="@SubIncludeByPropertyNames"
-                    ItemDetailsII="NullClass"
-                    ItemDetailsIII="NullClass"
-                    ShowColumnList
-                    ShowExportButton
-                    ShowDetailRowS
-                    Field="@nameof(AspNetUsers.Id)"
-                    FieldD="@nameof(AspNetUserRoles.UserId)"
-                    ExportToStream="false"
-                    ExportBasePath="temp" />
-    </TabItem>
-    <TabItem Text="角色表">
-        <p>存储向哪些用户分配哪些角色</p>
-        <TablePollo TItem="AspNetUserRoles"
-                    IncludeByPropertyNames=" new List<string> {nameof(AspNetUserRoles.AspNetUserss),nameof(AspNetUserRoles.AspNetRoless) }"
-                    ItemDetails="AspNetUsers"
-                    SubIncludeByPropertyNames="@IncludeAspNetUsers"
-                    ItemDetailsII="NullClass"
-                    ItemDetailsIII="NullClass"
-                    ShowColumnList
-                    ShowExportButton
-                    ShowDetailRowS
-                    Field="@nameof(AspNetUserRoles.UserId)"
-                    FieldD="@nameof(AspNetUsers.Id)"
-                    ExportToStream="false"
-                    ExportBasePath="temp" />
-
-        <hr />
-        <p>只显示Admin</p>
-        <TablePollo TItem="AspNetUserRoles"
-                    WhereLamda="DWhere"
-                    IncludeByPropertyNames=" new List<string> {nameof(AspNetUserRoles.AspNetUserss),nameof(AspNetUserRoles.AspNetRoless) }"
-                    ItemDetails="AspNetUsers"
-                    SubIncludeByPropertyNames="@IncludeAspNetUsers"
-                    ItemDetailsII="NullClass"
-                    ItemDetailsIII="NullClass"
-                    ShowColumnList
-                    ShowExportButton
-                    ShowDetailRowS
-                    Field="@nameof(AspNetUserRoles.UserId)"
-                    FieldD="@nameof(AspNetUsers.Id)"
-                    ExportToStream="false"
-                    ExportBasePath="temp" />
-        @code{
-            Expression<Func<AspNetUserRoles, bool>>? DWhere { get => dwhere.And(d => d.AspNetRoless.Name == "Admin"); }
-            Expression<Func<AspNetUserRoles, bool>>? dwhere;
-        }
-    </TabItem>
-
-    <TabItem Text="角色定义">
-
-        <TablePollo TItem="AspNetRoles"
-                    IncludeByPropertyNames="new List<string> {nameof(AspNetRoles.AspNetUserRoless) }"
-                    ItemDetails="AspNetUserRoles"
-                    SubIncludeByPropertyNames="new List<string> {nameof(AspNetUserRoles.AspNetUserss),nameof(AspNetUserRoles.AspNetRoless) }"
-                    ItemDetailsII="NullClass"
-                    ItemDetailsIII="NullClass"
-                    ShowColumnList
-                    ShowExportButton
-                    ShowDetailRowS
-                    Field="@nameof(AspNetRoles.Id)"
-                    FieldD="@nameof(AspNetUserRoles.RoleId)"
-                    ExportToStream="false"
-                    ExportBasePath="temp"
-                    RowButtons="list"
-                    PageIndex="2"
-                    PageItemsSource="new int[] {2, 20, 50, 100, 200, 500, 1000 }" />
-
-        @code{
-        }
-    </TabItem>
-    <TabItem Text="测试">
-
-        <TableAmePro TItem="AspNetUsersDto"
-                      ShowDetailRowType=ShowDetailRowType.弹窗
-                      Field="@nameof(AspNetUsers.TwoFactorEnabled)"
-                      FieldType="typeof(int)"
-                      FieldD="@nameof(AspNetUserRoles.UserId)"
-                      ItemDetails="AspNetUserRoles"
-                      ItemDetailsII="NullClass"
-                      ItemDetailsIII="NullClass"
-                      ShowColumnList
-                      ShowFooter>
-            @*<RowButtonTemplate>
-                    <Button Text="测试1" />
-                </RowButtonTemplate>
-                <TableToolbarTemplate>
-                    <Button Text="测试2" />
-                </TableToolbarTemplate>
-                <TableColumnsTemplate>
-                    <Button Text="测试3" />
-                </TableColumnsTemplate>
-                <DetailRowTemplate>
-                    <Button Text="测试4" />
-                </DetailRowTemplate>
-                <FooterTemplate>
-                    <TableFooterCell Text="测试5" />
-                </FooterTemplate>*@
-        </TableAmePro>
-    </TabItem>
-</Tab>
 
 @code{
     [Inject]
