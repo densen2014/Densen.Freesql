@@ -574,8 +574,8 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
 
         static Expression<Func<object>> CreateLambda(Type fieldType)
         {
-            var method = typeof(Utility).GetMethod(nameof(DialogTableDetails), BindingFlags.Public)!.MakeGenericMethod(fieldType);
-            var body = Expression.Call(null, method);
+            var method = typeof(TableAmeProBase<>).GetMethod(nameof(DialogTableDetails), BindingFlags.Public)!.MakeGenericMethod(fieldType);
+            var body = Expression.Call(method);
 
             return Expression.Lambda<Func<object>>(Expression.Convert(body, typeof(object)));
         }
