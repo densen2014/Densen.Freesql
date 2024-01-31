@@ -62,12 +62,6 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
 
     public string? cacheFooterValue;
 
-    /// <summary>
-    /// 获得/设置 Table Footer Content 
-    /// </summary>
-    [Parameter]
-    public RenderFragment? FooterContent { get; set; } 
-
     #region 继承bb table的设置
 
     /// <summary>
@@ -200,7 +194,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// 获得/设置 双击行回调委托方法
     /// </summary>
     [Parameter]
-    public Func<TItem, Task>? OnDoubleClickRowCallback { get; set; } 
+    public Func<TItem, Task>? OnDoubleClickRowCallback { get; set; }
 
     /// <summary>
     /// 获得/设置 被选中数据集合
@@ -469,38 +463,38 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// <param name="tableImgField"></param>
     /// <returns></returns>
     protected RenderFragment RenderTableImgColumn(TItem model, TableImgField? tableImgField = null) => builder =>
-      {
-          tableImgField = tableImgField ?? TableImgField ?? new TableImgField();
-          var fieldExpresson = Utility.GenerateValueExpression(model, tableImgField.Field, tableImgField.FieldType);
-          builder.OpenComponent(0, typeof(TableColumn<,>).MakeGenericType(typeof(TItem), tableImgField.FieldType));
-          builder.AddAttribute(1, "FieldExpression", fieldExpresson);
-          //builder.AddAttribute(2, "Width", 200);
-          builder.AddAttribute(3, "Template", new RenderFragment<TableColumnContext<TItem, string>>(context => buttonBuilder =>
-          {
-              buttonBuilder.OpenComponent<ImgColumn>(0);
-              buttonBuilder.AddAttribute(1, nameof(ImgColumn.Title), tableImgField.Title);
-              buttonBuilder.AddAttribute(2, nameof(ImgColumn.Name), tableImgField.Name);
-              var value = (context.Row).GetIdentityKey(tableImgField.Field);
-              buttonBuilder.AddAttribute(3, nameof(ImgColumn.Url), value);
-              if (!string.IsNullOrEmpty(tableImgField.BaseUrl))
-              {
-                  buttonBuilder.AddAttribute(4, nameof(ImgColumn.BaseUrl), tableImgField.BaseUrl);
-              }
+    {
+        tableImgField = tableImgField ?? TableImgField ?? new TableImgField();
+        var fieldExpresson = Utility.GenerateValueExpression(model, tableImgField.Field, tableImgField.FieldType);
+        builder.OpenComponent(0, typeof(TableColumn<,>).MakeGenericType(typeof(TItem), tableImgField.FieldType));
+        builder.AddAttribute(1, "FieldExpression", fieldExpresson);
+        //builder.AddAttribute(2, "Width", 200);
+        builder.AddAttribute(3, "Template", new RenderFragment<TableColumnContext<TItem, string>>(context => buttonBuilder =>
+        {
+            buttonBuilder.OpenComponent<ImgColumn>(0);
+            buttonBuilder.AddAttribute(1, nameof(ImgColumn.Title), tableImgField.Title);
+            buttonBuilder.AddAttribute(2, nameof(ImgColumn.Name), tableImgField.Name);
+            var value = (context.Row).GetIdentityKey(tableImgField.Field);
+            buttonBuilder.AddAttribute(3, nameof(ImgColumn.Url), value);
+            if (!string.IsNullOrEmpty(tableImgField.BaseUrl))
+            {
+                buttonBuilder.AddAttribute(4, nameof(ImgColumn.BaseUrl), tableImgField.BaseUrl);
+            }
 
-              if (!string.IsNullOrEmpty(tableImgField.Style))
-              {
-                  buttonBuilder.AddAttribute(5, nameof(ImgColumn.Style), tableImgField.Style);
-              }
+            if (!string.IsNullOrEmpty(tableImgField.Style))
+            {
+                buttonBuilder.AddAttribute(5, nameof(ImgColumn.Style), tableImgField.Style);
+            }
 
-              buttonBuilder.CloseComponent();
-          }));
-          if (!string.IsNullOrEmpty(tableImgField.ColumnText))
-          {
-              builder.AddAttribute(4, "Text", tableImgField.ColumnText);
-          }
+            buttonBuilder.CloseComponent();
+        }));
+        if (!string.IsNullOrEmpty(tableImgField.ColumnText))
+        {
+            builder.AddAttribute(4, "Text", tableImgField.ColumnText);
+        }
 
-          builder.CloseComponent();
-      };
+        builder.CloseComponent();
+    };
 
     /// <summary>
     /// 动态生成控件 TableColumn 功能列
@@ -551,25 +545,47 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     {
         var fieldExpresson = Utility.GenerateValueExpression(model, Field ?? FieldD ?? "ID", FieldType);
         var typeTableColumn = typeof(TableColumn<,>).MakeGenericType(typeof(TItem), FieldType);
+        var value = Utility.GetPropertyValue(model, Field ?? FieldD ?? "ID");
+        //if (value == null)
+        //{
+        //    return;
+        //}
+        //var valueType=value.GetType();
         builder.OpenComponent(0, typeTableColumn);
         builder.AddAttribute(1, "FieldExpression", fieldExpresson);
-        if (Type.GetTypeCode(FieldType) == TypeCode.Int32)
-        {
-            builder.AddAttribute(2, "Template", DialogTableDetails<int>());
-        }
-        else
-        {
-            builder.AddAttribute(2, "Template", DialogTableDetails<string>());
-        }
+        //var typeTableColumnContext = typeof(TableColumnContext<,>).MakeGenericType(typeof(TItem), FieldType);
+        builder.AddAttribute(2, "Template", DialogTableDetails(FieldType));
+        //if (Type.GetTypeCode(FieldType) == TypeCode.Int32)
+        //{
+        //    builder.AddAttribute(2, "Template", DialogTableDetails<int>());
+        //}
+        //else
+        //{
+        //    builder.AddAttribute(2, "Template", DialogTableDetails<string>());
+        //}
         builder.AddAttribute(3, "Visible", true);
         builder.CloseComponent();
     };
+
+    private object DialogTableDetails(Type fieldType)
+    {
+        var valueChangedInvoker = CreateLambda(this, fieldType).Compile();
+        return valueChangedInvoker();
+
+        static Expression<Func<object>> CreateLambda(TableAmeProBase<TItem> table, Type fieldType)
+        {
+            var method = typeof(TableAmeProBase<TItem>).GetMethod(nameof(CreateRenderFragment), BindingFlags.NonPublic | BindingFlags.Instance)!.MakeGenericMethod(fieldType);
+            var body = Expression.Call(Expression.Constant(table), method);
+
+            return Expression.Lambda<Func<object>>(body);
+        }
+    }
 
     /// <summary>
     /// 动态生成明细弹窗控件
     /// </summary>
     /// <returns></returns>
-    public virtual RenderFragment<TableColumnContext<TItem, TValue>> DialogTableDetails<TValue>()
+    private RenderFragment<TableColumnContext<TItem, TValue>> CreateRenderFragment<TValue>()
     {
         return new RenderFragment<TableColumnContext<TItem, TValue>>(context => buttonBuilder =>
         {
@@ -624,18 +640,21 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     public virtual RenderFragment RenderTableColumnPhotoUrl(TItem model) => builder =>
     {
         var fieldExpresson = Utility.GenerateValueExpression(model, Field ?? FieldD ?? "ID", FieldType); // 刚才你的那个获取表达式 GetExpression() 的返回值的
+        var value = Utility.GetPropertyValue<object, object>(model, Field ?? FieldD ?? "ID");
+        var valueType = value.GetType();
         builder.OpenComponent(0, typeof(TableColumn<,>).MakeGenericType(typeof(TItem), FieldType));
         builder.AddAttribute(1, "FieldExpression", fieldExpresson);
+        //builder.AddAttribute(2, "Template", DialogTableDetails(valueType, value));
 
-        // 添加模板
-        if (Type.GetTypeCode(FieldType) == TypeCode.Int32)
-        {
-            builder.AddAttribute(2, "Template", DialogTableDetails<int>());
-        }
-        else
-        {
-            builder.AddAttribute(2, "Template", DialogTableDetails<string>());
-        }
+        //// 添加模板
+        //if (Type.GetTypeCode(FieldType) == TypeCode.Int32)
+        //{
+        //    builder.AddAttribute(2, "Template", DialogTableDetails<int>());
+        //}
+        //else
+        //{
+        //    builder.AddAttribute(2, "Template", DialogTableDetails<string>());
+        //}
         builder.CloseComponent();
     };
 
@@ -779,8 +798,8 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// <param name="rowType"></param>
     /// <param name="builder"></param>
     public virtual void TRenderTable(TableDetailRowType rowType, RenderTreeBuilder builder)
-    { 
-        builder.OpenComponent<TableAmeProBase<Item>>(0); 
+    {
+        builder.OpenComponent<TableAmeProBase<Item>>(0);
     }
 
     #endregion
