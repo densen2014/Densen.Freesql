@@ -198,7 +198,7 @@
     <RowButtonTemplate>
         @if (RowButtonTemplate != null)
         {
-            @RowButtonTemplate
+            @RowButtonTemplate(context)
         }
 
         @if (RowButtons != null && RowButtons.Any())
@@ -216,7 +216,7 @@
     <DetailRowTemplate>
         @if (DetailRowTemplate != null)
         {
-            @DetailRowTemplate
+            @DetailRowTemplate(context)
         }
 
         @if (ShowDetailRowType == ShowDetailRowType.选项卡)
@@ -244,8 +244,12 @@
 
     <TableFooter Context="context1">
         @if (FooterTemplate != null)
+        {                      
+            @FooterTemplate(TableMain.Rows)
+        }
+        @if (FooterContent != null)
         {
-            @FooterTemplate
+            @FooterContent
         }
         @if (string.IsNullOrEmpty(FooterTotalColName) && !ShowFloatPanel && !ShowFloatPanelToolbar && !string.IsNullOrEmpty(FooterText))
         {
@@ -282,7 +286,7 @@
                 cols += 1;
             }
             <td colspan="@cols">
-                <div class="table-cell justify-content-end">
+                <div class="table-cell @(FooterAlign==Alignment.Right?"justify-content-end":"justify-content-start")">
                     <FloatPanel @ref="FloatPanel" Value="@cacheFooterValue" />
                 </div>
             </td>

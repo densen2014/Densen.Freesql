@@ -2,6 +2,7 @@
 
 <div class="@CssClass">
     @Label @Value
+    @ChildContent
 </div>
 
 @code {
@@ -9,10 +10,19 @@
     [Parameter] public string? Label { get; set; }
     [Parameter] public string? Value { get; set; }
 
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
     public void Set(string label, string value)
     {
         Label = label;
         Value = value;
+        StateHasChanged();
+    }
+
+    public void Set(RenderFragment? childContent)
+    {
+        ChildContent = childContent; 
         StateHasChanged();
     }
 
