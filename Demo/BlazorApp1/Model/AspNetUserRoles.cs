@@ -21,18 +21,18 @@ namespace Densen.Models.ids;
 public partial class AspNetUserRoles
 {
 
-    [AutoGenerateColumn(Visible = false, Order = -2, Width = 30, TextEllipsis = true)]
+    [AutoGenerateColumn(Visible = false, Order = 2, TextEllipsis = true)]
     [DisplayName("用户ID")]
     [JsonProperty, Column(StringLength = -2, IsPrimary = true, IsNullable = false)]
     public string UserId { get; set; }
 
     [JsonProperty, Column(IsIgnore = true)]
     [DisplayName("用户")]
-    public string UserName { get => roleName ?? (AspNetUserss?.UserName); set => userName = value; }
+    public string UserName { get => userName ?? (AspNetUserss?.UserName); set => userName = value; }
 
     private string userName;
 
-    [AutoGenerateColumn(Visible = false, Order = -1, Width = 30, TextEllipsis = true)]
+    [AutoGenerateColumn( Order = 2, TextEllipsis = true,LookupServiceKey = nameof(RoleId), ShowSearchWhenSelect = false)]
     [DisplayName("角色ID")]
     [JsonProperty, Column(StringLength = -2, IsNullable = false)]
     public string RoleId { get; set; }

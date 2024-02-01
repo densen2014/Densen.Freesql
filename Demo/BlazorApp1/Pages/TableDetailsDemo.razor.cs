@@ -23,6 +23,10 @@ public partial class TableDetailsDemo
     private bool IsDetails { get; set; }
     private bool IsFirstLoad { get; set; } = true;
 
+    [NotNull]
+    [Inject]
+    ILookupService? LookupKeyService { get; set; }
+
     protected TablePollo<AspNetUserRoles, NullClass, NullClass, NullClass>? TableDetails { get; set; }
 
     private Expression<Func<AspNetUserRoles, bool>>? DWhere1 { get; set; } = null;
@@ -41,6 +45,7 @@ public partial class TableDetailsDemo
         IsFirstLoad = false;
         IsDetails = true;
         DWhere1 = a => a.UserId == item.Id;
+        LookupKeyService.GetItemsByKey($"SetLookupKey:{item.Id}");
         if (TableDetails != null)
         {
             await TableDetails.QueryAsync(DWhere1);

@@ -20,11 +20,11 @@ builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddFreeSql(option =>
 {
     option.UseConnectionString(FreeSql.DataType.Sqlite, "Data Source=demo.db;")
-#if DEBUG
+#if DEBUGSC || DEBUG
          //开发环境:自动同步实体
          .UseAutoSyncStructure(true)
          .UseNoneCommandParameter(true)
-    //调试sql语句输出
+        //调试sql语句输出
          .UseMonitorCommand(cmd => System.Console.WriteLine(cmd.CommandText + Environment.NewLine))
 #endif
     ;
@@ -35,7 +35,7 @@ builder.Services.AddTransient(typeof(FreeSqlDataService<>));
 
 builder.Services.AddTransient<IImportExport, ImportExportsMiniService>();
 //builder.Services.AddTransient<IImportExport, ImportExportsService>();
-builder.Services.AddSingleton(typeof(ILookupService), typeof(DemoLookupService));
+builder.Services.AddScoped(typeof(ILookupService), typeof(DemoLookupService));
 builder.Services.AddDensenExtensions();
 builder.Services.ConfigureJsonLocalizationOptions(op =>
 {
