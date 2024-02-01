@@ -38,8 +38,9 @@ internal class DemoLookupService : ILookupService
     {
         IEnumerable<SelectedItem>? items = null;
         var cacheKey = $"{key}_{LookupKey}";
-        if (cache.Get(cacheKey) != null)
+        if (key!=null && cache.Get(cacheKey) != null)
         {
+            System.Console.WriteLine($"* 从缓存中获取 {key} - {LookupKey}");
             return cache.Get(cacheKey) as IEnumerable<SelectedItem>;
         }
         else
@@ -72,22 +73,24 @@ internal class DemoLookupService : ILookupService
             }
             else if (key == nameof(AspNetUsers.UserName))
             {
-                items = fsql.Select<AspNetUsers>().Distinct().ToList(a => a.UserName).Select(a => new SelectedItem() { Value = a, Text = a }).ToList();
+                items = fsql.Select<AspNetUsers>().Distinct().ToList(a => new SelectedItem() { Value = a.UserName, Text = a.UserName });
             }
             else if (key == nameof(AspNetUserRoles.RoleId))
             {
                 items = fsql.Select<AspNetUserRoles>()
                     .WhereIf(LookupKey != null, a => a.UserId == LookupKey)
                     .Distinct()
-                    .ToList(a => new { a.RoleId, a.AspNetRoless.Name })
-                    .Select(a => new SelectedItem() { Value = a.RoleId, Text = a.Name })
-                    .ToList();
+                    .ToList(a => new SelectedItem() { Value = a.RoleId, Text = a.AspNetRoless.Name });
             }
             else if (key != null && key.StartsWith("SetLookupKey:"))
             {
                 LookupKey = key.Replace("SetLookupKey:", "");
             }
-            if (items != null) cache.Add(cacheKey, items, cacheItemPolicy);
+            if (items != null)
+            {
+                cache.Add(cacheKey, items, cacheItemPolicy);
+                System.Console.WriteLine($"* 添加缓存 {key} - {LookupKey}");
+            }
             return items;
         }
     }
