@@ -6,6 +6,7 @@
 
 using BootstrapBlazor.Components;
 using Densen.Models.ids;
+using System.Runtime.Caching;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -15,7 +16,17 @@ namespace Microsoft.Extensions.DependencyInjection;
 internal class DemoLookupService : ILookupService
 {
     private IServiceProvider Provider { get; }
+
     private IFreeSql fsql { get; set; }
+
+    private string? LookupKey { get; set; }
+
+    private ObjectCache cache = MemoryCache.Default;
+
+    private CacheItemPolicy cacheItemPolicy = new CacheItemPolicy
+    {
+        AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(60.0),
+    };
 
     public DemoLookupService(IServiceProvider provider, IFreeSql fsql)
     {
@@ -26,9 +37,16 @@ internal class DemoLookupService : ILookupService
     public IEnumerable<SelectedItem>? GetItemsByKey(string? key)
     {
         IEnumerable<SelectedItem>? items = null;
-        if (key == "Provideres")
+        var cacheKey = $"{key}_{LookupKey}";
+        if (cache.Get(cacheKey) != null)
         {
-            items = new List<SelectedItem>()
+            return cache.Get(cacheKey) as IEnumerable<SelectedItem>;
+        }
+        else
+        {
+            if (key == "Provideres")
+            {
+                items = new List<SelectedItem>()
             {
                 new() { Value = "True", Text = "真真" },
                 new() { Value = "False", Text = "假假" },
@@ -51,11 +69,26 @@ internal class DemoLookupService : ILookupService
                 new() { Value = "Googlej", Text = "谷歌" },
                 new() { Value = "Googlek", Text = "谷歌" },
             };
+            }
+            else if (key == nameof(AspNetUsers.UserName))
+            {
+                items = fsql.Select<AspNetUsers>().Distinct().ToList(a => a.UserName).Select(a => new SelectedItem() { Value = a, Text = a }).ToList();
+            }
+            else if (key == nameof(AspNetUserRoles.RoleId))
+            {
+                items = fsql.Select<AspNetUserRoles>()
+                    .WhereIf(LookupKey != null, a => a.UserId == LookupKey)
+                    .Distinct()
+                    .ToList(a => new { a.RoleId, a.AspNetRoless.Name })
+                    .Select(a => new SelectedItem() { Value = a.RoleId, Text = a.Name })
+                    .ToList();
+            }
+            else if (key != null && key.StartsWith("SetLookupKey:"))
+            {
+                LookupKey = key.Replace("SetLookupKey:", "");
+            }
+            if (items != null) cache.Add(cacheKey, items, cacheItemPolicy);
+            return items;
         }
-        else if (key == nameof(AspNetUsers.UserName))
-        {
-            items = fsql.Select<AspNetUsers>().ToList().Select(a => new SelectedItem() { Value = a.UserName, Text = a.UserName }).ToList();
-        }
-        return items;
     }
 }
