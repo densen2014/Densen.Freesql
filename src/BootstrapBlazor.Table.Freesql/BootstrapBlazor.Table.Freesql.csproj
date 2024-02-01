@@ -26,7 +26,7 @@
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.*" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <ItemGroup Condition="'$(Configuration)' != 'Release'">
         <ProjectReference Include="..\BootstrapBlazor.DataAcces.FreeSql\Densen.Extensions.Freesql.BootstrapBlazor.csproj" />
         <ProjectReference Include="..\BootstrapBlazor.Table.ImportExportsService\BootstrapBlazor.Table.ImportExportsService.csproj" />
     </ItemGroup>
