@@ -62,6 +62,12 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
 
     public string? cacheFooterValue;
 
+    /// <summary>
+    /// 获得/设置 Table Footer Content 
+    /// </summary>
+    [Parameter]
+    public RenderFragment? FooterContent { get; set; }
+
     #region 继承bb table的设置
 
     /// <summary>
