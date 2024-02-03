@@ -20,7 +20,7 @@ namespace Densen.Models.ids;
 public partial class AspNetUsers
 {
 
-    [AutoGenerateColumn(Visible = false, Order = 1, Width = 30, TextEllipsis = true)]
+    [AutoGenerateColumn(Visible = true, Order = 1, Width = 30, TextEllipsis = true)]
     [DisplayName("用户ID")]
     [JsonProperty, Column(StringLength = -2, IsPrimary = true, IsNullable = false)]
     public string Id { get; set; }

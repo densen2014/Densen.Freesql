@@ -5,10 +5,10 @@
 <PageTitle>测试RenderTableColumn</PageTitle>
 
 
-    <TableAmePro TItem="AspNetUsersDto"
+    <TableAmePro TItem="AspNetUsers"
                  ShowDetailRowType=ShowDetailRowType.弹窗
-                 Field="@nameof(AspNetUsers.TwoFactorEnabled)"
-                 FieldType="typeof(int)"
+                 Field="@nameof(AspNetUsers.Id)"
+                 FieldType="typeof(string)"
                  FieldD="@nameof(AspNetUserRoles.UserId)"
                  ItemDetails="AspNetUserRoles"
                  ItemDetailsII="NullClass"

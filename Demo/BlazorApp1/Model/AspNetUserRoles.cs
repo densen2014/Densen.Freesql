@@ -21,7 +21,7 @@ namespace Densen.Models.ids;
 public partial class AspNetUserRoles
 {
 
-    [AutoGenerateColumn(Visible = false, Order = -2, Width = 30, TextEllipsis = true)]
+    [AutoGenerateColumn(Visible = true, Order = -2, Width = 30, TextEllipsis = true)]
     [DisplayName("用户ID")]
     [JsonProperty, Column(StringLength = -2, IsPrimary = true, IsNullable = false)]
     public string UserId { get; set; }
