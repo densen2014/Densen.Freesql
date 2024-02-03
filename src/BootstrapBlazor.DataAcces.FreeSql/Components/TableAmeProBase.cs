@@ -553,7 +553,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         //var valueType=value.GetType();
         builder.OpenComponent(0, typeTableColumn);
         builder.AddAttribute(1, "FieldExpression", fieldExpresson);
-        var typeTableColumnContext = typeof(TableColumnContext<,>).MakeGenericType(typeof(TItem), FieldType);
+        //var typeTableColumnContext = typeof(TableColumnContext<,>).MakeGenericType(typeof(TItem), FieldType);
         builder.AddAttribute(2, "Template", DialogTableDetails(FieldType));
         //if (Type.GetTypeCode(FieldType) == TypeCode.Int32)
         //{
@@ -569,15 +569,15 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
 
     private object DialogTableDetails(Type fieldType)
     {
-        var valueChangedInvoker = CreateLambda(fieldType).Compile();
+        var valueChangedInvoker = CreateLambda(this, fieldType).Compile();
         return valueChangedInvoker();
 
-        static Expression<Func<object>> CreateLambda(Type fieldType)
+        static Expression<Func<object>> CreateLambda(TableAmeProBase<TItem> table, Type fieldType)
         {
-            var method = typeof(TableAmeProBase<>).GetMethod(nameof(DialogTableDetails), BindingFlags.Public)!.MakeGenericMethod(fieldType);
-            var body = Expression.Call(method);
+            var method = typeof(TableAmeProBase<TItem>).GetMethod(nameof(CreateRenderFragment), BindingFlags.NonPublic | BindingFlags.Instance)!.MakeGenericMethod(fieldType);
+            var body = Expression.Call(Expression.Constant(table), method);
 
-            return Expression.Lambda<Func<object>>(Expression.Convert(body, typeof(object)));
+            return Expression.Lambda<Func<object>>(body);
         }
     }
 
@@ -585,7 +585,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// 动态生成明细弹窗控件
     /// </summary>
     /// <returns></returns>
-    public virtual object DialogTableDetails<TValue>()
+    private RenderFragment<TableColumnContext<TItem, TValue>> CreateRenderFragment<TValue>()
     {
         return new RenderFragment<TableColumnContext<TItem, TValue>>(context => buttonBuilder =>
         {
