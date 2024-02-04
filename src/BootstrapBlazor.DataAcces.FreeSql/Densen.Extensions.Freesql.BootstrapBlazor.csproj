@@ -24,6 +24,7 @@
     <ItemGroup Condition="'$(Configuration)' == 'DebugSC'">
         <!--带外部源码调试环境-->
         <ProjectReference Include="..\..\..\Densen.Extensions\Blazor\Densen.Extensions.BootstrapBlazor.csproj" />
+        <ProjectReference Include="..\BootstrapBlazor.Table.ImportExportsMiniService\BootstrapBlazor.Table.ImportExportsMiniService.csproj" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Release'">
