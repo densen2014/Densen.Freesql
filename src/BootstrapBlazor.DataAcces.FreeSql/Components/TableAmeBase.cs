@@ -874,6 +874,11 @@ public partial class TableAmeBase : BootstrapComponentBase
     public bool SubIsExcel { get; set; }
 
     /// <summary>
+    /// 详表只读,默认为 false
+    /// </summary>
+    [Parameter] public bool SubIsReadonly { get; set; }
+
+    /// <summary>
     /// 获得/设置 是否表头允许折行 默认 false 不折行 此设置为 true 时覆盖 <see cref="ITableColumn.HeaderTextWrap"/> 参数值
     /// </summary>
     [Parameter]

@@ -767,6 +767,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
             builder.AddAttribute(27, nameof(EditMode), SubEditMode);
         }
         builder.AddAttribute(29, nameof(IsExcel), SubIsExcel);
+        builder.AddAttribute(30, nameof(IsReadonly), SubIsReadonly);
         TRenderTableAdditionalAttributes(builder);
         builder.CloseComponent();
     };
