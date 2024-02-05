@@ -43,18 +43,18 @@
        ShowDefaultButtons="@(ShowDefaultButtons &&!IsReadonly)"
        ShowExtendButtons="@(ShowExtendButtons &&!IsReadonly)"
        ShowExportButton=ShowExportButton
-       ShowSearch="@ShowSearch"
+       ShowSearch="@(ShowSearch &&!IsSimpleUI)"
        SearchMode="@SearchMode"
        ShowSearchButton="@ShowAdvancedSearch"
-       ShowAdvancedSearch="@ShowAdvancedSearch"
+       ShowAdvancedSearch="@(ShowAdvancedSearch &&!IsSimpleUI)"
        ShowResetButton="@ShowResetButton"
        CollapsedTopSearch="@CollapsedTopSearch"
        ShowDetailRow="@ShowDetailRow"
        ShowFooter="@ShowFooter"
        ShowColumnList="@ShowColumnList"
-       ShowRefresh="@ShowRefresh"
+       ShowRefresh="@(ShowRefresh &&!IsSimpleUI)"
        Items="@Items"
-       ShowCardView="@ShowCardView"
+       ShowCardView="@(ShowCardView &&!IsSimpleUI)"
        Height="@Height"
        IsFixedHeader="@IsFixedHeader"
        ScrollMode="ScrollMode"
@@ -89,6 +89,11 @@
        IsAutoQueryFirstRender="IsAutoQueryFirstRender"
        SelectedRows="SelectedRows"
        SelectedRowsChanged="SelectedRowsChanged"
+       EditDialogSaveButtonText="@EditDialogSaveButtonText"
+        EditDialogCloseButtonText="@EditDialogCloseButtonText"
+       EditFooterTemplate="@EditFooterTemplate"
+       AddModalTitle="@AddModalTitle"
+       EditModalTitle="@EditModalTitle"
        >
 
     <TableToolbarTemplate>
@@ -100,7 +105,7 @@
         {
             <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="自由编辑" OnClick="@IsExcelToggle" />
         }
-        @if (ShowScrollModeButtons)
+        @if (ShowScrollModeButtons && !IsSimpleUI)
         {
             <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="@(scrollMode == ScrollMode.Virtual ?"长滚动":"分页")" OnClick="@ScrollModeToggle" />
         }

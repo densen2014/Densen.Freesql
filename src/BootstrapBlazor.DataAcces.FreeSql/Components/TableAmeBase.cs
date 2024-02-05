@@ -394,6 +394,11 @@ public partial class TableAmeBase : BootstrapComponentBase
     /// </summary>
     [Parameter] public bool IsReadonly { get; set; }
 
+    /// <summary>
+    /// 简化UI,默认为 false
+    /// </summary>
+    [Parameter] public bool IsSimpleUI { get; set; }
+
     #region StorageService
     public async Task StorageSetValue<TValue>(string key, TValue value)
     {
@@ -879,6 +884,11 @@ public partial class TableAmeBase : BootstrapComponentBase
     [Parameter] public bool SubIsReadonly { get; set; }
 
     /// <summary>
+    /// 详表简化UI,默认为 false
+    /// </summary>
+    [Parameter] public bool SubIsSimpleUI { get; set; }
+
+    /// <summary>
     /// 获得/设置 是否表头允许折行 默认 false 不折行 此设置为 true 时覆盖 <see cref="ITableColumn.HeaderTextWrap"/> 参数值
     /// </summary>
     [Parameter]
@@ -920,7 +930,33 @@ public partial class TableAmeBase : BootstrapComponentBase
     /// 获得/设置 首次加载时是否自动查询数据 默认 true <see cref="Items"/> 模式下此参数不起作用
     /// </summary>
     [Parameter]
-    public bool IsAutoQueryFirstRender { get; set; } = true; 
+    public bool IsAutoQueryFirstRender { get; set; } = true;
+
+    /// <summary>
+    /// 获得/设置 保存弹窗中的保存按钮显示文本 默认为资源文件中的 保存
+    /// </summary>
+    [Parameter]
+    public string? EditDialogSaveButtonText { get; set; }
+
+    /// <summary>
+    /// 获得/设置 保存弹窗中的关闭按钮显示文本 默认为资源文件中的 关闭
+    /// </summary>
+    [Parameter]
+    public string? EditDialogCloseButtonText { get; set; }
+
+    /// <summary>
+    /// 获得/设置 编辑数据弹窗 Title
+    /// </summary>
+    [Parameter]
+    [NotNull]
+    public string? EditModalTitle { get; set; }
+
+    /// <summary>
+    /// 获得/设置 新建数据弹窗 Title
+    /// </summary>
+    [Parameter]
+    [NotNull]
+    public string? AddModalTitle { get; set; }
 
     #endregion
 

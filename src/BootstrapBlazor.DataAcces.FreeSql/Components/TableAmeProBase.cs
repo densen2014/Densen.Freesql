@@ -214,6 +214,12 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     [Parameter]
     public EventCallback<List<TItem>> SelectedRowsChanged { get; set; }
 
+    /// <summary>
+    /// 获得/设置 弹窗 Footer
+    /// </summary>
+    [Parameter]
+    public RenderFragment<TItem>? EditFooterTemplate { get; set; }
+
     #endregion
 
     /// <summary>
@@ -391,6 +397,11 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         if (PageItems != 0 && !PageItemsSource.Contains(PageItems))
         {
             PageItemsSource = PageItemsSource.Append(PageItems).OrderBy(a => a).ToList();
+        }
+        if (IsReadonly)
+        {
+            EditModalTitle = "查看";
+            if (EditFooterTemplate == null) { EditFooterTemplate = (item) => builder => { }; }
         }
 
     }
@@ -768,6 +779,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         }
         builder.AddAttribute(29, nameof(IsExcel), SubIsExcel);
         builder.AddAttribute(30, nameof(IsReadonly), SubIsReadonly);
+        builder.AddAttribute(31, nameof(IsSimpleUI), SubIsSimpleUI);
         TRenderTableAdditionalAttributes(builder);
         builder.CloseComponent();
     };
