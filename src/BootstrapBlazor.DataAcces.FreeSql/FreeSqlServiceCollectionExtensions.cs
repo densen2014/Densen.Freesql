@@ -28,6 +28,7 @@ public static class FreeSqlServiceCollectionExtensions
     /// <returns></returns>
     public static IServiceCollection AddFreeSql(this IServiceCollection services, Action<FreeSqlBuilder> optionsAction, Action<IFreeSql>? configureAction = null, bool configEntityPropertyImage = false, FreeSqlServiceOptions? configureOptions = null)
     {
+        configureOptions ??= new FreeSqlServiceOptions(configEntityPropertyImage);
         services.AddSingleton(sp =>
         {
             var builder = new FreeSqlBuilder();
@@ -45,19 +46,52 @@ public static class FreeSqlServiceCollectionExtensions
 
         services.AddTransient(typeof(IDataService<>), typeof(FreeSqlDataService<>));
         services.TryAddTransient<IImportExport, ImportExportsMiniService>();
+        services.AddSingleton(configureOptions);
         return services;
     }
 
     /// <summary>
-    /// 配置类
+    /// 增加 FreeSql.Cloud 多库操作服务, 提供跨数据库访问，分布式事务TCC、SAGA解决方案
     /// </summary>
-    public class FreeSqlServiceOptions
+    /// <param name="services"></param>
+    /// <param name="optionsAction"></param>
+    /// <param name="configureAction"></param>
+    /// <param name="configureOptions"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddFreeSqlCloud(this IServiceCollection services, Action<FreeSqlBuilder> optionsAction, Action<IFreeSql>? configureAction = null, FreeSqlServiceOptions? configureOptions = null)
     {
-        /// <summary>
-        /// 获得/设置 自定义Enum支持和Image支持
-        /// </summary>
-        public bool ConfigEntityPropertyImage { get; set; }
+        configureOptions ??= new FreeSqlServiceOptions();
+        var fsqlCloud = new FsqlCloud();
+#if DEBUG
+        fsqlCloud.DistributeTrace += log => System.Console.WriteLine(log.Split('\n')[0].Trim());
+#endif
+        services.AddSingleton(fsqlCloud);
+        services.AddSingleton(sp =>
+        {
+            fsqlCloud.Register("main", () =>
+            {
+                var builder = new FreeSqlBuilder();
+                optionsAction(builder);
+                var instance = builder.Build();
+                instance.UseJsonMap();
+                if (configureOptions?.ConfigEntityPropertyImage ?? false)
+                {
+                    instance.Aop.AuditValue += AuditValue;
+                    instance.Aop.ConfigEntityProperty += ConfigEntityProperty;
+                }
+                configureAction?.Invoke(instance);
+                return instance;
+            });
+            return fsqlCloud.Use("main");
+        });
+
+        services.AddTransient(typeof(IDataService<>), typeof(FreeSqlDataService<>));
+        services.TryAddTransient<IImportExport, ImportExportsMiniService>();
+        services.AddSingleton(configureOptions);
+        return services;
     }
+
+
 
     #region 自定义Guid支持
     /// <summary>
@@ -108,3 +142,4 @@ public static class FreeSqlServiceCollectionExtensions
 
 
 }
+

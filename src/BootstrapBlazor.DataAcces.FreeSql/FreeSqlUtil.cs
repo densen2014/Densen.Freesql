@@ -110,7 +110,7 @@ public static partial class FreeSqlUtil
                             bool forceAllItems = false,
                             Expression<Func<TModel, bool>>? WhereLamda = null) where TModel : class, new()
     {
-        var items = new List<TModel>(); ;
+        var items = new List<TModel>();
 
         if (forceAllItems)
         {

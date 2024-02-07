@@ -20,6 +20,8 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
     [NotNull]
     public IFreeSql? fsql { get; set; }
 
+    private FsqlCloud? fsqlCloud { get; set; }
+
     /// <summary>
     /// 构造函数
     /// </summary>
@@ -30,15 +32,32 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
     /// <summary>
     /// 构造函数
     /// </summary>
-    public FreeSqlDataService(IFreeSql fsql)
+    public FreeSqlDataService(IFreeSql fsql, FsqlCloud? fsqlCloud = null)
     {
-        this.fsql = fsql;
+        this.fsqlCloud = fsqlCloud;
+        if (this.fsqlCloud != null)
+        {
+            this.fsql = this.fsqlCloud;
+        }
+        else
+        {
+            this.fsql = fsql;
+        }
+    }
+
+    public void Use(string connectionString)
+    {
+        if (fsqlCloud != null && connectionString != null)
+        {
+            ConnectionString = connectionString;
+            fsql = fsqlCloud.Use(connectionString);
+        }
     }
 
     /// <summary>
-    /// 指定数据库连接字符串 [预留功能]
+    /// 指定数据库连接字符串
     /// </summary>
-    public string? ibstring { get; set; }
+    public string? ConnectionString { get; set; }
 
     /// <summary>
     /// 级联保存字段名
@@ -93,9 +112,9 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
     {
         // 通过模型获取主键列数据
         // 支持批量删除
-        var res=await FreeSqlUtil.Delete(fsql, models);
+        var res = await FreeSqlUtil.Delete(fsql, models);
         TotalCount = null;
-        return res>0;
+        return res > 0;
     }
 
     /// <summary>
@@ -105,11 +124,11 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
     /// <param name="changedType">数据变化类型</param>
     /// <returns></returns>
     public override async Task<bool> SaveAsync(TModel model, ItemChangedType changedType)
-    { 
-        var res=await FreeSqlUtil.Save(fsql, model, EnableCascadeSave, ItemCache,SaveManyChildsPropertyName);
-         
+    {
+        var res = await FreeSqlUtil.Save(fsql, model, EnableCascadeSave, ItemCache, SaveManyChildsPropertyName);
+
         TotalCount = null;
-        return res!=null;
+        return res != null;
     }
 
     /// <summary>

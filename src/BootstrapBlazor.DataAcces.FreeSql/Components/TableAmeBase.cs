@@ -37,7 +37,7 @@ public partial class TableAmeBase : BootstrapComponentBase
     /// 指定数据库连接字符串
     /// </summary>
     [Parameter]
-    public string? ibstring { get; set; }
+    public string? ConnectionString { get; set; }
 
     [Inject]
     [NotNull]
@@ -992,6 +992,21 @@ public partial class TableAmeBase : BootstrapComponentBase
         {
             Height = PageHeight - 150;
             StateHasChanged();
+        }
+
+    }
+
+    /// <summary>
+    /// OnParametersSet 方法
+    /// </summary>
+    protected override void OnParametersSet()
+    {
+        if (ConnectionString !=null)
+        {
+#if DEBUG
+            System.Console.WriteLine("切换连接字符串");
+#endif
+            //DetailColumnWidth = op.TableSettings.DetailColumnWidth;
         }
 
     }

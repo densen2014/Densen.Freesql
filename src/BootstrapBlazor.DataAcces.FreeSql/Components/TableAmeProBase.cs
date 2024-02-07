@@ -240,7 +240,11 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         if (DataServices.Any())
         {
             DataServices.Last().SaveManyChildsPropertyName = SaveManyChildsPropertyName;
-            DataServices.Last().ibstring = ibstring;
+            DataServices.Last().ConnectionString = ConnectionString;
+            if (ConnectionString != null)
+            {
+                DataServices.Last().Use(ConnectionString);
+            }
             DataServices.Last().EnableCascadeSave = EnableCascadeSave;
             return DataServices.Last();
         }
@@ -426,19 +430,28 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         }
     }
 
+    public void SetConnectionString(string? connectionString)
+    {
+        this.ConnectionString = connectionString; 
+    }
+
     /// <summary>
     /// 查询按钮调用此方法
     /// </summary>
     /// <param name="whereLamda">附加and条件,如果传入值为空不使用</param>
     /// <param name="force">强制使用附加and条件,即使传入值为空也使用</param>
+    /// <param name="connectionString">数据库连接字符串</param>
     /// <returns></returns>
-    public async Task QueryAsync(Expression<Func<TItem, bool>>? whereLamda = null, bool force = false)
+    public async Task QueryAsync(Expression<Func<TItem, bool>>? whereLamda = null, bool force = false,string? connectionString = null)
     {
         if (whereLamda != null || force)
         {
             WhereLamda = whereLamda;
         }
-
+        if (connectionString != null)
+        {
+            this.ConnectionString = connectionString;
+        }
         await TableMain.QueryAsync();
     }
 
@@ -740,9 +753,9 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         {
             builder.AddAttribute(18, nameof(RenderMode), SubRenderMode);
         }
-        if (ibstring != null)
+        if (ConnectionString != null)
         {
-            builder.AddAttribute(19, nameof(ibstring), ibstring);
+            builder.AddAttribute(19, nameof(ConnectionString), ConnectionString);
         }
         if (SubTableFunctionsFields != null)
         {

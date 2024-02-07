@@ -53,3 +53,4 @@ public static partial class FreeSqlUtil
     };
 
 }
+
