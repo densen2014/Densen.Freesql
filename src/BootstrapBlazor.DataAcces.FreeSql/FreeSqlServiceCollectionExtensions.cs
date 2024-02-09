@@ -66,7 +66,7 @@ public static class FreeSqlServiceCollectionExtensions
         fsqlCloud.DistributeTrace += log => System.Console.WriteLine(log.Split('\n')[0].Trim());
 #endif
         services.AddSingleton(fsqlCloud);
-        services.AddSingleton(sp =>
+        services.AddScoped(sp =>
         {
             fsqlCloud.Register("main", () =>
             {
