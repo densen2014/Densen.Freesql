@@ -427,12 +427,12 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
 
         if (IsReadonly)
         {
-            EditModalTitle = "查看";
+            EditModalTitle = ReadOnlyModalTitle;
             if (EditFooterTemplate == null) { EditFooterTemplate = (item) => builder => { }; }
         }
         else
         {
-            if (EditModalTitle == "查看")
+            if (EditModalTitle == ReadOnlyModalTitle)
             {
                 EditModalTitle = Localizer[nameof(EditModalTitle)];
             }

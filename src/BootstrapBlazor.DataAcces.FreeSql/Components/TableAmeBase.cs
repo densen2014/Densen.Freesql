@@ -17,7 +17,7 @@ using Alignment = BootstrapBlazor.Components.Alignment;
 namespace AmeBlazor.Components;
 
 /// <summary>
-/// TablePollo 组件基类
+/// TableAme 组件基类
 /// </summary>
 public partial class TableAmeBase : BootstrapComponentBase
 {
@@ -31,7 +31,7 @@ public partial class TableAmeBase : BootstrapComponentBase
     protected DownloadService? DownloadService { get; set; }
 
 
-    #region TablePollo 的设置
+    #region TableAme 的设置
 
     /// <summary>
     /// 指定数据库连接字符串, 用于 FreeSql.Cloud 多库操作服务, 需注入 FreeSql.Cloud 多库操作服务
@@ -948,10 +948,16 @@ public partial class TableAmeBase : BootstrapComponentBase
     public string? EditDialogCloseButtonText { get; set; }
 
     /// <summary>
+    /// 获得/设置 只读数据弹窗 Title
+    /// </summary>
+    [Parameter]
+    public string? ReadOnlyModalTitle { get; set; } = "查看";
+
+    /// <summary>
     /// 获得/设置 编辑数据弹窗 Title
     /// </summary>
     [Parameter]
-    public string? EditModalTitle { get; set; } 
+    public string? EditModalTitle { get; set; }
 
     /// <summary>
     /// 获得/设置 新建数据弹窗 Title
