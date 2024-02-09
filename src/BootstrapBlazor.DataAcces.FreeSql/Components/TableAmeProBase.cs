@@ -13,6 +13,7 @@ using FreeSql;
 using FreeSql.Internal.Model;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
@@ -69,6 +70,10 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     public RenderFragment? FooterContent { get; set; }
 
     #region 继承bb table的设置
+
+    [Inject]
+    [NotNull]
+    private IStringLocalizer<Table<TItem>>? Localizer { get; set; }
 
     /// <summary>
     /// 获得/设置 数据服务
@@ -158,24 +163,28 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// 获得/设置 EditTemplate 实例
     /// </summary>
     [Parameter]
+    [NotNull]
     public RenderFragment<TItem>? EditTemplate { get; set; }
 
     /// <summary>
     /// 获得/设置 列创建时回调委托方法
     /// </summary>
     [Parameter]
+    [NotNull]
     public Func<List<ITableColumn>, Task>? OnColumnCreating { get; set; }
 
     /// <summary>
     /// 获得/设置 获得高级搜索条件回调方法 默认 null
     /// </summary>
     [Parameter]
+    [NotNull]
     public Func<PropertyInfo, TItem, List<SearchFilterAction>?>? GetAdvancedSearchFilterCallback { get; set; }
 
     /// <summary>
     /// 获得/设置 分页信息内容模板
     /// </summary>
     [Parameter]
+    [NotNull]
     public RenderFragment? PageInfoBodyTemplate { get; set; }
 
     /// <summary>
@@ -200,6 +209,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// 获得/设置 双击行回调委托方法
     /// </summary>
     [Parameter]
+    [NotNull]
     public Func<TItem, Task>? OnDoubleClickRowCallback { get; set; }
 
     /// <summary>
@@ -218,7 +228,9 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// 获得/设置 弹窗 Footer
     /// </summary>
     [Parameter]
+    [NotNull]
     public RenderFragment<TItem>? EditFooterTemplate { get; set; }
+
 
     #endregion
 
@@ -228,6 +240,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     [Parameter] public DynamicFilterInfo? DynamicFilterInfo { get; set; }
 
     #region 数据服务
+
     /// <summary>
     /// 获得/设置 注入数据服务
     /// </summary>
@@ -401,15 +414,33 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         if (PageItems != 0 && !PageItemsSource.Contains(PageItems))
         {
             PageItemsSource = PageItemsSource.Append(PageItems).OrderBy(a => a).ToList();
-        }
+        } 
+
+    }
+
+    /// <summary>
+    /// OnParametersSet 方法
+    /// </summary>
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
         if (IsReadonly)
         {
             EditModalTitle = "查看";
             if (EditFooterTemplate == null) { EditFooterTemplate = (item) => builder => { }; }
         }
+        else
+        {
+            if (EditModalTitle == "查看")
+            {
+                EditModalTitle = Localizer[nameof(EditModalTitle)];
+            }
+            AddModalTitle ??= Localizer[nameof(AddModalTitle)];
+            EditFooterTemplate = null;
+        }
 
     }
-
     protected override void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);

@@ -34,7 +34,7 @@ public partial class TableAmeBase : BootstrapComponentBase
     #region TablePollo 的设置
 
     /// <summary>
-    /// 指定数据库连接字符串
+    /// 指定数据库连接字符串, 用于 FreeSql.Cloud 多库操作服务, 需注入 FreeSql.Cloud 多库操作服务
     /// </summary>
     [Parameter]
     public string? ConnectionString { get; set; }
@@ -824,6 +824,7 @@ public partial class TableAmeBase : BootstrapComponentBase
     /// <para>表格工具栏左侧按钮模板，模板中内容出现在默认按钮前面</para>
     /// </summary>
     [Parameter]
+    [NotNull]
     public RenderFragment? TableToolbarBeforeTemplate { get; set; }
 
     /// <summary>
@@ -838,6 +839,7 @@ public partial class TableAmeBase : BootstrapComponentBase
     /// <para>表格工具栏右侧按钮模板，模板中内容出现在默认按钮前面</para>
     /// </summary>
     [Parameter]
+    [NotNull]
     public RenderFragment? TableExtensionToolbarBeforeTemplate { get; set; }
 
     /// <summary>
@@ -845,6 +847,7 @@ public partial class TableAmeBase : BootstrapComponentBase
     /// <para>表格工具栏右侧按钮模板，模板中内容出现在默认按钮后面</para>
     /// </summary>
     [Parameter]
+    [NotNull]
     public RenderFragment? TableExtensionToolbarTemplate { get; set; }
 
     /// <summary>
@@ -948,14 +951,12 @@ public partial class TableAmeBase : BootstrapComponentBase
     /// 获得/设置 编辑数据弹窗 Title
     /// </summary>
     [Parameter]
-    [NotNull]
-    public string? EditModalTitle { get; set; }
+    public string? EditModalTitle { get; set; } 
 
     /// <summary>
     /// 获得/设置 新建数据弹窗 Title
     /// </summary>
     [Parameter]
-    [NotNull]
     public string? AddModalTitle { get; set; }
 
     #endregion
@@ -992,21 +993,6 @@ public partial class TableAmeBase : BootstrapComponentBase
         {
             Height = PageHeight - 150;
             StateHasChanged();
-        }
-
-    }
-
-    /// <summary>
-    /// OnParametersSet 方法
-    /// </summary>
-    protected override void OnParametersSet()
-    {
-        if (ConnectionString !=null)
-        {
-#if DEBUG
-            System.Console.WriteLine("切换连接字符串");
-#endif
-            //DetailColumnWidth = op.TableSettings.DetailColumnWidth;
         }
 
     }

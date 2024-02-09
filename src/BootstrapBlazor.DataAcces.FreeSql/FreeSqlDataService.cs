@@ -52,10 +52,14 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
             ConnectionString = connectionString;
             fsql = fsqlCloud.Use(connectionString);
         }
+        else if (fsqlCloud == null && connectionString != null)
+        {
+            System.Console.WriteLine("FreeSqlDataService.Use(string connectionString) 无法使用，因为未启用/注入 FreeSql.Cloud 多库操作服务");
+        }
     }
 
     /// <summary>
-    /// 指定数据库连接字符串
+    /// 指定数据库连接字符串, 用于 FreeSql.Cloud 多库操作服务, 需注入 FreeSql.Cloud 多库操作服务
     /// </summary>
     public string? ConnectionString { get; set; }
 
