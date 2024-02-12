@@ -115,7 +115,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// 获得/设置 保存按钮异步回调方法
     /// </summary>
     [Parameter]
-    public Func<TItem, ItemChangedType, Task<TItem>>? SaveAsync { get; set; }
+    public Func<TItem, ItemChangedType, Task<TItem?>>? SaveAsync { get; set; } 
 
     /// <summary>
     /// 保存数据后异步回调方法
@@ -133,12 +133,14 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// 获得/设置 删除后回调委托方法 (SaveModelAsync)
     /// </summary>
     [Parameter]
+    [NotNull]
     public Func<List<TItem>, Task>? OnAfterDeleteAsync { get; set; }
 
     /// <summary>
     /// 获得/设置 保存删除后回调委托方法 (SaveModelAsync)
     /// </summary>
     [Parameter]
+    [NotNull]
     public Func<Task>? OnAfterModifyAsync { get; set; }
 
     /// <summary>
@@ -295,7 +297,14 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     {
         if (SaveAsync != null)
         {
-            item = await SaveAsync(item, changedType);
+            var itemRes = await SaveAsync(item, changedType);
+            if (itemRes != null)
+            {
+                item = itemRes;
+            }else
+            {
+                return false;
+            }
         }
         var res = await GetDataService().SaveAsync(item, changedType);
         if (AfterSaveAsync != null)
