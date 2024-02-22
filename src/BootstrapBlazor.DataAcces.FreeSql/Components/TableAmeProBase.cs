@@ -115,7 +115,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// 获得/设置 保存按钮异步回调方法
     /// </summary>
     [Parameter]
-    public Func<TItem, ItemChangedType, Task<TItem?>>? SaveAsync { get; set; } 
+    public Func<TItem, ItemChangedType, Task<TItem?>>? SaveAsync { get; set; }
 
     /// <summary>
     /// 保存数据后异步回调方法
@@ -248,25 +248,37 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// </summary>
     [Inject]
     [NotNull]
-    public virtual IEnumerable<FreeSqlDataService<TItem>>? DataServices { get; set; }
+    public IEnumerable<FreeSqlDataService<TItem>>? DataServices { get; set; }
 
-    public virtual FreeSqlDataService<TItem> GetDataService()
+    public FreeSqlDataService<TItem> GetDataService()
     {
         if (DataServices.Any())
         {
             DataServices.Last().SaveManyChildsPropertyName = SaveManyChildsPropertyName;
             DataServices.Last().ConnectionString = ConnectionString;
-            if (ConnectionString != null)
+            if (!GetFsql())
             {
-                DataServices.Last().Use(ConnectionString);
+                if (ConnectionString != null)
+                {
+                    DataServices.Last().Use(ConnectionString);
+                }
             }
             DataServices.Last().EnableCascadeSave = EnableCascadeSave;
             return DataServices.Last();
         }
         else
         {
-            throw new InvalidOperationException("DataServiceInvalidOperationText");
+            throw new InvalidOperationException("数据服务无效,可能是未注入");
         }
+    }
+
+    /// <summary>
+    /// 自定义数据连接
+    /// </summary>
+    /// <returns></returns>
+    public virtual bool GetFsql()
+    {
+        return false;
     }
 
     public async Task<TItem> OnAddAsync()
@@ -301,7 +313,8 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
             if (itemRes != null)
             {
                 item = itemRes;
-            }else
+            }
+            else
             {
                 return false;
             }
@@ -423,7 +436,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         if (PageItems != 0 && !PageItemsSource.Contains(PageItems))
         {
             PageItemsSource = PageItemsSource.Append(PageItems).OrderBy(a => a).ToList();
-        } 
+        }
 
     }
 
@@ -472,7 +485,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
 
     public void SetConnectionString(string? connectionString)
     {
-        this.ConnectionString = connectionString; 
+        this.ConnectionString = connectionString;
     }
 
     /// <summary>
@@ -482,7 +495,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// <param name="force">强制使用附加and条件,即使传入值为空也使用</param>
     /// <param name="connectionString">数据库连接字符串</param>
     /// <returns></returns>
-    public async Task QueryAsync(Expression<Func<TItem, bool>>? whereLamda = null, bool force = false,string? connectionString = null)
+    public async Task QueryAsync(Expression<Func<TItem, bool>>? whereLamda = null, bool force = false, string? connectionString = null)
     {
         if (whereLamda != null || force)
         {

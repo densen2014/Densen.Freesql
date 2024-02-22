@@ -45,7 +45,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
         }
     }
 
-    public void Use(string connectionString)
+    public virtual void Use(string connectionString)
     {
         if (fsqlCloud != null && connectionString != null)
         {

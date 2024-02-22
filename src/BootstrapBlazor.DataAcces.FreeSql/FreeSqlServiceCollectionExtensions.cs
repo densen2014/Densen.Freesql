@@ -86,6 +86,8 @@ public static class FreeSqlServiceCollectionExtensions
         });
 
         services.AddTransient(typeof(IDataService<>), typeof(FreeSqlDataService<>));
+        //附加查询条件数据库操作服务
+        services.AddTransient(typeof(FreeSqlDataService<>));
         services.TryAddTransient<IImportExport, ImportExportsMiniService>();
         services.AddSingleton(configureOptions);
         return services;
