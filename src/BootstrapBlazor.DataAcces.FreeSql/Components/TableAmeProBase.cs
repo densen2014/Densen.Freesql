@@ -901,7 +901,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         }
 
         // 关闭 option 相关联的弹窗
-        option.Close();
+        await option.Close();
 
         // 弹窗告知下载完毕
         await ToastService.Show(new ToastOption()
@@ -943,7 +943,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         await 导入();
 
         // 关闭 option 相关联的弹窗
-        option.Close();
+        await option.Close();
 
         // 弹窗告知下载完毕
         await ToastService.Show(new ToastOption()
@@ -984,7 +984,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         await 导入II();
 
         // 关闭 option 相关联的弹窗
-        option.Close();
+        await option.Close();
 
         // 弹窗告知下载完毕
         await ToastService.Show(new ToastOption()
@@ -1023,7 +1023,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         }
 
         // 关闭 option 相关联的弹窗
-        option.Close();
+        await option.Close();
 
         // 弹窗告知下载完毕
         await ToastService.Show(new ToastOption()

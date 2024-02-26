@@ -77,7 +77,7 @@ C# 代码
             await Export(items?.ToList(), exportType);
 
             // 关闭 option 相关联的弹窗
-            option.Close();
+            await option.Close();
 
             // 弹窗告知下载完毕
             await ToastService.Show(new ToastOption()
