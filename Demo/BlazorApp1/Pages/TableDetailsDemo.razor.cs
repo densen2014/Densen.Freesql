@@ -45,7 +45,7 @@ public partial class TableDetailsDemo
         IsFirstLoad = false;
         IsDetails = true;
         DWhere1 = a => a.UserId == item.Id;
-        LookupKeyService.GetItemsByKey($"SetLookupKey:{item.Id}");
+        LookupKeyService.GetItemsByKey("SetLookupKey",item.Id);
         if (TableDetails != null)
         {
             await TableDetails.QueryAsync(DWhere1);

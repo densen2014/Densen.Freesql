@@ -84,6 +84,8 @@ internal class DemoLookupService : ILookupService
             }
             else if (key != null && key.StartsWith("SetLookupKey:"))
             {
+                //调用 hack 方式 LookupKeyService.GetItemsByKey($"SetLookupKey:{item.Id}");
+                // 设置当前查询条件, 用于后续查询
                 LookupKey = key.Replace("SetLookupKey:", "");
             }
             if (items != null)
@@ -97,6 +99,12 @@ internal class DemoLookupService : ILookupService
 
     public IEnumerable<SelectedItem>? GetItemsByKey(string? key, object? data)
     {
+        if (key != null && key == "SetLookupKey" && data?.ToString() != null)
+        {
+            //LookupKeyService.GetItemsByKey("SetLookupKey", item.Id);
+            //设置当前查询条件, 用于后续查询
+            LookupKey = data.ToString();
+        }
         return GetItemsByKey(key);
     }
 }
