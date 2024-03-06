@@ -437,6 +437,8 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         {
             PageItemsSource = PageItemsSource.Append(PageItems).OrderBy(a => a).ToList();
         }
+        AddModalTitle ??= Localizer[nameof(AddModalTitle)];
+        EditModalTitle ??= Localizer[nameof(EditModalTitle)];
 
     }
 
