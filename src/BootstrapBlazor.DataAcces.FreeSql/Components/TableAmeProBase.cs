@@ -233,6 +233,11 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     [NotNull]
     public RenderFragment<TItem>? EditFooterTemplate { get; set; }
 
+    /// <summary>
+    /// 获得/设置 是否保持选择行，默认为 false 不保持
+    /// </summary>
+    [Parameter]
+    public bool IsKeepSelectedRows { get; set; }
 
     #endregion
 
