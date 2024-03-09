@@ -7,13 +7,13 @@
 		<RootNamespace>Densen.Service</RootNamespace>
         <TargetFrameworks>netstandard2.0;netstandard2.1;net7.0;net8.0</TargetFrameworks>
         <OutputPath>..\..\..\Bin</OutputPath>
-        <Version>8.3.0</Version>
+        <Version>8.3.4</Version>
         <Configurations>Debug;Release;DebugSC</Configurations>
     </PropertyGroup>
 
 	<ItemGroup>
-        <PackageReference Include="MiniExcel" Version="1.*" />
-        <PackageReference Include="MiniWord" Version="0.*" />
+        <PackageReference Include="MiniExcel" Version="1.31.3" />
+        <PackageReference Include="MiniWord" Version="0.8.0" />
     </ItemGroup>
 
 </Project>
