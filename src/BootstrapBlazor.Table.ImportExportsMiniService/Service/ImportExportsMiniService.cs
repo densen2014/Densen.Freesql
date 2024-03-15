@@ -5,6 +5,7 @@
 // **********************************
 
 using MiniExcelLibs;
+using MiniExcelLibs.OpenXml;
 using MiniSoftware;
 
 namespace Densen.Service;
