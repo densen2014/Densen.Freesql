@@ -399,6 +399,11 @@ public partial class TableAmeBase : BootstrapComponentBase
     /// </summary>
     [Parameter] public bool IsSimpleUI { get; set; }
 
+    /// <summary>
+    /// 使用分表,走WithTempQuery方法查询
+    /// </summary>
+    [Parameter] public bool AsTable { get; set; }
+
     #region StorageService
     public async Task StorageSetValue<TValue>(string key, TValue value)
     {

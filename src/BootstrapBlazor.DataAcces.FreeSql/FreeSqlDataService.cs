@@ -94,6 +94,11 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
     public decimal Total { get; set; }
 
     /// <summary>
+    /// 使用分表,走WithTempQuery方法查询
+    /// </summary>
+    public bool AsTable { get; set; }
+
+    /// <summary>
     /// 缓存查询条件
     /// </summary>
     private QueryPageOptions OptionsCache { get; set; } = new QueryPageOptions();
@@ -163,7 +168,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
                 List<string>? WhereCascadeOr = null,
                 Expression<Func<TModel, bool>>? WhereLamda = null)
     {
-        var res = FreeSqlUtil.Fetch(OptionsCache, OptionsCache, null, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, true, WhereLamda);
+        var res = FreeSqlUtil.Fetch(OptionsCache, OptionsCache, null, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, true, WhereLamda, AsTable);
         return res.Items?.ToList();
     }
 
@@ -187,7 +192,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
                 List<string>? WhereCascadeOr = null,
                 Expression<Func<TModel, bool>>? WhereLamda = null)
     {
-        var res = FreeSqlUtil.Fetch(option, OptionsCache, TotalCount, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, WhereLamda: WhereLamda);
+        var res = FreeSqlUtil.Fetch(option, OptionsCache, TotalCount, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, WhereLamda: WhereLamda, AsTable: AsTable);
         TotalCount = res.TotalCount;
         Items = res.Items?.ToList();
         OptionsCache = option;

@@ -97,6 +97,7 @@ public static partial class FreeSqlUtil
     /// <param name="WhereCascadeOr">附加查询条件使用or结合</param>
     /// <param name="forceAllItems">附加查询条件使用or结合</param>
     /// <param name="WhereLamda">查询条件，Where(a => a.Id > 10)，支持导航对象查询，Where(a => a.Author.Email == "2881099@qq.com")</param>
+    /// <param name="asTable">使用分表,走WithTempQuery方法查询</param>
     public static QueryData<TModel> Fetch<TModel>(
                             QueryPageOptions option,
                             QueryPageOptions? optionsLast,
@@ -108,7 +109,8 @@ public static partial class FreeSqlUtil
                             List<string>? OrderByPropertyName = null,
                             List<string>? WhereCascadeOr = null,
                             bool forceAllItems = false,
-                            Expression<Func<TModel, bool>>? WhereLamda = null) where TModel : class, new()
+                            Expression<Func<TModel, bool>>? WhereLamda = null,
+                            bool AsTable = false) where TModel : class, new()
     {
         var items = new List<TModel>();
 
@@ -134,6 +136,12 @@ public static partial class FreeSqlUtil
             //{
 
             var fsql_select = BuildWhere(option, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, WhereCascadeOr, WhereLamda);
+
+            //使用分表,走WithTempQuery方法查询 https://github.com/dotnetcore/FreeSql/discussions/1066?WT.mc_id=DT-MVP-5005078#discussioncomment-8846214
+            if (AsTable)
+            {
+                fsql_select = fsql_select.WithTempQuery(a => new TModel());
+            }
 
             fsql_select = fsql_select.OrderByPropertyNameIf(option.SortOrder != SortOrder.Unset, option.SortName, option.SortOrder == SortOrder.Asc);
 

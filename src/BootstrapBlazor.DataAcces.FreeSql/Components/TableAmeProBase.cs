@@ -269,6 +269,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
                 }
             }
             DataServices.Last().EnableCascadeSave = EnableCascadeSave;
+            DataServices.Last().AsTable = AsTable;
             return DataServices.Last();
         }
         else
