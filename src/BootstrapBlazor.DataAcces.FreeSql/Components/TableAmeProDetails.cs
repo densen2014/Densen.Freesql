@@ -42,6 +42,12 @@ where ItemDetails : class, new()
     public Func<ItemDetails, ItemChangedType, Task<ItemDetails>>? SubSaveAsync { get; set; }
 
     /// <summary>
+    /// 子表保存数据后异步回调方法
+    /// </summary>
+    [Parameter]
+    public Func<ItemDetails, ItemChangedType, Task>? SubAfterSaveAsync { get; set; }
+
+    /// <summary>
     /// 获得/设置 子表删除按钮异步回调方法
     /// </summary>
     [Parameter]
@@ -65,9 +71,13 @@ where ItemDetails : class, new()
         {
             builder.AddAttribute(52, nameof(SaveAsync), SubSaveAsync);
         }
+        if (SubAfterSaveAsync != null)
+        {
+            builder.AddAttribute(52, nameof(AfterSaveAsync), SubAfterSaveAsync);
+        }
         if (SubDeleteAsync != null)
         {
-            builder.AddAttribute(52, nameof(DeleteAsync), SubDeleteAsync);
+            builder.AddAttribute(53, nameof(DeleteAsync), SubDeleteAsync);
         }
     }
 }
