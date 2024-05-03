@@ -50,6 +50,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
         if (fsqlCloud != null && connectionString != null)
         {
             ConnectionString = connectionString;
+            //临时访问其他数据库表，使用 FreeSqlCloud 对象 Use("db3").Select<T>().ToList()
             fsql = fsqlCloud.Use(connectionString);
         }
         else if (fsqlCloud == null && connectionString != null)

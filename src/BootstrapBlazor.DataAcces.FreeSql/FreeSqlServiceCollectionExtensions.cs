@@ -5,6 +5,7 @@
 // **********************************
 
 using BootstrapBlazor.Components;
+using Densen.DataAcces;
 using Densen.DataAcces.FreeSql;
 using Densen.Service;
 using FreeSql;
@@ -82,6 +83,7 @@ public static class FreeSqlServiceCollectionExtensions
                 configureAction?.Invoke(instance);
                 return instance;
             });
+            //临时访问其他数据库表，使用 FreeSqlCloud 对象 Use("db3").Select<T>().ToList()
             return fsqlCloud.Use("main");
         });
 

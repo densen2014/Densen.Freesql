@@ -32,4 +32,8 @@
         <PackageReference Include="Densen.Extensions.BootstrapBlazor" Version="8.*" />
         <PackageReference Include="BootstrapBlazor.Table.ImportExportsMiniService" Version="8.*" />
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Densen.DataAcces.FreeSql\Densen.DataAcces.FreeSql.csproj" />
+    </ItemGroup>
 </Project>
