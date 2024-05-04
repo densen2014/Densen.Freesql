@@ -23,19 +23,24 @@ public class FsqlCloud : FreeSqlCloud<string>
 
 public static class FsqlCloudExtensions
 {
-    public static FsqlCloud AddFreeSqlCloud(Action<FreeSqlBuilder> optionsAction, Action<IFreeSql>? configureAction = null,bool ConfigEntityPropertyImage=false)
+    public static FsqlCloud AddFreeSqlCloud(Action<FreeSqlBuilder> optionsAction, Action<IFreeSql>? configureAction = null,FreeSqlServiceOptions? configureOptions = null)
     {
+        configureOptions ??= new FreeSqlServiceOptions();
+
         var fsqlCloud = new FsqlCloud();
 #if DEBUG
-        fsqlCloud.DistributeTrace += log => System.Console.WriteLine(log.Split('\n')[0].Trim());
+        if (configureOptions.DistributeTrace)
+        {
+            fsqlCloud.DistributeTrace += log => System.Console.WriteLine(log.Split('\n')[0].Trim());
+        }
 #endif
-            fsqlCloud.Register("main", () =>
+        fsqlCloud.Register("main", () =>
             {
                 var builder = new FreeSqlBuilder();
                 optionsAction(builder);
                 var instance = builder.Build();
                 instance.UseJsonMap();
-                if ( ConfigEntityPropertyImage  )
+                if (configureOptions.ConfigEntityPropertyImage)
                 {
                     instance.Aop.AuditValue += AuditValue;
                     instance.Aop.ConfigEntityProperty += ConfigEntityProperty;

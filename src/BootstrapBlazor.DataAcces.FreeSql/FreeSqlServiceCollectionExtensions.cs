@@ -64,7 +64,10 @@ public static class FreeSqlServiceCollectionExtensions
         configureOptions ??= new FreeSqlServiceOptions();
         var fsqlCloud = new FsqlCloud();
 #if DEBUG
-        fsqlCloud.DistributeTrace += log => System.Console.WriteLine(log.Split('\n')[0].Trim());
+        if (configureOptions.DistributeTrace)
+        {
+            fsqlCloud.DistributeTrace += log => System.Console.WriteLine(log.Split('\n')[0].Trim());
+        }
 #endif
         services.AddSingleton(fsqlCloud);
         services.AddScoped(sp =>
@@ -75,7 +78,7 @@ public static class FreeSqlServiceCollectionExtensions
                 optionsAction(builder);
                 var instance = builder.Build();
                 instance.UseJsonMap();
-                if (configureOptions?.ConfigEntityPropertyImage ?? false)
+                if (configureOptions.ConfigEntityPropertyImage)
                 {
                     instance.Aop.AuditValue += AuditValue;
                     instance.Aop.ConfigEntityProperty += ConfigEntityProperty;
