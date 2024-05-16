@@ -1,0 +1,28 @@
+﻿@page "/customComponent"
+@using Densen.Models.ids
+
+<PageTitle>定制组件</PageTitle>
+
+
+<TableAmePro TItem="AspNetUsers"
+             ItemDetails="NullClass"
+             ItemDetailsII="NullClass"
+             ItemDetailsIII="NullClass"
+             AutoGenerateColumns="false">
+    <TableToolbarTemplate>
+        <TableToolbarButton TItem="AspNetUsers" Color="Color.Secondary" Text="明细" />
+    </TableToolbarTemplate>
+    <TableColumns>
+        <TableColumn TType="string" TItem="AspNetUsers" @bind-Field="@context.UserName">
+            <Template Context="v">
+                <h6>@v.Value</h6>
+                <PopConfirmButton Color="Color.Primary" Text="Test" Size="Size.ExtraSmall" />
+            </Template>
+        </TableColumn>
+    </TableColumns>
+    <EditTemplate>
+        <!--本例中使用了联动功能，必须封装成组件-->
+        <DemoTableEditTemplate Model="context" />
+    </EditTemplate>
+
+</TableAmePro>

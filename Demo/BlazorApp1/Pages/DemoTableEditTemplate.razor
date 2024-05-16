@@ -1,0 +1,18 @@
+﻿@using Densen.Models.ids
+
+<div class="row form-inline g-3">
+    <div class="col-12 col-sm-6">
+        <BootstrapInput @bind-Value="Model.Email" />
+    </div>
+    <div class="col-12 col-sm-6">
+        <BootstrapInput @bind-Value="Model.UUID" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    [NotNull]
+    public AspNetUsers? Model { get; set; }
+ 
+  
+}

@@ -834,7 +834,7 @@ public partial class TableAmeBase : BootstrapComponentBase
 
     /// <summary>
     /// 获得/设置 表格 Toolbar 按钮模板
-    /// <para>表格工具栏左侧按钮模板，模板中内容出现在默认按钮后面</para>
+    /// <para>表格工具栏左侧按钮模板，模板中内容出现在默认按钮后面*</para>
     /// </summary>
     [Parameter]
     public RenderFragment? TableToolbarTemplate { get; set; }
@@ -854,13 +854,6 @@ public partial class TableAmeBase : BootstrapComponentBase
     [Parameter]
     [NotNull]
     public RenderFragment? TableExtensionToolbarTemplate { get; set; }
-
-    /// <summary>
-    /// 获得/设置 表格 列模板
-    /// <para>列模板，模板中内容出现在现有列后面</para>
-    /// </summary>
-    [Parameter]
-    public RenderFragment? TableColumnsTemplate { get; set; }
 
     /// <summary>
     /// 获得/设置 扩展按钮是否在前面 默认 false 在行尾

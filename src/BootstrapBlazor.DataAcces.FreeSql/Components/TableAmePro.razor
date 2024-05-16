@@ -169,6 +169,10 @@
     </TableToolbarTemplate>
 
     <TableColumns>
+        @if (TableColumns != null)
+        {
+            @TableColumns?.Invoke(new TItem())
+        }
         @if (ShowDetailRowType == ShowDetailRowType.弹窗)
         {
             @RenderTableColumn(context)
@@ -197,7 +201,7 @@
         }
         @if (TableColumnsTemplate != null)
         {
-            @TableColumnsTemplate
+            @TableColumnsTemplate?.Invoke(new TItem())
         }
     </TableColumns>
 

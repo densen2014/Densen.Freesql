@@ -246,6 +246,19 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// </summary>
     [Parameter] public DynamicFilterInfo? DynamicFilterInfo { get; set; }
 
+    /// <summary>
+    /// 获得/设置 TableHeader 实例*
+    /// </summary>
+    [Parameter]
+    public RenderFragment<TItem>? TableColumns { get; set; }
+
+    /// <summary>
+    /// 获得/设置 表格 列模板
+    /// <para>列模板，模板中内容出现在现有列后面*</para>
+    /// </summary>
+    [Parameter]
+    public RenderFragment<TItem>? TableColumnsTemplate { get; set; }
+
     #region 数据服务
 
     /// <summary>
