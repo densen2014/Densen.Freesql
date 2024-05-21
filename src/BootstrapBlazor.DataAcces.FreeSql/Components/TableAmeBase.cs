@@ -396,6 +396,7 @@ public partial class TableAmeBase : BootstrapComponentBase
 
     /// <summary>
     /// 简化UI,默认为 false
+    /// <para>隐藏: 搜索,高级搜素,刷新,表格布局,长滚动</para>
     /// </summary>
     [Parameter] public bool IsSimpleUI { get; set; }
 
@@ -886,6 +887,7 @@ public partial class TableAmeBase : BootstrapComponentBase
 
     /// <summary>
     /// 详表简化UI,默认为 false
+    /// <para>隐藏: 搜索,高级搜素,刷新,表格布局,长滚动</para>
     /// </summary>
     [Parameter] public bool SubIsSimpleUI { get; set; }
 
