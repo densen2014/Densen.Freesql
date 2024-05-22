@@ -74,9 +74,7 @@ BootstrapBlazor的FreeSql数据注入服务扩展包
             };
         }
 
-        List<string> SubIncludeByPropertyNames = new List<string> {
-            nameof(AspNetUserRoles.AspNetRoless) ,
-        };
+        List<string> SubIncludeByPropertyNames = [nameof(AspNetUserRoles.AspNetRoless)];
 
 
     }
