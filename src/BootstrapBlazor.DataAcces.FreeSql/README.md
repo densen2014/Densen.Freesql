@@ -24,7 +24,7 @@ BootstrapBlazor的FreeSql数据注入服务扩展包
     数据服务支持的方法:
 
     - IncludeByPropertyNames: 附加IncludeByPropertyName查询条件, 单项可逗号隔开附加查询条件的第二个参数 then，可以进行二次查询前的修饰工作. (暂时只支持一个then附加)
-    - OrderByPropertyName: 强制排序,但是手动排序优先
+    - OrderByPropertyName: 强制排序,但是手动排序优先, ["len(CustomerID)", "CustomerID"]
     - LeftJoinString: 左联查询，使用原生sql语法
     - WhereCascade: 附加查询条件使用and结合
     - WhereCascadeOr: 附加查询条件使用or结合

@@ -93,7 +93,7 @@ public static partial class FreeSqlUtil
     /// 其中单项可逗号隔开附加查询条件的第二个参数 then，可以进行二次查询前的修饰工作. <para></para>
     /// 单项第二个逗号隔开可第三层then附加</param>
     /// <param name="LeftJoinString">左联查询，使用原生sql语法，LeftJoin("type b on b.id = a.id")</param>
-    /// <param name="OrderByPropertyName">强制排序,但是手动排序优先</param>
+    /// <param name="OrderByPropertyName">强制排序,但是手动排序优先, ["len(CustomerID)", "CustomerID"]</param>
     /// <param name="WhereCascadeOr">附加查询条件使用or结合</param>
     /// <param name="forceAllItems">附加查询条件使用or结合</param>
     /// <param name="WhereLamda">查询条件，Where(a => a.Id > 10)，支持导航对象查询，Where(a => a.Author.Email == "2881099@qq.com")</param>

@@ -24,6 +24,8 @@
        OnClickRowCallback="ClickRow"
        OnAfterDeleteAsync="@OnAfterDeleteAsync"
        OnAfterModifyAsync="@OnAfterModifyAsync"
+       OnColumnCreating="@OnColumnCreating"
+       OnDoubleClickRowCallback="OnDoubleClickRowCallback"
        DoubleClickToEdit="@DoubleClickToEdit"
        IsMultipleSelect="@IsMultipleSelect"
        IsTracking="@IsTracking"
@@ -78,11 +80,9 @@
        AllowDragColumn="@AllowDragColumn"
        HeaderTextWrap="@HeaderTextWrap"
        ShowFilterHeader="@ShowFilterHeader"
-       OnColumnCreating="@OnColumnCreating"
        GetAdvancedSearchFilterCallback="@GetAdvancedSearchFilterCallback"
        IsFixedFooter="@IsFixedFooter"
        PageInfoBodyTemplate="PageInfoBodyTemplate"
-       OnDoubleClickRowCallback="OnDoubleClickRowCallback"
        ScrollWidth="ScrollWidth"
        IsHideFooterWhenNoData="IsHideFooterWhenNoData"
        ShowMultiFilterHeader="ShowMultiFilterHeader"
@@ -228,8 +228,7 @@
         {
             @DetailRowTemplate(context)
         }
-
-        @if (ShowDetailRowType == ShowDetailRowType.选项卡)
+        else if (ShowDetailRowType == ShowDetailRowType.选项卡)
         {
             <Tab IsLazyLoadTabItem="true">
                 <TabItem Text="@DetailRowsName1">

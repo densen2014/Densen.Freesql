@@ -165,11 +165,11 @@ public partial class TableAmeBase : BootstrapComponentBase
     /// <summary>
     /// 附加导航IncludeByPropertyName查询条件, 单项可逗号隔开附加查询条件的第二个参数 then，可以进行二次查询前的修饰工作. (暂时只支持一个then附加) <para></para>
     /// 例如 : <para></para>
-    ///       new List&lt;string&gt; { "ProductsNamePrice","customers" } <para></para>
+    ///       ["ProductsNamePrice","customers"] <para></para>
     /// 或: 直接附加最终关系<para></para>
-    ///       new List&lt;string&gt; { "Orders.Customers1","Orders.Employes1" } <para></para>
+    ///       ["Orders.Customers1","Orders.Employes1"] <para></para>
     /// 或: 附加查询条件的第二个参数 then<para></para>
-    ///       new List&lt;string&gt; { "Orders,Employes"}  对应linq为:IncludeByPropertyName("Orders",then => then.IncludeByPropertyName("Employes")<para></para>
+    ///       ["Orders,Employes"]  对应linq为:IncludeByPropertyName("Orders",then => then.IncludeByPropertyName("Employes")<para></para>
     /// </summary>
     [Parameter] public List<string>? IncludeByPropertyNames { get; set; }
 
@@ -180,19 +180,19 @@ public partial class TableAmeBase : BootstrapComponentBase
 
     /// <summary>
     /// 详表附加导航IncludeByPropertyName查询条件 <para></para>
-    /// 例如 : new List&lt;string&gt; { "ProductsNamePrice","customers" }
+    /// 例如 : ["ProductsNamePrice","customers"]
     /// </summary>
     [Parameter] public List<string>? SubIncludeByPropertyNames { get; set; }
 
     /// <summary>
     /// 详表附加导航IncludeByPropertyNameII查询条件 <para></para>
-    /// 例如 : new List&lt;string&gt; { "ProductsNamePrice","customers" }
+    /// 例如 : ["ProductsNamePrice","customers"]
     /// </summary>
     [Parameter] public List<string>? SubIncludeByPropertyNamesII { get; set; }
 
     /// <summary>
     /// 详表附加导航IncludeByPropertyNameIII查询条件 <para></para>
-    /// 例如 : new List&lt;string&gt; { "ProductsNamePrice","customers" }
+    /// 例如 : ["ProductsNamePrice","customers"]
     /// </summary>
     [Parameter] public List<string>? SubIncludeByPropertyNamesIII { get; set; }
 
@@ -203,7 +203,7 @@ public partial class TableAmeBase : BootstrapComponentBase
 
     /// <summary>
     /// 强制排序,但是手动排序优先
-    /// 例如 : new List&lt;string&gt; { "ProductsNamePrice","customers" }
+    /// 例如 : ["ProductsNamePrice","customers"] 或 ["len(CustomerID)", "CustomerID"]
     /// </summary>
     [Parameter] public List<string>? OrderByPropertyName { get; set; }
 
