@@ -516,15 +516,19 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// <param name="force">强制使用附加and条件,即使传入值为空也使用</param>
     /// <param name="connectionString">数据库连接字符串</param>
     /// <returns></returns>
-    public async Task QueryAsync(Expression<Func<TItem, bool>>? whereLamda = null, bool force = false, string? connectionString = null)
+    public async Task QueryAsync(Expression<Func<TItem, bool>>? whereLamda = null, bool force = false, string? connectionString = null, List<string>? orderByPropertyName = null)
     {
         if (whereLamda != null || force)
         {
             WhereLamda = whereLamda;
         }
+        if (orderByPropertyName != null)
+        {
+            OrderByPropertyName = orderByPropertyName;
+        }
         if (connectionString != null)
         {
-            this.ConnectionString = connectionString;
+            ConnectionString = connectionString;
         }
         await TableMain.QueryAsync();
     }
