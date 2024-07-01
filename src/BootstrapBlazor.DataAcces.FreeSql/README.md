@@ -86,6 +86,9 @@ BootstrapBlazor的FreeSql数据注入服务扩展包
 
 ## 更新日志
 
+2024-7-1
+- 添加 AfterQueryCallBackAsync 查询回调方法,用于附加获取地理位置之类
+
 2024-2-9
 - 增加 [FreeSql.Cloud 多库操作服务](https://github.com/densen2014/Densen.Freesql/wiki/%E5%85%B3%E4%BA%8E-FreeSql.Cloud-%E5%A4%9A%E5%BA%93%E6%93%8D%E4%BD%9C%E6%9C%8D%E5%8A%A1) (AddFreeSqlCloud), 提供跨数据库访问，分布式事务TCC、SAGA解决方案
 - TableAmePro 组件使用 ConnectionString 作为key,在服务里 fsql = fsqlCloud.Use(connectionString) 获取当前库的实例
