@@ -12,22 +12,18 @@
                     ItemDetailsIII="NullClass"
                     EnableCascadeSave
                     AfterQueryAsync="@OnAfterQueryAsync"
+                    AfterQueryCallBackAsync="@OnAfterQueryCallBackAsync"
                     ShowFooter="true"
                     FooterText=""
                     ShowFloatPanel="false"
                     PageItemsSourceStart="3"
                     FooterAlign="Alignment.Left">
             <FooterContent>
-                <td colspan="2">
-                    <div class="table-cell justify-content-start">
-                        合计 @DateTime.Now.ToString("hh:mm:ss")
-                    </div>
-                </td>
                 <td colspan="5">
                     <div class="table-cell justify-content-start">
-                        总结  @DateTime.UtcNow.ToString("hh:mm:ss")
+                        @SummaryText
                     </div>
-                </td>
+                </td> 
             </FooterContent>
         </TablePollo>
     </TabItem>

@@ -150,6 +150,12 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     public Action<ISelect<TItem>>? AfterQueryAsync { get; set; }
 
     /// <summary>
+    /// 获得/设置 查询回调方法,用于附加获取地理位置之类
+    /// </summary>
+    [Parameter]
+    public Func<IEnumerable<TItem>, Task<IEnumerable<TItem>?>>? AfterQueryCallBackAsync { get; set; }
+
+    /// <summary>
     /// 获得/设置 单击行回调委托方法
     /// </summary>
     [Parameter]
@@ -387,7 +393,11 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
                 WhereLamda
             );
 
-        ItemsCache = itemsOrm.Items;
+        if (AfterQueryCallBackAsync != null && itemsOrm.Items!=null)
+        {
+            itemsOrm.Items = await AfterQueryCallBackAsync(itemsOrm.Items); 
+        }
+
 
         if (AfterQueryAsync != null)
         {
@@ -398,6 +408,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
                 AfterQueryAsync(ISelectCache());
             }
         }
+        ItemsCache = itemsOrm.Items;
 
         return itemsOrm;
     }

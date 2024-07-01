@@ -5,6 +5,7 @@
 // **********************************
 
 using AmeBlazor.Components;
+using BootstrapBlazor.Components;
 using Densen.Models.ids;
 using FreeSql;
 using System.Diagnostics.CodeAnalysis;
@@ -18,6 +19,8 @@ public partial class TableTotalDemo
 
     [NotNull]
     protected TablePollo<AspNetUsers, NullClass, NullClass, NullClass>? TableMain2 { get; set; }
+
+    private string? SummaryText { get; set; }
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -36,9 +39,22 @@ public partial class TableTotalDemo
     {
         var _sum1 = select.Sum(d => d.PhoneNumberConfirmed);
         var _sum2 = select.Sum(d => d.AccessFailedCount);
+        SummaryText=$"已确认：{_sum2:N2}  访问失败：{_sum1:N2}";
         //FloatPanel.Set($"佣金：{_sum2:N2}  合计金额：{_sum1:N2}");
-        TableMain.SetFooter($"已确认：{_sum2:N2}  访问失败：{_sum1:N2}");
+        //TableMain.SetFooter($"已确认：{_sum2:N2}  访问失败：{_sum1:N2}");
     }
+ 
+
+    protected Task<IEnumerable<AspNetUsers>> OnAfterQueryCallBackAsync(IEnumerable<AspNetUsers> items)
+    {
+        foreach (var item in items)
+        {
+            item.Email = $"CallBack {item.Email}";
+        }
+        return Task.FromResult(items);
+
+    }
+
 
     /// <summary>
     /// 查询后计算合计
