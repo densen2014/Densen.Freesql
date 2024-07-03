@@ -69,23 +69,23 @@ public static class FreeSqlServiceCollectionExtensions
             fsqlCloud.DistributeTrace += log => System.Console.WriteLine(log.Split('\n')[0].Trim());
         }
 #endif
-        services.AddSingleton(fsqlCloud);
-        services.AddScoped(sp =>
+        fsqlCloud.Register("main", () =>
         {
-            fsqlCloud.Register("main", () =>
+            var builder = new FreeSqlBuilder();
+            optionsAction(builder);
+            var instance = builder.Build();
+            instance.UseJsonMap();
+            if (configureOptions.ConfigEntityPropertyImage)
             {
-                var builder = new FreeSqlBuilder();
-                optionsAction(builder);
-                var instance = builder.Build();
-                instance.UseJsonMap();
-                if (configureOptions.ConfigEntityPropertyImage)
-                {
-                    instance.Aop.AuditValue += AuditValue;
-                    instance.Aop.ConfigEntityProperty += ConfigEntityProperty;
-                }
-                configureAction?.Invoke(instance);
-                return instance;
-            });
+                instance.Aop.AuditValue += AuditValue;
+                instance.Aop.ConfigEntityProperty += ConfigEntityProperty;
+            }
+            configureAction?.Invoke(instance);
+            return instance;
+        });
+        services.AddSingleton(fsqlCloud);
+        services.AddSingleton(sp =>
+        {
             //临时访问其他数据库表，使用 FreeSqlCloud 对象 Use("db3").Select<T>().ToList()
             return fsqlCloud.Use("main");
         });
