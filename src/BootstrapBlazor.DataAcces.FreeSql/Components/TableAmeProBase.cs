@@ -393,6 +393,11 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
                 WhereLamda
             );
 
+        if (GetDataService().Message != null)
+        {
+            ToastService?.Error("出错",GetDataService().Message);
+        }
+
         if (AfterQueryCallBackAsync != null && itemsOrm.Items!=null)
         {
             itemsOrm.Items = await AfterQueryCallBackAsync(itemsOrm.Items); 

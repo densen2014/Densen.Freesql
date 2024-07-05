@@ -100,6 +100,11 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
     public bool AsTable { get; set; }
 
     /// <summary>
+    /// 执行结果
+    /// </summary>
+    public string? Message;
+
+    /// <summary>
     /// 缓存查询条件
     /// </summary>
     private QueryPageOptions OptionsCache { get; set; } = new QueryPageOptions();
@@ -169,7 +174,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
                 List<string>? WhereCascadeOr = null,
                 Expression<Func<TModel, bool>>? WhereLamda = null)
     {
-        var res = FreeSqlUtil.Fetch(OptionsCache, OptionsCache, null, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, true, WhereLamda, AsTable);
+        var res = FreeSqlUtil.Fetch(out Message,OptionsCache, OptionsCache, null, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, true, WhereLamda, AsTable);
         return res.Items?.ToList();
     }
 
@@ -193,7 +198,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
                 List<string>? WhereCascadeOr = null,
                 Expression<Func<TModel, bool>>? WhereLamda = null)
     {
-        var res = FreeSqlUtil.Fetch(option, OptionsCache, TotalCount, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, WhereLamda: WhereLamda, AsTable: AsTable);
+        var res = FreeSqlUtil.Fetch(out Message, option, OptionsCache, TotalCount, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, WhereLamda: WhereLamda, AsTable: AsTable);
         TotalCount = res.TotalCount;
         Items = res.Items?.ToList();
         OptionsCache = option;
@@ -209,7 +214,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
     /// <returns></returns>
     public override Task<QueryData<TModel>> QueryAsync(QueryPageOptions option)
     {
-        var res = FreeSqlUtil.Fetch<TModel>(option, OptionsCache, TotalCount, fsql);
+        var res = FreeSqlUtil.Fetch<TModel>(out Message, option, OptionsCache, TotalCount, fsql);
         TotalCount = res.TotalCount;
         Items = res.Items?.ToList();
         OptionsCache = option;

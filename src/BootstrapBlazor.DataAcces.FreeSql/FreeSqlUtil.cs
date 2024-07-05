@@ -99,6 +99,7 @@ public static partial class FreeSqlUtil
     /// <param name="WhereLamda">查询条件，Where(a => a.Id > 10)，支持导航对象查询，Where(a => a.Author.Email == "2881099@qq.com")</param>
     /// <param name="asTable">使用分表,走WithTempQuery方法查询</param>
     public static QueryData<TModel> Fetch<TModel>(
+                            out string? message,
                             QueryPageOptions option,
                             QueryPageOptions? optionsLast,
                             long? TotalCount,
@@ -112,6 +113,7 @@ public static partial class FreeSqlUtil
                             Expression<Func<TModel, bool>>? WhereLamda = null,
                             bool AsTable = false) where TModel : class, new()
     {
+        message = null;
         var items = new List<TModel>();
 
         if (forceAllItems)
@@ -143,7 +145,15 @@ public static partial class FreeSqlUtil
                 fsql_select = fsql_select.WithTempQuery(a => new TModel());
             }
 
-            fsql_select = fsql_select.OrderByPropertyNameIf(option.SortOrder != SortOrder.Unset, option.SortName, option.SortOrder == SortOrder.Asc);
+            //处理排序字段不存在错误捕获
+            try
+            {
+                fsql_select = fsql_select.OrderByPropertyNameIf(option.SortOrder != SortOrder.Unset, option.SortName, option.SortOrder == SortOrder.Asc);
+            }
+            catch (Exception ex)
+            {
+                message=ex.Message;
+            }
 
             #region "处理手动排序条件"
             if (OrderByPropertyName != null)
