@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Description>FreeSql 数据注入服务扩展包</Description>
+        <Description>FreeSql Cloud 数据注入服务扩展包,基于 FreeSql 3.2.832</Description>
         <AssemblyName>Densen.DataAcces.FreeSql</AssemblyName>
         <PackageTags>FreeSql DataAcces</PackageTags>
         <OutputPath>..\..\..\Bin</OutputPath>
-        <Version>8.6.1</Version>
+        <Version>8.7.0</Version>
     </PropertyGroup>
 
     <PropertyGroup>
