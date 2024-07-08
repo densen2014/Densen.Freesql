@@ -5,7 +5,7 @@
 1. 安装包或者直接第二步手动编辑.csproj文件
     ```xml
     <ItemGroup>
-        <PackageReference Include="BootstrapBlazor.AutoGenerate" Version="*" />
+        <PackageReference Include="Densen.BootstrapBlazor.Abtracts" Version="*" />
     </ItemGroup>
     ```
 
@@ -16,7 +16,7 @@
     </PropertyGroup>
 
     <ItemGroup Condition="$(Frameworks48.Contains('|$(TargetFramework)|'))">
-        <PackageReference Include="BootstrapBlazor.AutoGenerate" Version="*" />
+        <PackageReference Include="Densen.BootstrapBlazor.Abtracts" Version="*" />
     </ItemGroup>
     ```
 
