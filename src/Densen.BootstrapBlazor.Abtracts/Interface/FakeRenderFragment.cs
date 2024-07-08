@@ -3,7 +3,7 @@
 // 作者：Alex Chow
 // e-mail:zhouchuanglin@gmail.com 
 // **********************************
-#if NET20_OR_GREATER
+#if NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
 
 namespace BootstrapBlazor.Components;
 

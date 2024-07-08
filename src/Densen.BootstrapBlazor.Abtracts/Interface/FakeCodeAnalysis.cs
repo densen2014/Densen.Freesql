@@ -5,7 +5,7 @@
 // **********************************
 
 
-#if NET20_OR_GREATER
+#if NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
 namespace BootstrapBlazor.Components;
 
 //
@@ -13,7 +13,7 @@ namespace BootstrapBlazor.Components;
 //     Specifies that an output is not null even if the corresponding type allows it.
 //     Specifies that an input argument was not null when the call returns.
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, Inherited = false)]
-public sealed class NotNullAttribute : Attribute
+internal sealed class NotNullAttribute : Attribute
 {
     //
     // 摘要:

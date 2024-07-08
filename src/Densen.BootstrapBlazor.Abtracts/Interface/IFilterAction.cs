@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // Website: https://www.blazor.zone or https://argozhang.github.io/
 
-#if NET20_OR_GREATER
+#if NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
 
 
 namespace BootstrapBlazor.Components;

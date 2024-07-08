@@ -19,6 +19,17 @@
         <PackageReference Include="Densen.BootstrapBlazor.Abtracts" Version="*" />
     </ItemGroup>
     ```
+    或你自己需要的组合
+ 
+    ```xml
+    <PropertyGroup>
+        <Frameworks48>|net462|net48|netstandard2.0|netstandard2.1|</Frameworks48>
+    </PropertyGroup>
+
+    <ItemGroup Condition="$(Frameworks48.Contains('|$(TargetFramework)|'))">
+        <PackageReference Include="Densen.BootstrapBlazor.Abtracts" Version="*" />
+    </ItemGroup>
+    ```
 
 3. 愉快的使用
     ```xml
@@ -26,7 +37,6 @@
     public partial class Foo  
     {
         [AutoGenerateColumn(Order = 0, Visible = false)]
-        [NotNull]
         public int ID { get; set; }
 
     }
