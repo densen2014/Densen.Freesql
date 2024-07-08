@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Description>抽取 BootstrapBlazor 几个特性 (AutoGenerateClass, AutoGenerateColumn..) 独立包,兼容net framework,基于BootstrapBlazor 8.7.1</Description>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>Densen.BootstrapBlazor.Abtracts</AssemblyName>
+        <PackageTags>Densen BootstrapBlazor.Abtracts</PackageTags>
+        <OutputPath>..\..\..\Bin</OutputPath>
+        <Version>0.0.1</Version>
+        <TargetFrameworks>net462;net48</TargetFrameworks>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="System.Text.Json" Version="8.0.3" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Reference Include="System.ComponentModel.DataAnnotations" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <None Update="README.md">
+        <PackagePath></PackagePath>
+        <Pack>true</Pack>
+      </None>
+    </ItemGroup>
+    
+</Project>

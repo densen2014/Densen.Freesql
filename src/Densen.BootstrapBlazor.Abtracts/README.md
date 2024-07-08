@@ -1,0 +1,1 @@
+抽取 BootstrapBlazor 几个特性 (AutoGenerateClass, AutoGenerateColumn..) 独立包,兼容net framework,基于BootstrapBlazor 8.7.1
