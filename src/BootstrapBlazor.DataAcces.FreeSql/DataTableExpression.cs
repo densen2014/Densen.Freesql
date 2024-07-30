@@ -22,7 +22,14 @@ public static partial class DataTableExpression
             if (col.PropertyType.IsNumberType())
             {
                 col.FormatString = col.PropertyType == typeof(int) ? "" : "N2";
-                col.Align = Alignment.Center;
+                try
+                {
+                    col.Align = Alignment.Center;
+                }
+                catch (Exception e)
+                {
+                    System.Console.WriteLine(e.Message);
+                }
             }
             if (col.PropertyType == typeof(DateTime))
             {

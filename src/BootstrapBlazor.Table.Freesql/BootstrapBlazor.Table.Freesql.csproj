@@ -7,7 +7,7 @@
 		<AssemblyName>BootstrapBlazor.Table.Freesql</AssemblyName>
 		<RootNamespace>Densen.Components</RootNamespace>
         <OutputPath>..\..\..\Bin</OutputPath>
-        <Version>8.7.0</Version>
+        <Version>8.7.5</Version>
         <Configurations>Debug;Release;DebugSC</Configurations>
     </PropertyGroup>
     
