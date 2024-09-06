@@ -793,7 +793,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         }
         else if (rowType == TableDetailRowType.选项卡3)
         {
-            if (FieldII != null && FieldII != Field)
+            if (FieldIII != null && FieldIII != Field)
             {
                 _Field = FieldIII ?? Field;
                 _FieldValue = model.GetIdentityKey(FieldIII);
