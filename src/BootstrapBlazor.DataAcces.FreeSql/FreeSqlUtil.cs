@@ -164,10 +164,10 @@ public static partial class FreeSqlUtil
                     {
                         var item = itemtemp;
                         var isAscending = true;
-                        if (item.EndsWith(" desc"))
+                        if (item.EndsWith(" desc") && !item.StartsWith("len("))
                         {
                             isAscending = false;
-                            item = item.Replace(" desc", "");
+                            item = item.Replace(" desc", ""); 
                         }
                         if (item.StartsWith("len("))
                         {
