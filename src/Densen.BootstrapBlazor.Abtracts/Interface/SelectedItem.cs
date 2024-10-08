@@ -23,6 +23,16 @@ public class SelectedItem
     public SelectedItem(string value, string text) => (Value, Text) = (value, text);
 
     /// <summary>
+    /// 构造函数
+    /// </summary>
+    public SelectedItem(string value, string text, object? item) => (Value, Text, Item) = (value, text, item);
+
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    public SelectedItem(int id, string text, object? item) => (Value, Text, Item) = (id.ToString(), text, item);
+
+    /// <summary>
     /// 获得/设置 显示名称
     /// </summary>
     public virtual string Text { get; set; } = "";
@@ -46,6 +56,15 @@ public class SelectedItem
     /// 获得/设置 分组名称
     /// </summary>
     public string GroupName { get; set; } = "";
+
+    //public int ID { get; set; }
+
+    public object? Item { get; set; }
+
+    public override string ToString()
+    {
+        return Text;
+    }
 }
 
 #endif
