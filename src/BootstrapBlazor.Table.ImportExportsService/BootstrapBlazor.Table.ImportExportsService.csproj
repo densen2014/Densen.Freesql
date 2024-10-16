@@ -7,7 +7,7 @@
 		<RootNamespace>Densen.Service</RootNamespace>
         <TargetFrameworks>netstandard2.0;netstandard2.1;net7.0;net8.0</TargetFrameworks>
         <OutputPath>..\..\..\Bin</OutputPath>
-        <Version>8.7.5</Version>
+        <Version>8.10.4</Version>
         <Configurations>Debug;Release;DebugSC</Configurations>
     </PropertyGroup>
 
