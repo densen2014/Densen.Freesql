@@ -887,6 +887,9 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         builder.AddAttribute(29, nameof(IsExcel), SubIsExcel);
         builder.AddAttribute(30, nameof(IsReadonly), SubIsReadonly);
         builder.AddAttribute(31, nameof(IsSimpleUI), SubIsSimpleUI);
+        builder.AddAttribute(32, nameof(EditDialogItemsPerRow), SubEditDialogItemsPerRow);
+        builder.AddAttribute(33, nameof(EditDialogRowType), SubEditDialogRowType);
+        builder.AddAttribute(34, nameof(EditDialogSize), SubEditDialogSize);
         TRenderTableAdditionalAttributes(builder);
         builder.CloseComponent();
     };

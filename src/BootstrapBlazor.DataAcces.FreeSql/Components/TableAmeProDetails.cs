@@ -24,31 +24,31 @@ where ItemDetails : class, new()
 {
 
     /// <summary>
-    /// 获得/设置 子表新建按钮回调方法
+    /// 获得/设置 明细表新建按钮回调方法
     /// </summary>
     [Parameter]
     public Func<ItemDetails, Task<ItemDetails>>? SubAddAsync { get; set; }
 
     /// <summary>
-    /// 获得/设置 子表编辑按钮回调方法
+    /// 获得/设置 明细表编辑按钮回调方法
     /// </summary>
     [Parameter]
     public Func<ItemDetails, Task>? SubEditAsync { get; set; }
 
     /// <summary>
-    /// 获得/设置 子表保存按钮异步回调方法
+    /// 获得/设置 明细表保存按钮异步回调方法
     /// </summary>
     [Parameter]
     public Func<ItemDetails, ItemChangedType, Task<ItemDetails>>? SubSaveAsync { get; set; }
 
     /// <summary>
-    /// 子表保存数据后异步回调方法
+    /// 明细表保存数据后异步回调方法
     /// </summary>
     [Parameter]
     public Func<ItemDetails, ItemChangedType, Task>? SubAfterSaveAsync { get; set; }
 
     /// <summary>
-    /// 获得/设置 子表删除按钮异步回调方法
+    /// 获得/设置 明细表删除按钮异步回调方法
     /// </summary>
     [Parameter]
     public Func<IEnumerable<TItem>, Task<bool>>? SubDeleteAsync { get; set; }

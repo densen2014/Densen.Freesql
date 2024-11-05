@@ -620,7 +620,7 @@ public partial class TableAmeBase : BootstrapComponentBase
     public EditMode EditMode { get; set; }
 
     /// <summary>
-    /// 获得/设置 组件编辑模式 默认为弹窗编辑行数据 PopupEditForm
+    /// 获得/设置 明细表组件编辑模式 默认为弹窗编辑行数据 PopupEditForm
     /// </summary>
     [Parameter]
     public EditMode? SubEditMode { get; set; }
@@ -662,13 +662,13 @@ public partial class TableAmeBase : BootstrapComponentBase
     public TableSize TableSizeDetails { get; set; } = BootstrapBlazor.Components.TableSize.Compact;
 
     /// <summary>
-    /// 获得/设置 默认每页数据数量 默认 0 使用 <see cref="PageItemsSource"/> 第一个值
+    /// 获得/设置 明细表默认每页数据数量 默认 0 使用 <see cref="PageItemsSource"/> 第一个值
     /// </summary>
     [Parameter]
     public int? SubPageItems { get; set; }
 
     /// <summary>
-    /// 获得/设置 
+    /// 获得/设置 明细表高度
     /// </summary>
     [Parameter]
     public int? SubHeight { get; set; }
@@ -802,10 +802,22 @@ public partial class TableAmeBase : BootstrapComponentBase
     public int EditDialogItemsPerRow { get; set; } = 2;
 
     /// <summary>
+    /// 获得/设置 明细表每行显示组件数量 默认为 2
+    /// </summary>
+    [Parameter]
+    public int SubEditDialogItemsPerRow { get; set; } = 2;
+
+    /// <summary>
     /// 获得/设置 设置行内组件布局格式 默认 Inline 布局
     /// </summary>
     [Parameter]
     public RowType EditDialogRowType { get; set; } = RowType.Inline;
+
+    /// <summary>
+    /// 获得/设置 明细表设置行内组件布局格式 默认 Inline 布局
+    /// </summary>
+    [Parameter]
+    public RowType SubEditDialogRowType { get; set; } = RowType.Inline;
 
     /// <summary>
     /// 获得/设置 设置 <see cref="EditDialogRowType" /> Inline 模式下标签对齐方式 默认 None 等效于 Left 左对齐
@@ -818,6 +830,12 @@ public partial class TableAmeBase : BootstrapComponentBase
     /// </summary>
     [Parameter]
     public Size EditDialogSize { get; set; } = Size.ExtraLarge;
+
+    /// <summary>
+    /// 明细表编辑框的大小
+    /// </summary>
+    [Parameter]
+    public Size SubEditDialogSize { get; set; } = Size.ExtraLarge;
 
     /// <summary>
     /// 获得/设置 编辑框是否显示最大化按钮 默认 false 不显示
