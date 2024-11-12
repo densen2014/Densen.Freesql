@@ -9,12 +9,12 @@
         <AssemblyName>Densen.BootstrapBlazor.Abtracts</AssemblyName>
         <PackageTags>Densen BootstrapBlazor.Abtracts</PackageTags>
         <OutputPath>..\..\..\Bin</OutputPath>
-        <Version>0.0.9</Version>
+        <Version>0.0.5</Version>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-        <PackageReference Include="System.Text.Json" Version="9.*" />
+        <PackageReference Include="System.Text.Json" Version="8.*" />
     </ItemGroup> 
     
 </Project>

@@ -5,9 +5,9 @@
 		<PackageTags>ImportExports Service for BootstrapBlazor</PackageTags>
 		<AssemblyName>BootstrapBlazor.Table.ImportExportsService</AssemblyName>
 		<RootNamespace>Densen.Service</RootNamespace>
-        <TargetFrameworks>netstandard2.0;netstandard2.1;net7.0;net8.0;net9.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;netstandard2.1;net7.0;net8.0</TargetFrameworks>
         <OutputPath>..\..\..\Bin</OutputPath>
-        <Version>9.0.0</Version>
+        <Version>8.10.5</Version>
         <Configurations>Debug;Release;DebugSC</Configurations>
     </PropertyGroup>
 
