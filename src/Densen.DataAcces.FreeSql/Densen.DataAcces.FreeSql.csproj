@@ -5,11 +5,11 @@
         <AssemblyName>Densen.DataAcces.FreeSql</AssemblyName>
         <PackageTags>FreeSql DataAcces</PackageTags>
         <OutputPath>..\..\..\Bin</OutputPath>
-        <Version>8.10.5</Version>
+        <Version>9.0.0</Version>
     </PropertyGroup>
 
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;netstandard2.1;net7.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;netstandard2.1;net7.0;net8.0;net9.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
