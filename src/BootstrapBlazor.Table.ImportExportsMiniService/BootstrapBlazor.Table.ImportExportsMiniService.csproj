@@ -5,15 +5,16 @@
 		<PackageTags>ImportExports Service for BootstrapBlazor</PackageTags>
 		<AssemblyName>BootstrapBlazor.Table.ImportExportsMiniService</AssemblyName>
 		<RootNamespace>Densen.Service</RootNamespace>
-        <TargetFrameworks>netstandard2.0;netstandard2.1;net7.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;netstandard2.1;net7.0;net8.0;net9.0</TargetFrameworks>
         <OutputPath>..\..\..\Bin</OutputPath>
-        <Version>8.10.5</Version>
+        <Version>9.0.1</Version>
         <Configurations>Debug;Release;DebugSC</Configurations>
     </PropertyGroup>
 
 	<ItemGroup>
-        <PackageReference Include="MiniExcel" Version="1.34.0" />
+        <PackageReference Include="MiniExcel" Version="1.35.0" />
         <PackageReference Include="MiniWord" Version="0.8.0" />
+        <PackageReference Include="System.IO.Packaging" Version="8.0.1" />
     </ItemGroup>
 
 </Project>
