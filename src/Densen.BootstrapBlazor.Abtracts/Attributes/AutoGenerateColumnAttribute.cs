@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // Website: https://www.blazor.zone or https://argozhang.github.io/
 
+#nullable enable
 #if NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER 
 
 namespace BootstrapBlazor.Components;
@@ -260,7 +261,9 @@ public class AutoGenerateColumnAttribute : AutoGenerateBaseAttribute, ITableColu
     /// 获得 属性类型
     /// </summary>
     [NotNull]
+#pragma warning disable CS8766 // 返回类型中引用类型的为 Null 性与隐式实现的成员不匹配(可能是由于为 Null 性特性)。
     public Type? PropertyType { get; internal set; }
+#pragma warning restore CS8766  
 
     /// <summary>
     /// 获得/设置 当前属性显示文字 列头或者标签名称
@@ -323,7 +326,7 @@ public class AutoGenerateColumnAttribute : AutoGenerateBaseAttribute, ITableColu
     /// <inheritdoc/>
     /// </summary>
     /// <returns></returns>
-    public string GetFieldName() => FieldName;
+    public string? GetFieldName() => FieldName;
 
     /// <summary>
     /// 获得/设置 当前属性分组

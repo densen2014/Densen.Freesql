@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // Website: https://www.blazor.zone or https://argozhang.github.io/
 
+#nullable enable
 #if NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
 
 namespace BootstrapBlazor.Components;
@@ -125,7 +126,7 @@ public interface IEditorItem
     /// <summary>
     /// 获取绑定字段信息方法
     /// </summary>
-    string GetFieldName();
+    string? GetFieldName();
 
     /// <summary>
     /// 获得/设置 顺序号
