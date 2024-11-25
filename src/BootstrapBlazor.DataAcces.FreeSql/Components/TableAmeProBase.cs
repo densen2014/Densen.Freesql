@@ -23,7 +23,7 @@ using static AME.EnumsExtensions;
 namespace AmeBlazor.Components;
 public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, new()
 {
-
+ 
     public TItem? SelectOneItem { get; set; }
 
     [Parameter] public Func<IEnumerable<TItem>, ExportType, Task>? 导出 { get; set; }
@@ -51,6 +51,20 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     [Parameter]
     public Func<TItem, Task<bool>>? DetailsDialogSaveAsync { get; set; }
 
+    /// <summary>
+    /// 获得/设置 编辑弹窗配置类扩展回调方法 新建/编辑弹窗弹出前回调此方法用于设置弹窗配置信息
+    /// </summary>
+    [Parameter]
+    public Action<ITableEditDialogOption<TItem>>? BeforeShowEditDialogCallback { get; set; }
+
+    /// <summary>
+    /// 设置禁用表单内回车自动提交功能
+    /// </summary>
+    public void SetDisableAutoSubmitFormByEnter()
+    {
+        BeforeShowEditDialogCallback = new Action<ITableEditDialogOption<TItem>>(o => o.DisableAutoSubmitFormByEnter = true);
+    }
+
     [NotNull]
     public Table<TItem>? TableMain { get; set; }
 
@@ -74,6 +88,10 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     [Inject]
     [NotNull]
     private IStringLocalizer<Table<TItem>>? Localizer { get; set; }
+
+    [Inject]
+    [NotNull]
+    private IIconTheme? IconTheme { get; set; }
 
     /// <summary>
     /// 获得/设置 数据服务
@@ -105,6 +123,12 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     [Parameter]
     public Func<TItem, Task<TItem>>? AddAsync { get; set; }
 
+    /// <summary>
+    /// 获得/设置 批量添加按钮回调方法
+    /// </summary>
+    [Parameter]
+    public Func<TItem, Task<bool>>? BatchAddAsync { get; set; }
+    
     /// <summary>
     /// 获得/设置 编辑按钮回调方法
     /// </summary>
@@ -320,6 +344,37 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         return newone;
     }
 
+    public async Task OnBatchAddAsync()
+    {
+        if (BatchAddAsync != null)
+        {
+            var newone = new TItem();
+            if (FieldValue != null || FieldValueD != null)
+            {
+                newone.FieldSetValue(Field, FieldValue ?? FieldValueD);
+            } 
+
+            if (await BatchAddAsync(newone))
+            {
+                await TableMain.QueryAsync();
+            }
+        }
+    }
+
+    public async Task Refresh()
+    {
+        await TableMain.QueryAsync(); 
+    }
+
+    /// <summary>
+    /// 设置 列可见方法
+    /// </summary>
+    /// <param name="columns"></param>
+    public void ResetVisibleColumns(IEnumerable<ColumnVisibleItem> columns)
+    {
+        TableMain.ResetVisibleColumns(columns);
+    }
+
     public async Task<TItem> OnEditAsync(TItem item)
     {
         if (EditAsync != null)
@@ -474,9 +529,11 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         }
         AddModalTitle ??= Localizer[nameof(AddModalTitle)];
         EditModalTitle ??= Localizer[nameof(EditModalTitle)];
+        BatchAddButtonText ??= Localizer[nameof(BatchAddButtonText)];
+        AddButtonIcon ??= IconTheme.GetIconByKey(ComponentIcons.TableAddButtonIcon);
 
     }
-
+     
     /// <summary>
     /// OnParametersSet 方法
     /// </summary>
@@ -891,7 +948,9 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         builder.AddAttribute(32, nameof(EditDialogItemsPerRow), SubEditDialogItemsPerRow);
         builder.AddAttribute(33, nameof(EditDialogRowType), SubEditDialogRowType);
         builder.AddAttribute(34, nameof(EditDialogSize), SubEditDialogSize);
-        TRenderTableAdditionalAttributes(builder);
+        builder.AddAttribute(35, nameof(EditDialogFullScreenSize), EditDialogFullScreenSize);
+        builder.AddAttribute(36, nameof(EditDialogFullScreenSize), EditDialogFullScreenSize);
+        TRenderTableAdditionalAttributes(builder, rowType);
         builder.CloseComponent();
     };
 
@@ -899,7 +958,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// 附加属性
     /// </summary>
     /// <param name="builder"></param>
-    public virtual void TRenderTableAdditionalAttributes(RenderTreeBuilder builder)
+    public virtual void TRenderTableAdditionalAttributes(RenderTreeBuilder builder, TableDetailRowType rowType = TableDetailRowType.选项卡1)
     {
     }
 

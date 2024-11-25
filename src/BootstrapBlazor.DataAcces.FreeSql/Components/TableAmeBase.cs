@@ -501,6 +501,18 @@ public partial class TableAmeBase : BootstrapComponentBase
     public bool ShowAddButton { get; set; } = true;
 
     /// <summary>
+    /// 获得/设置 是否显示批量添加按钮 默认为 false 不显示
+    /// </summary>
+    [Parameter]
+    public bool ShowBatchAddButton { get; set; } = false;
+
+    /// <summary>
+    /// 获得/设置 是否显示批量添加按钮2 默认为 false 不显示
+    /// </summary>
+    [Parameter]
+    public bool ShowBatchAddButton2 { get; set; } = false;
+
+    /// <summary>
     /// 获得/设置 是否显示编辑按钮 默认为 true 行内是否显示请使用 <see cref="ShowExtendEditButton"/> 与 <see cref="ShowEditButtonCallback" />
     /// </summary>
     [Parameter]
@@ -838,6 +850,12 @@ public partial class TableAmeBase : BootstrapComponentBase
     public Size SubEditDialogSize { get; set; } = Size.ExtraLarge;
 
     /// <summary>
+    /// 获得/设置 编辑框 FullScreenSize 参数 默认 none
+    /// </summary>
+    [Parameter]
+    public FullScreenSize EditDialogFullScreenSize { get; set; }
+
+    /// <summary>
     /// 获得/设置 编辑框是否显示最大化按钮 默认 false 不显示
     /// </summary>
     [Parameter]
@@ -982,6 +1000,19 @@ public partial class TableAmeBase : BootstrapComponentBase
     /// </summary>
     [Parameter]
     public string? AddModalTitle { get; set; }
+
+    /// <summary>
+    /// 获得/设置 批量添加按钮文本
+    /// </summary>
+    [Parameter]
+    [NotNull]
+    public string? BatchAddButtonText { get; set; } = "批量添加";
+
+    /// <summary>
+    /// 获得/设置 新建按钮图标
+    /// </summary>
+    [Parameter]
+    public string? AddButtonIcon { get; set; }
 
     #endregion
 

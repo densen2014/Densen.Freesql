@@ -25,6 +25,8 @@
        EditDialogLabelAlign="EditDialogLabelAlign"
        EditDialogSize="EditDialogSize"
        EditDialogShowMaximizeButton="EditDialogShowMaximizeButton"
+       EditDialogFullScreenSize="EditDialogFullScreenSize"
+       BeforeShowEditDialogCallback="BeforeShowEditDialogCallback!"
        ExportButtonIcon=@ExportButtonIcon
        EditTemplate="@EditTemplate"
        GetAdvancedSearchFilterCallback="@GetAdvancedSearchFilterCallback"
@@ -92,11 +94,19 @@
        SelectedRows="SelectedRows"
        SelectedRowsChanged="SelectedRowsChanged"
        TableSize="@TableSize"
-       TableToolbarBeforeTemplate="@TableToolbarBeforeTemplate"
        TableExtensionToolbarBeforeTemplate="@TableExtensionToolbarBeforeTemplate"
        TableExtensionToolbarTemplate="@TableExtensionToolbarTemplate" 
        >
-
+    <TableToolbarBeforeTemplate>
+        @if (TableToolbarBeforeTemplate != null)
+        {
+            @TableToolbarBeforeTemplate
+        }
+        @if (ShowBatchAddButton)
+        {
+            <TableToolbarButton TItem="TItem" Color="Color.Success" OnClick="@OnBatchAddAsync" Icon="@AddButtonIcon" Text="@BatchAddButtonText" />
+        }
+    </TableToolbarBeforeTemplate>
     <TableToolbarTemplate>
         @if (TableToolbarTemplate != null)
         {
@@ -253,7 +263,7 @@
 
     <TableFooter Context="context1">
         @if (FooterTemplate != null)
-        {                      
+        {
             @FooterTemplate(TableMain.Rows)
         }
         @if (FooterContent != null)
