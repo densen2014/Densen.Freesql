@@ -173,6 +173,10 @@ public static partial class FreeSqlUtil
                         {
                             fsql_select = fsql_select.OrderBy(item);
                         }
+                        else if(item.Contains("case when"))
+                        {
+                            fsql_select = fsql_select.OrderBy(item);
+                        }
                         else if (option.SortOrder == SortOrder.Unset)
                         {
                             fsql_select = fsql_select.OrderByPropertyName(item, isAscending);
