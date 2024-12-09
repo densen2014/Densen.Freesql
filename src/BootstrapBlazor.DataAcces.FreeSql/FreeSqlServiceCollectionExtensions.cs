@@ -58,8 +58,13 @@ public static class FreeSqlServiceCollectionExtensions
     /// <param name="optionsAction"></param>
     /// <param name="configureAction"></param>
     /// <param name="configureOptions"></param>
+    /// <param name="configureActions">批量注册实例</param>
     /// <returns></returns>
-    public static IServiceCollection AddFreeSqlCloud(this IServiceCollection services, Action<FreeSqlBuilder> optionsAction, Action<IFreeSql>? configureAction = null, FreeSqlServiceOptions? configureOptions = null)
+    public static IServiceCollection AddFreeSqlCloud(this IServiceCollection services,
+                                                     Action<FreeSqlBuilder> optionsAction,
+                                                     Action<IFreeSql>? configureAction = null,
+                                                     FreeSqlServiceOptions? configureOptions = null,
+                                                     Action<FsqlCloud>? fsqlCloudRegisters = null)
     {
         configureOptions ??= new FreeSqlServiceOptions();
         var fsqlCloud = new FsqlCloud();
@@ -82,7 +87,8 @@ public static class FreeSqlServiceCollectionExtensions
             }
             configureAction?.Invoke(instance);
             return instance;
-        });
+        }); 
+        fsqlCloudRegisters?.Invoke(fsqlCloud); 
         services.AddSingleton(fsqlCloud);
         services.AddSingleton(sp =>
         {
@@ -96,9 +102,7 @@ public static class FreeSqlServiceCollectionExtensions
         services.TryAddTransient<IImportExport, ImportExportsMiniService>();
         services.AddSingleton(configureOptions);
         return services;
-    }
-
-
+    } 
 
     #region 自定义Guid支持
     /// <summary>
