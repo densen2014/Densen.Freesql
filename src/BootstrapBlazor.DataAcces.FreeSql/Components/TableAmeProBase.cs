@@ -7,18 +7,17 @@
 using AME;
 using BootstrapBlazor.Components;
 using Densen.DataAcces.FreeSql;
-using Densen.Service;
-using DocumentFormat.OpenXml.Spreadsheet;
+using Densen.Service; 
 using FreeSql;
 using FreeSql.Internal.Model;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Localization;
-using Microsoft.JSInterop;
+using Microsoft.JSInterop; 
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
-using static AME.EnumsExtensions;
+using static AME.EnumsExtensions; 
 
 namespace AmeBlazor.Components;
 public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, new()
@@ -82,6 +81,13 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// </summary>
     [Parameter]
     public RenderFragment? FooterContent { get; set; }
+
+    /// <summary>
+    /// 获得/设置 列创建时自动渲染按当前语言区小数点格式对应编辑组件, 默认 true
+    /// </summary>
+    [Parameter]
+    [NotNull]
+    public bool AutoRenderComponentWithLocaleFormat { get; set; } = true;
 
     #region 继承bb table的设置
 
@@ -532,6 +538,10 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         BatchAddButtonText ??= Localizer[nameof(BatchAddButtonText)];
         AddButtonIcon ??= IconTheme.GetIconByKey(ComponentIcons.TableAddButtonIcon);
 
+        if (AutoRenderComponentWithLocaleFormat && OnColumnCreating == null)
+        {
+            OnColumnCreating += AutoRenderComponentLocaleFormat;
+        }
     }
      
     /// <summary>
@@ -969,7 +979,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// <param name="builder"></param>
     public virtual void TRenderTable(TableDetailRowType rowType, RenderTreeBuilder builder)
     {
-        builder.OpenComponent<TableAmeProBase<Item>>(0);
+        builder.OpenComponent<TableAmeProBase<TItem>>(0);
     }
 
     #endregion
@@ -1377,4 +1387,64 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         FloatPanelUp?.Set(value);
     }
 
+    /// <summary>
+    /// 实现自动渲染组件类型
+    /// </summary>
+    /// <param name="columns"></param>
+    /// <returns></returns>
+    public static Task AutoRenderComponentLocaleFormat(List<ITableColumn> columns)
+    {
+        if (NumberDecimalSeparator == ".")
+        {
+            return Task.CompletedTask;
+        }
+
+        var items = columns.Where(i => i.ComponentType == null && IsNumberWithDecimalSeparator(i.PropertyType));
+        foreach (var item in items)
+        {
+            var type = Nullable.GetUnderlyingType(item.PropertyType) ?? item.PropertyType;
+            if (Nullable.GetUnderlyingType(item.PropertyType)!=null)
+            {
+                if (type == typeof(float))
+                {
+                    item.ComponentType = typeof(BootstrapInput<float?>);
+                }
+                else if (type == typeof(double))
+                {
+                    item.ComponentType = typeof(BootstrapInput<double?>);
+                }
+                else if (type == typeof(decimal))
+                {
+                    item.ComponentType = typeof(BootstrapInput<decimal?>);
+                }
+            }
+            else
+            {
+                if (type == typeof(float))
+                {
+                    item.ComponentType = typeof(BootstrapInput<float>);
+                }
+                else if (type == typeof(double))
+                {
+                    item.ComponentType = typeof(BootstrapInput<double>);
+                }
+                else if (type == typeof(decimal))
+                {
+                    item.ComponentType = typeof(BootstrapInput<decimal>);
+                }
+            }
+        } 
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// 检查是否为 Number 数据类型
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    private static bool IsNumberWithDecimalSeparator(Type t)
+    {
+        var targetType = Nullable.GetUnderlyingType(t) ?? t;
+        return targetType == typeof(float) || targetType == typeof(double) || targetType == typeof(decimal);
+    }
 }
