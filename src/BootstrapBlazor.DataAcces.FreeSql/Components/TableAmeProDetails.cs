@@ -94,6 +94,13 @@ where ItemDetails : class, new()
     public Func<ItemDetails, Task>? SubRefresh { get; set; }
 
     /// <summary>
+    /// 获得/设置 明细表模板
+    /// </summary>
+    [Parameter]
+    public RenderFragment<ItemDetails>? SubTableColumns { get; set; }
+
+
+    /// <summary>
     /// 附加属性
     /// </summary>
     /// <param name="builder"></param>
@@ -118,38 +125,32 @@ where ItemDetails : class, new()
         if (SubDeleteAsync != null)
         {
             builder.AddAttribute(53, nameof(DeleteAsync), SubDeleteAsync);
-        } 
+        }
         if (SubBeforeShowEditDialogCallback != null)
         {
             builder.AddAttribute(54, nameof(BeforeShowEditDialogCallback), SubBeforeShowEditDialogCallback);
-        } 
+        }
         if (SubTableToolbarTemplate != null)
         {
             builder.AddAttribute(55, nameof(TableToolbarTemplate), SubTableToolbarTemplate);
-        } 
+        }
         if (SubTableToolbarBeforeTemplate != null)
         {
             builder.AddAttribute(56, nameof(TableToolbarBeforeTemplate), SubTableToolbarBeforeTemplate);
         }
-        if (rowType== TableDetailRowType.选项卡1)
+        if (rowType == TableDetailRowType.选项卡1)
         {
             builder.AddAttribute(56, nameof(ShowBatchAddButton), SubShowBatchAddButton);
             if (SubBatchAddAsync != null)
             {
                 builder.AddAttribute(56, nameof(BatchAddAsync), SubBatchAddAsync);
             }
-        }
-        else if (rowType== TableDetailRowType.选项卡2 && ShowBatchAddButton2)
-        {
-            builder.AddAttribute(56, nameof(ShowBatchAddButton), ShowBatchAddButton2);
-            if (SubBatchAddAsync != null)
-            {
-                builder.AddAttribute(56, nameof(BatchAddAsync), SubBatchAddAsync);
-            }
-        }
+        } 
         if (SubRefresh != null)
         {
             builder.AddAttribute(57, nameof(Refresh), SubRefresh);
         }
     }
+
+   
 }

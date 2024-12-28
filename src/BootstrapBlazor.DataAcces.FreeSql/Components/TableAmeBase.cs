@@ -507,12 +507,6 @@ public partial class TableAmeBase : BootstrapComponentBase
     public bool ShowBatchAddButton { get; set; } = false;
 
     /// <summary>
-    /// 获得/设置 是否显示批量添加按钮2 默认为 false 不显示
-    /// </summary>
-    [Parameter]
-    public bool ShowBatchAddButton2 { get; set; } = false;
-
-    /// <summary>
     /// 获得/设置 是否显示编辑按钮 默认为 true 行内是否显示请使用 <see cref="ShowExtendEditButton"/> 与 <see cref="ShowEditButtonCallback" />
     /// </summary>
     [Parameter]

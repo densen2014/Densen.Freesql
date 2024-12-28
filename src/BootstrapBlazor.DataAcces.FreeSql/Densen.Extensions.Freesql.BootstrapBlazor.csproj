@@ -6,7 +6,7 @@
         <AssemblyName>Densen.FreeSql.Extensions.BootstrapBlazor</AssemblyName>
         <RootNamespace>Densen.Extensions.Freesql.BootstrapBlazor</RootNamespace>
         <OutputPath>..\..\..\Bin</OutputPath>
-        <Version>9.1.2</Version>
+        <Version>9.1.9</Version>
         <Configurations>Debug;Release;DebugSC</Configurations>
     </PropertyGroup>
 
@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-        <PackageReference Include="Densen.Extensions.BootstrapBlazor" Version="9.*" />
+        <PackageReference Include="Densen.Extensions.BootstrapBlazor" Version="9.1.9" />
         <ProjectReference Include="..\BootstrapBlazor.Table.ImportExportsMiniService\BootstrapBlazor.Table.ImportExportsMiniService.csproj" />
     </ItemGroup>
 
@@ -27,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Release'">
-        <PackageReference Include="Densen.Extensions.BootstrapBlazor" Version="9.*" />
+        <PackageReference Include="Densen.Extensions.BootstrapBlazor" Version="9.1.9" />
         <PackageReference Include="BootstrapBlazor.Table.ImportExportsMiniService" Version="9.*" />
     </ItemGroup>
 
