@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using static AME.EnumsExtensions;
 using Alignment = BootstrapBlazor.Components.Alignment;
 
@@ -29,6 +30,11 @@ public partial class TableAmeBase : BootstrapComponentBase
     [Inject]
     [NotNull]
     protected DownloadService? DownloadService { get; set; }
+
+    /// <summary>
+    /// 获得 当前输入语言小数点分隔符
+    /// </summary>
+    protected static string NumberDecimalSeparator => CultureInfo.CurrentCulture?.NumberFormat?.NumberDecimalSeparator ?? ".";
 
 
     #region TableAme 的设置
