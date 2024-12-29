@@ -83,7 +83,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     public RenderFragment? FooterContent { get; set; }
 
     /// <summary>
-    /// 获得/设置 列创建时自动渲染按当前语言区小数点格式对应编辑组件, 默认 true
+    /// 获得/设置 列创建时渲染带小数格式字段为文本框组件, 默认 true
     /// </summary>
     [Parameter]
     [NotNull]
@@ -1394,10 +1394,11 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// <returns></returns>
     public static Task AutoRenderComponentLocaleFormat(List<ITableColumn> columns)
     {
-        if (NumberDecimalSeparator == ".")
-        {
-            return Task.CompletedTask;
-        }
+        //经浏览器语言设定验证不过关,最终版本采用全部渲染为文本框解决问题
+        //if (NumberDecimalSeparator == ".")
+        //{
+        //    return Task.CompletedTask;
+        //}
 
         var items = columns.Where(i => i.ComponentType == null && IsNumberWithDecimalSeparator(i.PropertyType));
         foreach (var item in items)
