@@ -7,6 +7,7 @@
 using BootstrapBlazor.Components;
 using Densen.DataAcces;
 using Densen.DataAcces.FreeSql;
+using Densen.DataAcces.MemoryData;
 using Densen.Service;
 using FreeSql;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -46,6 +47,8 @@ public static class FreeSqlServiceCollectionExtensions
         });
 
         services.AddTransient(typeof(IDataService<>), typeof(FreeSqlDataService<>));
+        //附加内存数据操作服务
+        services.AddTransient(typeof(MemoryDataService<>));
         services.TryAddTransient<IImportExport, ImportExportsMiniService>();
         services.AddSingleton(configureOptions);
         return services;
@@ -99,6 +102,8 @@ public static class FreeSqlServiceCollectionExtensions
         services.AddTransient(typeof(IDataService<>), typeof(FreeSqlDataService<>));
         //附加查询条件数据库操作服务
         services.AddTransient(typeof(FreeSqlDataService<>));
+        //附加内存数据操作服务
+        services.AddTransient(typeof(MemoryDataService<>));
         services.TryAddTransient<IImportExport, ImportExportsMiniService>();
         services.AddSingleton(configureOptions);
         return services;

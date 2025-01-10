@@ -104,6 +104,8 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
     /// </summary>
     public string? Message;
 
+    private int VirtualScrollPageItemsCache = 0;
+
     /// <summary>
     /// 缓存查询条件
     /// </summary>
@@ -146,6 +148,22 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
         return res != null;
     }
 
+    private void GetVirtualScrollPageItemsCache(QueryPageOptions options)
+    {
+        if (options.IsVirtualScroll)
+        {
+            //缓存虚拟滚动查询模式分页数
+            if (VirtualScrollPageItemsCache == 0 || options.PageItems> VirtualScrollPageItemsCache)
+            {
+                VirtualScrollPageItemsCache = options.PageItems;
+            }
+            else
+            {
+                options.PageItems = VirtualScrollPageItemsCache;
+            }
+        }
+    }
+
     /// <summary>
     /// 获得查询子句
     /// </summary>
@@ -174,6 +192,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
                 List<string>? WhereCascadeOr = null,
                 Expression<Func<TModel, bool>>? WhereLamda = null)
     {
+        GetVirtualScrollPageItemsCache(OptionsCache);
         var res = FreeSqlUtil.Fetch(out Message,OptionsCache, OptionsCache, null, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, true, WhereLamda, AsTable);
         return res.Items?.ToList();
     }
@@ -198,6 +217,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
                 List<string>? WhereCascadeOr = null,
                 Expression<Func<TModel, bool>>? WhereLamda = null)
     {
+        GetVirtualScrollPageItemsCache(option);
         var res = FreeSqlUtil.Fetch(out Message, option, OptionsCache, TotalCount, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, WhereLamda: WhereLamda, AsTable: AsTable);
         TotalCount = res.TotalCount;
         Items = res.Items?.ToList();
@@ -214,6 +234,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
     /// <returns></returns>
     public override Task<QueryData<TModel>> QueryAsync(QueryPageOptions option)
     {
+        GetVirtualScrollPageItemsCache(option);
         var res = FreeSqlUtil.Fetch<TModel>(out Message, option, OptionsCache, TotalCount, fsql);
         TotalCount = res.TotalCount;
         Items = res.Items?.ToList();

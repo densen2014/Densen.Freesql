@@ -104,7 +104,7 @@
         }
         @if (ShowBatchAddButton)
         {
-            <TableToolbarButton TItem="TItem" Color="Color.Success" OnClick="@OnBatchAddAsync" Icon="@AddButtonIcon" Text="@BatchAddButtonText" />
+            <TableToolbarButton TItem="TItem" Color="Color.Success" OnClick="@OnBatchAddAsync" Icon="@AddButtonIcon" Text="@LocalizerAme[BatchAddButtonText]" />
         }
     </TableToolbarBeforeTemplate>
     <TableToolbarTemplate>
@@ -114,11 +114,11 @@
         }
         @if (ShowDefaultButtons && ShowExcelModeButtons && !IsReadonly)
         {
-            <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="自由编辑" OnClick="@IsExcelToggle" />
+            <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="@LocalizerAme["自由编辑"]" OnClick="@IsExcelToggle" />
         }
         @if (ShowScrollModeButtons && !IsSimpleUI)
         {
-            <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="@(scrollMode == ScrollMode.Virtual ?"长滚动":"分页")" OnClick="@ScrollModeToggle" />
+            <TableToolbarButton TItem="TItem" Color="Color.Primary" Text="@(scrollMode == ScrollMode.Virtual ?@LocalizerAme["长滚动"]:@LocalizerAme["分页"])" OnClick="@ScrollModeToggle" />
         }
         @if (Excel导入 != null)
         {

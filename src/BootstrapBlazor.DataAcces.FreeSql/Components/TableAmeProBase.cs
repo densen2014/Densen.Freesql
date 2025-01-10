@@ -89,11 +89,15 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     [NotNull]
     public bool AutoRenderComponentWithLocaleFormat { get; set; } = true;
 
+    [Inject]
+    [NotNull]
+    public IStringLocalizer<TableAmeBase>? LocalizerAme { get; set; }
+
     #region 继承bb table的设置
 
     [Inject]
     [NotNull]
-    private IStringLocalizer<Table<TItem>>? Localizer { get; set; }
+    public IStringLocalizer<Table<TItem>>? Localizer { get; set; }
 
     [Inject]
     [NotNull]
