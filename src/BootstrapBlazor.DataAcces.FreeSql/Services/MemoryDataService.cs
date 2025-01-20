@@ -5,6 +5,7 @@
 // **********************************
 
 using BootstrapBlazor.Components;
+using MiniExcelLibs;
 using System.Buffers;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
@@ -27,6 +28,22 @@ public class MemoryDataService<TModel> : DataServiceBase<TModel>
     /// </summary>
     [NotNull]
     public string? Field { get; set; }
+
+    /// <summary>
+    /// 导入Excel
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
+    public async Task ImportFormExcel(string filePath)  
+    {
+        if (filePath == null)
+        {
+            return;
+        }
+        //获取到的导入结果为一个字典类型，Key为Sheet名，Value为Sheet对应的数据
+        var res = await MiniExcel.QueryAsync<TModel>(filePath, excelType: ExcelType.XLSX);
+        Items =res.ToList(); 
+    }
 
     /// <summary>
     /// 保存方法
