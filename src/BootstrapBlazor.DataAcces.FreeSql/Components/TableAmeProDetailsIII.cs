@@ -27,19 +27,25 @@ public partial class TableAmeProDetailsIII<TItem, ItemDetails, ItemDetailsII, It
 {
 
     /// <summary>
-    /// 获得/设置 是否显示批量添加按钮2 默认为 false 不显示
+    /// 获得/设置 明细表2是否显示添加按钮 默认为 true 显示
+    /// </summary>
+    [Parameter]
+    public bool SubShowAddButton2 { get; set; } = true;
+
+    /// <summary>
+    /// 获得/设置 明细表2是否显示批量添加按钮 默认为 false 不显示
     /// </summary>
     [Parameter]
     public bool SubShowBatchAddButton2 { get; set; } = false;
 
     /// <summary>
-    /// 获得/设置 明细表批量添加按钮回调方法
+    /// 获得/设置 明细表2批量添加按钮回调方法
     /// </summary>
     [Parameter]
     public Func<ItemDetailsII, Task<bool>>? SubBatchAddAsync2 { get; set; }
 
     /// <summary>
-    /// 获得/设置 明细表模板
+    /// 获得/设置 明细表2模板
     /// </summary>
     [Parameter]
     public RenderFragment<ItemDetailsII>? SubTableColumns2 { get; set; }
@@ -65,6 +71,7 @@ public partial class TableAmeProDetailsIII<TItem, ItemDetails, ItemDetailsII, It
             builder.OpenComponent<TableAmePro<ItemDetailsII, NullClass, NullClass, NullClass>>(0);
             if (SubShowBatchAddButton2)
             {
+                builder.AddAttribute(101, nameof(ShowAddButton), SubShowAddButton2);
                 builder.AddAttribute(100, nameof(ShowBatchAddButton), SubShowBatchAddButton2);
                 if (SubBatchAddAsync != null)
                 {

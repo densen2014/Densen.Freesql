@@ -82,6 +82,12 @@ where ItemDetails : class, new()
     public bool SubShowBatchAddButton { get; set; } = false;
 
     /// <summary>
+    /// 获得/设置 明细表是否显示添加按钮 默认为 true 显示
+    /// </summary>
+    [Parameter]
+    public bool SubShowAddButton { get; set; } = true;
+
+    /// <summary>
     /// 获得/设置 明细表批量添加按钮回调方法
     /// </summary>
     [Parameter]
@@ -141,6 +147,7 @@ where ItemDetails : class, new()
         if (rowType == TableDetailRowType.选项卡1)
         {
             builder.AddAttribute(56, nameof(ShowBatchAddButton), SubShowBatchAddButton);
+            builder.AddAttribute(58, nameof(ShowAddButton), SubShowAddButton);
             if (SubBatchAddAsync != null)
             {
                 builder.AddAttribute(56, nameof(BatchAddAsync), SubBatchAddAsync);
