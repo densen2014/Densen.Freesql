@@ -137,6 +137,7 @@ public class MemoryDataService<TModel> : DataServiceBase<TModel>
 
         // 设置记录总数
         var total = items.Count();
+        ItemsResult = items.ToList();
 
         // 内存分页
         if (options.IsPage)
@@ -152,7 +153,6 @@ public class MemoryDataService<TModel> : DataServiceBase<TModel>
             }
             items = items.Skip(options.StartIndex).Take(VirtualScrollPageItemsCache);
         }
-        ItemsResult = items.ToList();
 
         return Task.FromResult(new QueryData<TModel>()
         {
