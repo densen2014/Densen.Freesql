@@ -20,6 +20,7 @@ public class MemoryDataService<TModel> : DataServiceBase<TModel>
         where TModel : class, new()
 {
     public List<TModel> Items { get; set; } = [];
+    public List<TModel> ItemsResult { get; set; } = [];
     public IEnumerable<int> PageItemsSource => new int[] { 10, 20, 100, 500 };
     public IEnumerable<int> PageItemsSource50 => new int[] { 50, 100, 200, 500 };
 
@@ -34,7 +35,7 @@ public class MemoryDataService<TModel> : DataServiceBase<TModel>
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns></returns>
-    public async Task ImportFormExcel(string filePath)  
+    public async Task ImportFormExcel(string filePath)
     {
         if (filePath == null)
         {
@@ -42,7 +43,7 @@ public class MemoryDataService<TModel> : DataServiceBase<TModel>
         }
         //获取到的导入结果为一个字典类型，Key为Sheet名，Value为Sheet对应的数据
         var res = await MiniExcel.QueryAsync<TModel>(filePath, excelType: ExcelType.XLSX);
-        Items =res.ToList(); 
+        Items = res.ToList();
     }
 
     /// <summary>
@@ -93,7 +94,7 @@ public class MemoryDataService<TModel> : DataServiceBase<TModel>
     public override Task<QueryData<TModel>> QueryAsync(QueryPageOptions options)
     {
 
-        IEnumerable<TModel> items = Items??new();
+        IEnumerable<TModel> items = Items ?? new();
 
         var isSearch = options.Searches.Any() || options.CustomerSearches.Any() || options.AdvanceSearches.Any();
 
@@ -145,12 +146,13 @@ public class MemoryDataService<TModel> : DataServiceBase<TModel>
         else if (options.IsVirtualScroll)
         {
             //缓存虚拟滚动查询模式分页数
-            if (VirtualScrollPageItemsCache == 0 || options.PageItems> VirtualScrollPageItemsCache)
+            if (VirtualScrollPageItemsCache == 0 || options.PageItems > VirtualScrollPageItemsCache)
             {
                 VirtualScrollPageItemsCache = options.PageItems;
             }
             items = items.Skip(options.StartIndex).Take(VirtualScrollPageItemsCache);
         }
+        ItemsResult = items.ToList();
 
         return Task.FromResult(new QueryData<TModel>()
         {
