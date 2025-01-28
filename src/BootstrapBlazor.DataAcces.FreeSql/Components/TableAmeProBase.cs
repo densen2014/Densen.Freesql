@@ -7,22 +7,22 @@
 using AME;
 using BootstrapBlazor.Components;
 using Densen.DataAcces.FreeSql;
-using Densen.Service; 
+using Densen.Service;
 using FreeSql;
 using FreeSql.Internal.Model;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.Extensions.Localization;
-using Microsoft.JSInterop; 
+using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
-using static AME.EnumsExtensions; 
+using static AME.EnumsExtensions;
 
 namespace AmeBlazor.Components;
 public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, new()
 {
- 
+
     public TItem? SelectOneItem { get; set; }
 
     [Parameter] public Func<IEnumerable<TItem>, ExportType, Task>? 导出 { get; set; }
@@ -138,7 +138,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// </summary>
     [Parameter]
     public Func<TItem, Task<bool>>? BatchAddAsync { get; set; }
-    
+
     /// <summary>
     /// 获得/设置 编辑按钮回调方法
     /// </summary>
@@ -340,6 +340,10 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         return false;
     }
 
+    /// <summary>
+    /// 添加, 如果设置了参数, 传递到实体类
+    /// </summary>
+    /// <returns></returns>
     public async Task<TItem> OnAddAsync()
     {
         var newone = new TItem();
@@ -354,6 +358,10 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         return newone;
     }
 
+    /// <summary>
+    /// 批量添加, 如果设置了参数, 传递到实体类
+    /// </summary>
+    /// <returns></returns>
     public async Task OnBatchAddAsync()
     {
         if (BatchAddAsync != null)
@@ -361,8 +369,9 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
             var newone = new TItem();
             if (FieldValue != null || FieldValueD != null)
             {
+                //如果设置了参数, 传递到实体类
                 newone.FieldSetValue(Field, FieldValue ?? FieldValueD);
-            } 
+            }
 
             if (await BatchAddAsync(newone))
             {
@@ -373,7 +382,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
 
     public async Task Refresh()
     {
-        await TableMain.QueryAsync(); 
+        await TableMain.QueryAsync();
     }
 
     /// <summary>
@@ -385,6 +394,11 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         TableMain.ResetVisibleColumns(columns);
     }
 
+    /// <summary>
+    /// 编辑按钮回调方法
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
     public async Task<TItem> OnEditAsync(TItem item)
     {
         if (EditAsync != null)
@@ -417,6 +431,11 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         return res;
     }
 
+    /// <summary>
+    /// 删除按钮回调方法
+    /// </summary>
+    /// <param name="items"></param>
+    /// <returns></returns>
     public async Task<bool> OnDeleteAsync(IEnumerable<TItem> items)
     {
         if (DeleteAsync != null)
@@ -460,17 +479,19 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
 
         if (GetDataService().Message != null)
         {
-            ToastService?.Error("出错",GetDataService().Message);
+            ToastService?.Error("出错", GetDataService().Message);
         }
 
-        if (AfterQueryCallBackAsync != null && itemsOrm.Items!=null)
+        if (AfterQueryCallBackAsync != null && itemsOrm.Items != null)
         {
-            itemsOrm.Items = await AfterQueryCallBackAsync(itemsOrm.Items); 
+            //查询回调方法,用于附加获取地理位置之类
+            itemsOrm.Items = await AfterQueryCallBackAsync(itemsOrm.Items);
         }
 
 
         if (AfterQueryAsync != null)
         {
+            //查询回调方法,用于计算合计之类,传递orm查询子句到外部
             var select = ISelectCache();
             if (SelectCache != select)
             {
@@ -547,7 +568,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
             OnColumnCreating += AutoRenderComponentLocaleFormat;
         }
     }
-     
+
     /// <summary>
     /// OnParametersSet 方法
     /// </summary>
@@ -1408,7 +1429,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         foreach (var item in items)
         {
             var type = Nullable.GetUnderlyingType(item.PropertyType) ?? item.PropertyType;
-            if (Nullable.GetUnderlyingType(item.PropertyType)!=null)
+            if (Nullable.GetUnderlyingType(item.PropertyType) != null)
             {
                 if (type == typeof(float))
                 {
@@ -1438,7 +1459,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
                     item.ComponentType = typeof(BootstrapInput<decimal>);
                 }
             }
-        } 
+        }
         return Task.CompletedTask;
     }
 
