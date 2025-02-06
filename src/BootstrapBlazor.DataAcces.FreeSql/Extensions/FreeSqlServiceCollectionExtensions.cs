@@ -46,7 +46,7 @@ public static class FreeSqlServiceCollectionExtensions
             return instance;
         });
 
-        services.AddTransient(typeof(IDataService<>), typeof(FreeSqlDataService<>));
+        //services.AddTransient(typeof(IDataService<>), typeof(FreeSqlDataService<>));
         //附加内存数据操作服务
         services.AddTransient(typeof(MemoryDataService<>));
         services.TryAddTransient<IImportExport, ImportExportsMiniService>();
@@ -99,7 +99,7 @@ public static class FreeSqlServiceCollectionExtensions
             return fsqlCloud.Use("main");
         });
 
-        services.AddTransient(typeof(IDataService<>), typeof(FreeSqlDataService<>));
+        //services.AddTransient(typeof(IDataService<>), typeof(FreeSqlDataService<>));
         //附加查询条件数据库操作服务
         services.AddTransient(typeof(FreeSqlDataService<>));
         //附加内存数据操作服务
