@@ -411,6 +411,12 @@ public partial class TableAmeBase : BootstrapComponentBase
     /// </summary>
     [Parameter] public bool AsTable { get; set; }
 
+    /// <summary>
+    /// Orm命令超时设置(秒),默认-1使用数据库默认超时
+    /// </summary>
+    [Parameter]
+    public int CommandTimeout { get; set; } = -1;
+
     #region StorageService
     public async Task StorageSetValue<TValue>(string key, TValue value)
     {

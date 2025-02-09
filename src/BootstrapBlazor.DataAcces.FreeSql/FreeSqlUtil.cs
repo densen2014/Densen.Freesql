@@ -98,6 +98,7 @@ public static partial class FreeSqlUtil
     /// <param name="forceAllItems">附加查询条件使用or结合</param>
     /// <param name="WhereLamda">查询条件，Where(a => a.Id > 10)，支持导航对象查询，Where(a => a.Author.Email == "2881099@qq.com")</param>
     /// <param name="asTable">使用分表,走WithTempQuery方法查询</param>
+    /// <param name="timeout">命令超时设置(秒),默认-1使用数据库默认超时</param>
     public static QueryData<TModel> Fetch<TModel>(
                             out string? message,
                             QueryPageOptions option,
@@ -111,7 +112,8 @@ public static partial class FreeSqlUtil
                             List<string>? WhereCascadeOr = null,
                             bool forceAllItems = false,
                             Expression<Func<TModel, bool>>? WhereLamda = null,
-                            bool AsTable = false) where TModel : class, new()
+                            bool AsTable = false,
+                            int timeout = -1) where TModel : class, new()
     {
         message = null;
         var items = new List<TModel>();
@@ -152,7 +154,7 @@ public static partial class FreeSqlUtil
             }
             catch (Exception ex)
             {
-                message=ex.Message;
+                message = ex.Message;
             }
 
             #region "处理手动排序条件"
@@ -167,13 +169,13 @@ public static partial class FreeSqlUtil
                         if (item.EndsWith(" desc") && !item.StartsWith("len("))
                         {
                             isAscending = false;
-                            item = item.Replace(" desc", ""); 
+                            item = item.Replace(" desc", "");
                         }
                         if (item.StartsWith("len("))
                         {
                             fsql_select = fsql_select.OrderBy(item);
                         }
-                        else if(item.Contains("case when"))
+                        else if (item.Contains("case when"))
                         {
                             fsql_select = fsql_select.OrderBy(item);
                         }
@@ -210,6 +212,10 @@ public static partial class FreeSqlUtil
                 fsql_select = fsql_select.Skip(option.StartIndex).Take(option.PageItems);
             }
 
+            if (timeout > -1)
+            {
+                fsql_select = fsql_select.CommandTimeout(timeout);
+            }
             items = fsql_select.ToList();
 
             TotalCount = count;

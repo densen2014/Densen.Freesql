@@ -100,6 +100,11 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
     public bool AsTable { get; set; }
 
     /// <summary>
+    /// 命令超时设置(秒),默认-1使用数据库默认超时
+    /// </summary>
+    public int CommandTimeout { get; set; } = -1;
+
+    /// <summary>
     /// 执行结果
     /// </summary>
     public string? Message;
@@ -153,7 +158,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
         if (options.IsVirtualScroll)
         {
             //缓存虚拟滚动查询模式分页数
-            if (VirtualScrollPageItemsCache == 0 || options.PageItems> VirtualScrollPageItemsCache)
+            if (VirtualScrollPageItemsCache == 0 || options.PageItems > VirtualScrollPageItemsCache)
             {
                 VirtualScrollPageItemsCache = options.PageItems;
             }
@@ -193,7 +198,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
                 Expression<Func<TModel, bool>>? WhereLamda = null)
     {
         GetVirtualScrollPageItemsCache(OptionsCache);
-        var res = FreeSqlUtil.Fetch(out Message,OptionsCache, OptionsCache, null, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, true, WhereLamda, AsTable);
+        var res = FreeSqlUtil.Fetch(out Message, OptionsCache, OptionsCache, null, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, true, WhereLamda, AsTable, CommandTimeout);
         return res.Items?.ToList();
     }
 
@@ -218,7 +223,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
                 Expression<Func<TModel, bool>>? WhereLamda = null)
     {
         GetVirtualScrollPageItemsCache(option);
-        var res = FreeSqlUtil.Fetch(out Message, option, OptionsCache, TotalCount, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, WhereLamda: WhereLamda, AsTable: AsTable);
+        var res = FreeSqlUtil.Fetch(out Message, option, OptionsCache, TotalCount, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, OrderByPropertyName, WhereCascadeOr, WhereLamda: WhereLamda, AsTable: AsTable, timeout: CommandTimeout);
         TotalCount = res.TotalCount;
         Items = res.Items?.ToList();
         OptionsCache = option;

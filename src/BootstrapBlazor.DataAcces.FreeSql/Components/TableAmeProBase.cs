@@ -323,6 +323,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
             }
             DataServices.Last().EnableCascadeSave = EnableCascadeSave;
             DataServices.Last().AsTable = AsTable;
+            DataServices.Last().CommandTimeout = CommandTimeout;
             return DataServices.Last();
         }
         else
