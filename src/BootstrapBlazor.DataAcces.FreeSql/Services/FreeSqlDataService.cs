@@ -15,7 +15,7 @@ namespace Densen.DataAcces.FreeSql;
 /// <summary>
 /// FreeSql ORM 的 IDataService 数据注入服务接口实现
 /// </summary>
-public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel : class, new()
+public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel : class
 {
     [NotNull]
     public IFreeSql? fsql { get; set; }

@@ -39,7 +39,7 @@ public static partial class FreeSqlUtil
                         List<string>? IncludeByPropertyNames = null,
                         string? LeftJoinString = null,
                         List<string>? WhereCascadeOr = null,
-                        Expression<Func<TModel, bool>>? WhereLamda = null) where TModel : class, new()
+                        Expression<Func<TModel, bool>>? WhereLamda = null) where TModel : class
     {
         var dynamicFilterInfo = MakeDynamicFilterInfo(option, WhereCascade, WhereCascadeOr);
         var fsql_select = fsql.Select<TModel>();
@@ -113,7 +113,7 @@ public static partial class FreeSqlUtil
                             bool forceAllItems = false,
                             Expression<Func<TModel, bool>>? WhereLamda = null,
                             bool AsTable = false,
-                            int timeout = -1) where TModel : class, new()
+                            int timeout = -1) where TModel : class
     {
         message = null;
         var items = new List<TModel>();
@@ -130,21 +130,12 @@ public static partial class FreeSqlUtil
         {
             var isSearch = option.Searches.Any() || option.CustomerSearches.Any() || option.AdvanceSearches.Any();
 
-            //if (TotalCount != null && !option.IsVirtualScroll && !isSearch && option.PageItems == optionsLast.PageItems && TotalCount <= optionsLast.PageItems)
-            //{
-            //    //当选择的每页显示数量大于总数时，强制认为是一页
-            //    //无搜索,并且总数<=分页总数直接使用内存排序和搜索
-            //    Console.WriteLine($"无搜索,分页数相等{option.PageItems}/{optionsLast.PageItems},直接使用内存排序和搜索");
-            //}
-            //else
-            //{
-
             var fsql_select = BuildWhere(option, fsql, WhereCascade, IncludeByPropertyNames, LeftJoinString, WhereCascadeOr, WhereLamda);
 
             //使用分表,走WithTempQuery方法查询 https://github.com/dotnetcore/FreeSql/discussions/1066?WT.mc_id=DT-MVP-5005078#discussioncomment-8846214
             if (AsTable)
             {
-                fsql_select = fsql_select.WithTempQuery(a => new TModel());
+                fsql_select = fsql_select.WithTempQuery(a => CreateInstance<TModel>());
             }
 
             //处理排序字段不存在错误捕获
@@ -340,28 +331,6 @@ public static partial class FreeSqlUtil
                 }
             }
 
-            //// 处理模糊搜索
-            //if (option.Searches.Any())
-            //{
-            //    filters.Add(new()
-            //    {
-            //        Logic = DynamicFilterLogic.Or,
-            //        Filters = option.Searches.Select(i => i.ToDynamicFilter()).ToList()
-            //    });
-            //}
-
-            //// 处理自定义搜索
-            //if (option.CustomerSearches.Any())
-            //{
-            //    filters.AddRange(option.CustomerSearches.Select(i => i.ToDynamicFilter()));
-            //}
-
-            //// 处理高级搜索
-            //if (option.AdvanceSearches.Any())
-            //{
-            //    filters.AddRange(option.AdvanceSearches.Select(i => i.ToDynamicFilter()));
-            //}
-
             // 处理表格过滤条件
             if (option.Filters.Any())
             {
@@ -552,14 +521,14 @@ public static partial class FreeSqlUtil
     #endregion
 
     #region "删除方法"
-    public static async Task<int> Delete<TModel>(this IFreeSql fsql, IEnumerable<TModel> models) where TModel : class, new()
+    public static async Task<int> Delete<TModel>(this IFreeSql fsql, IEnumerable<TModel> models) where TModel : class
     {
         return await fsql.Delete<TModel>(models).ExecuteAffrowsAsync();
     }
     #endregion
 
     #region "保存方法"
-    public static async Task<TModel?> Save<TModel>(this IFreeSql fsql, TModel model, bool EnableCascadeSave, TModel? ItemCache, string? SaveManyChildsPropertyName) where TModel : class, new()
+    public static async Task<TModel?> Save<TModel>(this IFreeSql fsql, TModel model, bool EnableCascadeSave, TModel? ItemCache, string? SaveManyChildsPropertyName) where TModel : class
     {
         var repo = fsql.GetRepository<TModel>();
 
@@ -595,5 +564,23 @@ public static partial class FreeSqlUtil
     }
 
     #endregion
+
+    /// <summary>
+    /// 创建实例
+    /// </summary>
+    /// <typeparam name="TModel"></typeparam>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static TModel CreateInstance<TModel>()
+    {
+        try
+        {
+            return Activator.CreateInstance<TModel>();
+        }
+        catch (Exception)
+        {
+            throw new InvalidOperationException($"{typeof(TModel)} missing new() method. {typeof(TModel)} 未提供无参构造函数 new()");
+        }
+    }
 }
 

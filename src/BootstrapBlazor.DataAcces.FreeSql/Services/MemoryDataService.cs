@@ -5,8 +5,8 @@
 // **********************************
 
 using BootstrapBlazor.Components;
+using Densen.DataAcces.FreeSql;
 using MiniExcelLibs;
-using System.Buffers;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 
@@ -17,7 +17,7 @@ namespace Densen.DataAcces.MemoryData;
 /// </summary>
 /// <typeparam name="TModel"></typeparam>
 public class MemoryDataService<TModel> : DataServiceBase<TModel>
-        where TModel : class, new()
+        where TModel : class
 {
     public List<TModel> Items { get; set; } = [];
     public List<TModel> ItemsResult { get; set; } = [];
@@ -35,15 +35,15 @@ public class MemoryDataService<TModel> : DataServiceBase<TModel>
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns></returns>
-    public async Task ImportFormExcel(string filePath)
+    public async Task<List<TModel2>?> ImportFormExcel<TModel2>(string filePath) where TModel2 : class, new()
     {
-        if (filePath == null)
+        if (string.IsNullOrEmpty(filePath))
         {
-            return;
+            return null;
         }
         //获取到的导入结果为一个字典类型，Key为Sheet名，Value为Sheet对应的数据
-        var res = await MiniExcel.QueryAsync<TModel>(filePath, excelType: ExcelType.XLSX);
-        Items = res.ToList();
+        var res = await MiniExcel.QueryAsync<TModel2>(filePath, excelType: ExcelType.XLSX);
+        return res.ToList();
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ public class MemoryDataService<TModel> : DataServiceBase<TModel>
         if (model == null)
         {
             //model.FieldSetValue(Field,value);
-            Items.Add(new TModel());
+            Items.Add(FreeSqlUtil.CreateInstance<TModel>());
         }
         else
         {
