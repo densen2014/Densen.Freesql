@@ -190,6 +190,11 @@ public static partial class FreeSqlUtil
 
             //分页
             long count = 0;
+
+            if (timeout > -1)
+            {
+                fsql_select = fsql_select.CommandTimeout(timeout);
+            }
             fsql_select = fsql_select.Count(out count);
 
 
@@ -201,11 +206,6 @@ public static partial class FreeSqlUtil
             else if (option.IsVirtualScroll)
             {
                 fsql_select = fsql_select.Skip(option.StartIndex).Take(option.PageItems);
-            }
-
-            if (timeout > -1)
-            {
-                fsql_select = fsql_select.CommandTimeout(timeout);
             }
             items = fsql_select.ToList();
 
