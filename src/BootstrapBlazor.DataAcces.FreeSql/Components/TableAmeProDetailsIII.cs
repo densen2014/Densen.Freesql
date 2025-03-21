@@ -4,6 +4,7 @@
 // e-mail:zhouchuanglin@gmail.com 
 // **********************************
 
+using BootstrapBlazor.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using static AME.EnumsExtensions;
@@ -45,6 +46,42 @@ public partial class TableAmeProDetailsIII<TItem, ItemDetails, ItemDetailsII, It
     public Func<ItemDetailsII, Task<bool>>? SubBatchAddAsync2 { get; set; }
 
     /// <summary>
+    /// 获得/设置 明细表新建按钮回调方法
+    /// </summary>
+    [Parameter]
+    public Func<ItemDetailsII, Task<ItemDetailsII>>? SubAddAsync2 { get; set; }
+
+    /// <summary>
+    /// 获得/设置 明细表编辑按钮回调方法
+    /// </summary>
+    [Parameter]
+    public Func<ItemDetailsII, Task>? SubEditAsync2 { get; set; }
+
+    /// <summary>
+    /// 获得/设置 刷新明细表2
+    /// </summary>
+    [Parameter]
+    public Func<ItemDetailsII, Task>? SubRefresh2 { get; set; }
+
+    /// <summary>
+    /// 获得/设置 明细表保存按钮异步回调方法
+    /// </summary>
+    [Parameter]
+    public Func<ItemDetailsII, ItemChangedType, Task<ItemDetailsII>>? SubSaveAsync2 { get; set; }
+
+    /// <summary>
+    /// 明细表保存数据后异步回调方法
+    /// </summary>
+    [Parameter]
+    public Func<ItemDetailsII, ItemChangedType, Task>? SubAfterSaveAsync2 { get; set; }
+
+    /// <summary>
+    /// 获得/设置 明细表删除按钮异步回调方法
+    /// </summary>
+    [Parameter]
+    public Func<IEnumerable<ItemDetailsII>, Task<bool>>? SubDeleteAsync2 { get; set; }
+
+    /// <summary>
     /// 获得/设置 明细表2模板
     /// </summary>
     [Parameter]
@@ -80,7 +117,31 @@ public partial class TableAmeProDetailsIII<TItem, ItemDetails, ItemDetailsII, It
             }
             if (SubTableColumns2 != null)
             {
-                builder.AddAttribute(101, nameof(TableColumns), SubTableColumns2);
+                builder.AddAttribute(1001, nameof(TableColumns), SubTableColumns2);
+            }
+            if (SubAddAsync2 != null)
+            {
+                builder.AddAttribute(1002, nameof(AddAsync), SubAddAsync2);
+            }
+            if (SubEditAsync2 != null)
+            {
+                builder.AddAttribute(1003, nameof(EditAsync), SubEditAsync2);
+            }
+            if (SubSaveAsync2 != null)
+            {
+                builder.AddAttribute(1004, nameof(SaveAsync), SubSaveAsync2);
+            }
+            if (SubAfterSaveAsync2 != null)
+            {
+                builder.AddAttribute(1005, nameof(AfterSaveAsync), SubAfterSaveAsync2);
+            }
+            if (SubDeleteAsync2 != null)
+            {
+                builder.AddAttribute(1006, nameof(DeleteAsync), SubDeleteAsync2);
+            }
+            if (SubRefresh2 != null)
+            {
+                builder.AddAttribute(1007, nameof(Refresh), SubRefresh2);
             }
         }
         else if (ShowDetailRowType == ShowDetailRowType.表内明细II)

@@ -113,7 +113,6 @@ public static class FreeSqlServiceCollectionExtensions
     /// <summary>
     /// 审计属性值 , 实现插入/更新时统一处理某些值，比如某属性的雪花算法值、创建时间值、甚至是业务值。
     /// </summary>
-    /// <param name="sender"></param>
     /// <param name="e"></param>
     public static void AuditValue(object? sender, FreeSql.Aop.AuditValueEventArgs? e)
     {

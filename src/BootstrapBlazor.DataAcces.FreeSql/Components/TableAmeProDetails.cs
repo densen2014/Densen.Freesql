@@ -122,7 +122,7 @@ where ItemDetails : class, new()
         }
         if (SubSaveAsync != null)
         {
-            builder.AddAttribute(52, nameof(SaveAsync), SubSaveAsync);
+            builder.AddAttribute(521, nameof(SaveAsync), SubSaveAsync);
         }
         if (SubAfterSaveAsync != null)
         {

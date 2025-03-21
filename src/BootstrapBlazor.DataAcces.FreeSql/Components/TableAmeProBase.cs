@@ -985,7 +985,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         builder.AddAttribute(33, nameof(EditDialogRowType), SubEditDialogRowType);
         builder.AddAttribute(34, nameof(EditDialogSize), SubEditDialogSize);
         builder.AddAttribute(35, nameof(EditDialogFullScreenSize), EditDialogFullScreenSize);
-        builder.AddAttribute(36, nameof(EditDialogFullScreenSize), EditDialogFullScreenSize);
+        builder.AddAttribute(36, nameof(EditDialogShowMaximizeButton), EditDialogShowMaximizeButton);
         TRenderTableAdditionalAttributes(builder, rowType);
         builder.CloseComponent();
     };
