@@ -146,7 +146,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     public Func<TItem, Task>? EditAsync { get; set; }
 
     /// <summary>
-    /// 获得/设置 保存按钮异步回调方法
+    /// 获得/设置 保存按钮异步回调方法,返回null则取消执行保存操作
     /// </summary>
     [Parameter]
     public Func<TItem, ItemChangedType, Task<TItem?>>? SaveAsync { get; set; }
