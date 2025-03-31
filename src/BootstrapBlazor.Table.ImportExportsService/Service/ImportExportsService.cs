@@ -6,7 +6,7 @@
 
 using Magicodes.ExporterAndImporter.Excel;
 using Magicodes.ExporterAndImporter.Html;
-using Magicodes.ExporterAndImporter.Pdf;
+//using Magicodes.ExporterAndImporter.Pdf;
 using Magicodes.ExporterAndImporter.Word;
 
 namespace Densen.Service;
@@ -36,10 +36,10 @@ public class ImportExportsService : IImportExport
                 var exporter = new ExcelExporter();
                 var result = await exporter.Export(filePath + ".xlsx", items);
                 return result.FileName;
-            case ExportType.Pdf:
-                var exporterPdf = new PdfExporter();
-                var resultPdf = await exporterPdf.ExportListByTemplate(filePath + ".pdf", items, htmlTemplate: templatePath);
-                return resultPdf.FileName;
+            //case ExportType.Pdf:
+                //var exporterPdf = new PdfExporter();
+                //var resultPdf = await exporterPdf.ExportListByTemplate(filePath + ".pdf", items, htmlTemplate: templatePath);
+                //return resultPdf.FileName;
             case ExportType.Word:
                 var exporterWord = new WordExporter();
                 var resultWord = await exporterWord.ExportListByTemplate(filePath + ".docx", items, htmlTemplate: templatePath);
@@ -76,12 +76,12 @@ public class ImportExportsService : IImportExport
                 memoryStream = new MemoryStream(result);
                 fileName += ".xlsx";
                 break;
-            case ExportType.Pdf:
-                var exporterPdf = new PdfExporter();
-                var resultPdf = await exporterPdf.ExportBytesByTemplate(items, templatePath);
-                memoryStream = new MemoryStream(resultPdf);
-                fileName += ".pdf";
-                break;
+            //case ExportType.Pdf:
+            //    var exporterPdf = new PdfExporter();
+            //    var resultPdf = await exporterPdf.ExportBytesByTemplate(items, templatePath);
+            //    memoryStream = new MemoryStream(resultPdf);
+            //    fileName += ".pdf";
+            //    break;
             case ExportType.Word:
                 var exporterWord = new WordExporter();
                 var resultWord = await exporterWord.ExportBytesByTemplate(items, templatePath);

@@ -8,12 +8,12 @@ namespace Densen.Service;
 
 public enum ExportType
 {
-    Excel,
-    Pdf,
-    Word,
-    Html,
-    MiniExcel,
-    MiniWord,
+    Excel=0,
+    //Pdf=1,
+    Word=2,
+    Html=3,
+    MiniExcel=4,
+    MiniWord=5,
 }
 public class ExportResult
 {

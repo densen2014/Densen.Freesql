@@ -15,10 +15,10 @@
         <PackageReference Include="Densen.Magicodes.IE.Core" Version="2.8.0" />
 		<PackageReference Include="Magicodes.IE.Excel" Version="2.7.2" />
 		<PackageReference Include="Magicodes.IE.Html" Version="2.7.2" />
-		<PackageReference Include="Magicodes.IE.Pdf" Version="2.7.2" />
+		<!--<PackageReference Include="Magicodes.IE.Pdf" Version="2.7.2" />-->
 		<PackageReference Include="Magicodes.IE.Word" Version="2.7.2" />
-        <PackageReference Include="HtmlToOpenXml.dll" Version="2.3.0" />
-        <PackageReference Include="Haukcode.WkHtmlToPdfDotNet" Version="1.5.86" />
+        <!--<PackageReference Include="HtmlToOpenXml.dll" Version="2.3.0" />-->
+        <!--<PackageReference Include="Haukcode.WkHtmlToPdfDotNet" Version="1.5.86" />-->
     </ItemGroup>
 
 	<ItemGroup>
