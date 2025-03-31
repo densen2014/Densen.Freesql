@@ -141,7 +141,7 @@
             <TableToolbarButton TItem="TItem" Color="Color.Success" Text="@导出文本" IsAsync OnClickCallback="@ExportExcelAsync" />
             if (ShowExportMoreButtons)
             {
-                <TableToolbarButton TItem="TItem" Color="Color.Success" Text="PDF" IsAsync OnClickCallback="@ExportPDFAsync" />
+                @*<TableToolbarButton TItem="TItem" Color="Color.Success" Text="PDF" IsAsync OnClickCallback="@ExportPDFAsync" />*@
                 <TableToolbarButton TItem="TItem" Color="Color.Success" Text="Word" IsAsync OnClickCallback="@ExportWordAsync" />
                 <TableToolbarButton TItem="TItem" Color="Color.Success" Text="Html" IsAsync OnClickCallback="@ExportHtmlAsync" />
             }
@@ -337,10 +337,10 @@
                 <i class="fa-brands fa-html5"></i>
                 <span>Html</span>
             </div>
-            <div class="dropdown-item" @onclick="_=>ExportPDFAsync(TableMain.Rows)">
+            @*<div class="dropdown-item" @onclick="_=>ExportPDFAsync(TableMain.Rows)">
                 <i class="fas fa-file-pdf"></i>
                 <span>PDF</span>
-            </div>
+            </div>*@
 
         }
         <div class="dropdown-divider"></div>
@@ -366,10 +366,10 @@
                 <i class="fa-brands fa-html5"></i>
                 <span>Html</span>
             </div>
-            <div class="dropdown-item" @onclick="_ => ExportPDFAsync(GetAllItems())">
+            @*<div class="dropdown-item" @onclick="_ => ExportPDFAsync(GetAllItems())">
                 <i class="fas fa-file-pdf"></i>
                 <span>PDF</span>
-            </div>
+            </div>*@
         }
     </ExportButtonDropdownTemplate>
 
