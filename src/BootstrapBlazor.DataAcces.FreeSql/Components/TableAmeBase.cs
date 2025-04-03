@@ -5,8 +5,7 @@
 // **********************************
 
 using BootstrapBlazor.Components;
-using Densen.Service;
-using DocumentFormat.OpenXml.Spreadsheet;
+using Densen.Service; 
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.ComponentModel;
@@ -666,6 +665,19 @@ public partial class TableAmeBase : BootstrapComponentBase
     /// </summary>
     [Parameter]
     public TableHeaderStyle HeaderStyleDetails { get; set; } = TableHeaderStyle.Light;
+
+    /// <summary>
+    /// 获得/设置 是否显示表头 默认为 true 显示
+    /// </summary>
+    [Parameter]
+    public bool ShowHeader { get; set; } = true;
+
+    /// <summary>
+    /// 获得/设置 多表头模板
+    /// </summary>
+    [Parameter]
+    [NotNull]
+    public RenderFragment? MultiHeaderTemplate { get; set; }
 
     /// <summary>
     /// 获得/设置 表格组件大小 默认为 Normal 正常模式

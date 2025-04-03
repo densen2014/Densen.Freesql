@@ -32,6 +32,7 @@
        GetAdvancedSearchFilterCallback="@GetAdvancedSearchFilterCallback"
        HeaderStyle="@HeaderStyle"
        HeaderTextWrap="@HeaderTextWrap"
+       MultiHeaderTemplate="@(!ShowHeader?NullContent:MultiHeaderTemplate)"
        Height="@Height"
        IsFixedFooter="@IsFixedFooter"
        IsAutoRefresh="@IsAutoRefresh"
@@ -67,36 +68,35 @@
        RenderMode="RenderMode"
        SelectedRows="SelectedRows"
        SelectedRowsChanged="SelectedRowsChanged"
-       ShowLineNo="@ShowLineNo"
-       ShowSkeleton="@ShowSkeleton"
-       ShowToolbar="@ShowToolbar"
        ShowAddButton="@(ShowAddButton &&!IsReadonly)"
-       ShowEditButton="@(ShowEditButton &&!IsReadonly)"
+       ShowAdvancedSearch="@(ShowAdvancedSearch &&!IsSimpleUI)"
+       ShowCardView="@(ShowCardView &&!IsSimpleUI)"
+       ShowColumnList="@ShowColumnList"
        ShowDeleteButton="@(ShowDeleteButton &&!IsReadonly)"
+       ShowDefaultButtons="@(ShowDefaultButtons &&!IsReadonly)"
+       ShowEditButton="@(ShowEditButton &&!IsReadonly)"
        ShowExtendEditButton="@(ShowExtendEditButton &&!IsReadonly)"
        ShowExtendDeleteButton="@(ShowExtendDeleteButton &&!IsReadonly)"
-       ShowDefaultButtons="@(ShowDefaultButtons &&!IsReadonly)"
        ShowExtendButtons="@(ShowExtendButtons &&!IsReadonly)"
        ShowExportButton=ShowExportButton
-       ShowSearch="@(ShowSearch &&!IsSimpleUI)"
-       SearchMode="@SearchMode"
-       ShowSearchButton="@ShowAdvancedSearch"
-       ShowAdvancedSearch="@(ShowAdvancedSearch &&!IsSimpleUI)"
-       ShowResetButton="@ShowResetButton"
        ShowDetailRow="@ShowDetailRow"
        ShowFooter="@ShowFooter"
-       ShowColumnList="@ShowColumnList"
-       ShowRefresh="@(ShowRefresh &&!IsSimpleUI)"
-       ShowCardView="@(ShowCardView &&!IsSimpleUI)"
-       ShowFilterHeader="@ShowFilterHeader" 
+       ShowFilterHeader="@ShowFilterHeader"
+       ShowLineNo="@ShowLineNo"
        ShowMultiFilterHeader="ShowMultiFilterHeader"
+       ShowResetButton="@ShowResetButton"
+       ShowRefresh="@(ShowRefresh &&!IsSimpleUI)"
+       ShowSearch="@(ShowSearch &&!IsSimpleUI)"
+       ShowSkeleton="@ShowSkeleton"
+       ShowSearchButton="@ShowAdvancedSearch"
+       ShowToolbar="@ShowToolbar"
+       SearchMode="@SearchMode"
        ScrollMode="ScrollMode"
        ScrollWidth="ScrollWidth"
        ScrollingDialogContent="ScrollingDialogContent"
        TableSize="@TableSize"
        TableExtensionToolbarBeforeTemplate="@TableExtensionToolbarBeforeTemplate"
-       TableExtensionToolbarTemplate="@TableExtensionToolbarTemplate" 
-       >
+       TableExtensionToolbarTemplate="@TableExtensionToolbarTemplate">
     <TableToolbarBeforeTemplate>
         @if (TableToolbarBeforeTemplate != null)
         {
@@ -338,9 +338,9 @@
                 <span>Html</span>
             </div>
             @*<div class="dropdown-item" @onclick="_=>ExportPDFAsync(TableMain.Rows)">
-                <i class="fas fa-file-pdf"></i>
-                <span>PDF</span>
-            </div>*@
+                    <i class="fas fa-file-pdf"></i>
+                    <span>PDF</span>
+                </div>*@
 
         }
         <div class="dropdown-divider"></div>
@@ -367,10 +367,14 @@
                 <span>Html</span>
             </div>
             @*<div class="dropdown-item" @onclick="_ => ExportPDFAsync(GetAllItems())">
-                <i class="fas fa-file-pdf"></i>
-                <span>PDF</span>
-            </div>*@
+                    <i class="fas fa-file-pdf"></i>
+                    <span>PDF</span>
+                </div>*@
         }
     </ExportButtonDropdownTemplate>
 
-</Table> 
+</Table>
+
+@code{
+    private RenderFragment NullContent =>@<div></div>;
+}
