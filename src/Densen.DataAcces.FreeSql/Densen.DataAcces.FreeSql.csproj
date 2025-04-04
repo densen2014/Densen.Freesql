@@ -5,7 +5,7 @@
         <AssemblyName>Densen.DataAcces.FreeSql</AssemblyName>
         <PackageTags>FreeSql DataAcces</PackageTags>
         <OutputPath>..\..\..\Bin</OutputPath>
-        <Version>9.3.1</Version>
+        <Version>9.4.0</Version>
     </PropertyGroup>
 
     <PropertyGroup>

@@ -6,8 +6,8 @@
         <AssemblyName>Densen.FreeSql.Extensions.BootstrapBlazor</AssemblyName>
         <RootNamespace>Densen.Extensions.Freesql.BootstrapBlazor</RootNamespace>
         <OutputPath>..\..\..\Bin</OutputPath>
-        <Version>9.3.1</Version>
-        <Configurations>Debug;Release;DebugSC</Configurations>
+        <Version>9.4.0</Version>
+        <Configurations>Debug;Release</Configurations>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,20 +15,15 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.*" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-        <PackageReference Include="Densen.Extensions.BootstrapBlazor" Version="9.1.9" />
-        <ProjectReference Include="..\BootstrapBlazor.Table.ImportExportsMiniService\BootstrapBlazor.Table.ImportExportsMiniService.csproj" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(Configuration)' == 'DebugSC'">
+    <ItemGroup Condition="'$(Configuration)' == 'Debug'"> 
         <!--带外部源码调试环境-->
         <ProjectReference Include="..\..\..\Densen.Extensions\Blazor\Densen.Extensions.BootstrapBlazor.csproj" />
         <ProjectReference Include="..\BootstrapBlazor.Table.ImportExportsMiniService\BootstrapBlazor.Table.ImportExportsMiniService.csproj" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Release'">
-        <PackageReference Include="Densen.Extensions.BootstrapBlazor" Version="9.3.0" />
-        <PackageReference Include="BootstrapBlazor.Table.ImportExportsMiniService" Version="9.*" />
+        <PackageReference Include="Densen.Extensions.BootstrapBlazor" Version="9.4.0" />
+        <PackageReference Include="BootstrapBlazor.Table.ImportExportsMiniService" Version="9.4.0" />
     </ItemGroup>
 
     <ItemGroup>
