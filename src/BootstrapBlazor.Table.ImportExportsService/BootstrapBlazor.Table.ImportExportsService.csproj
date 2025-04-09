@@ -9,7 +9,6 @@
         <OutputPath>..\..\..\Bin</OutputPath>
         <Version>9.0.1</Version>
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
-        <Configurations>Debug;Release;DebugSC</Configurations>
     </PropertyGroup>
 
 	<ItemGroup>
@@ -20,6 +19,7 @@
 		<PackageReference Include="Magicodes.IE.Word" Version="2.7.2" />
         <!--<PackageReference Include="HtmlToOpenXml.dll" Version="2.3.0" />-->
         <!--<PackageReference Include="Haukcode.WkHtmlToPdfDotNet" Version="1.5.86" />-->
+        <PackageReference Include="SixLabors.ImageSharp" Version="2.1.10" />
     </ItemGroup>
 
 	<ItemGroup>
