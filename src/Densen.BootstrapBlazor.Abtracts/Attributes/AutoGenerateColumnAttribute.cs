@@ -35,7 +35,7 @@ public class AutoGenerateColumnAttribute : AutoGenerateBaseAttribute, ITableColu
     public bool SkipValidate { get; set; }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 添加新项目时，获取或设置该列是仅读取的。默认值是null，使用 <see cref="IEditorItem.Readonly"/> 值
     /// </summary>
     public bool IsReadonlyWhenAdd { get; set; }
 
@@ -46,7 +46,7 @@ public class AutoGenerateColumnAttribute : AutoGenerateBaseAttribute, ITableColu
     }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 在编辑项目时获取或设置该列是仅读取的。默认值是null，使用 <see cref="IEditorItem.Readonly"/> 值
     /// </summary>
     public bool IsReadonlyWhenEdit { get; set; }
 
@@ -57,7 +57,7 @@ public class AutoGenerateColumnAttribute : AutoGenerateBaseAttribute, ITableColu
     }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 添加新项目时，获取或设置该列是可见的。默认值为null，使用 <see cref="AutoGenerateBaseAttribute.Visible"/> 值
     /// </summary>
     public bool IsVisibleWhenAdd { get; set; } = true;
 
@@ -68,7 +68,7 @@ public class AutoGenerateColumnAttribute : AutoGenerateBaseAttribute, ITableColu
     }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 在编辑项目时获取或设置该列是否可见。默认为null，使用，使用 <see cref="AutoGenerateBaseAttribute.Visible"/> 值
     /// </summary>
     public bool IsVisibleWhenEdit { get; set; } = true;
 
@@ -178,42 +178,42 @@ public class AutoGenerateColumnAttribute : AutoGenerateBaseAttribute, ITableColu
     RenderFragment? ITableColumn.FilterTemplate { get; set; }
 
     /// <summary>
-    /// <inheritdoc/>
+    ///  获得/设置 字段鼠标悬停提示
     /// </summary>
     Func<object?, Task<string?>>? ITableColumn.GetTooltipTextCallback { get; set; }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 是否参与搜索
     /// </summary>
     bool? ITableColumn.Searchable { get => Searchable; set => Searchable = value ?? false; }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 是否可过滤数据
     /// </summary>
     bool? ITableColumn.Filterable { get => Filterable; set => Filterable = value ?? false; }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 是否排序
     /// </summary>
     bool? ITableColumn.Sortable { get => Sortable; set => Sortable = value ?? false; }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 是否允许换行
     /// </summary>
     bool? ITableColumn.TextWrap { get => TextWrap; set => TextWrap = value ?? false; }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 是否文本超出时省略
     /// </summary>
     bool? ITableColumn.TextEllipsis { get => TextEllipsis; set => TextEllipsis = value ?? false; }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 列忽略
     /// </summary>
     bool? IEditorItem.Ignore { get => Ignore; set => Ignore = value ?? false; }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 只读列
     /// </summary>
     bool? IEditorItem.Readonly { get => Readonly; set => Readonly = value ?? false; }
 
@@ -292,17 +292,19 @@ public class AutoGenerateColumnAttribute : AutoGenerateBaseAttribute, ITableColu
     public bool IsPopover { get; set; }
 
     /// <summary>
-    /// <inheritdoc/>>
+    /// 获得/设置 字典数据源字符串比较规则 默认 <see cref="StringComparison.OrdinalIgnoreCase" /> 大小写不敏感 
     /// </summary>
     public StringComparison LookupStringComparison { get; set; } = StringComparison.OrdinalIgnoreCase;
 
     /// <summary>
-    /// <inheritdoc/>>
+    /// 获得/设置 <see cref="ILookupService"/> 服务获取 Lookup 数据集合键值 常用于外键自动转换为名称操作，可以通过 <see cref="LookupServiceData"/> 传递自定义数据
+    /// <para>未设置 <see cref="Lookup"/> 时生效</para>
     /// </summary>
     public string? LookupServiceKey { get; set; }
 
     /// <summary>
-    /// <inheritdoc/>>
+    /// 获得/设置 <see cref="ILookupService"/> 服务获取 Lookup 数据集合键值自定义数据，通过 <see cref="LookupServiceKey"/> 指定键值
+    /// <para>未设置 <see cref="Lookup"/> 时生效</para>
     /// </summary>
     public object? LookupServiceData { get; set; }
 
@@ -339,27 +341,27 @@ public class AutoGenerateColumnAttribute : AutoGenerateBaseAttribute, ITableColu
     public int GroupOrder { get; set; }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 获得/设置 是否表头允许折行 默认 false 不折行 此设置为 true 时覆盖 <see cref="ITableColumn.HeaderTextWrap"/> 参数值
     /// </summary>
     public bool HeaderTextWrap { get; set; }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 获得/设置 是否表头显示 Tooltip 默认 false 不显示 可配合 <see cref="HeaderTextEllipsis"/> 使用 设置 <see cref="HeaderTextWrap"/> 为 true 时本参数不生效
     /// </summary>
     public bool ShowHeaderTooltip { get; set; }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 获得/设置 是否表头 Tooltip 内容
     /// </summary>
     public string? HeaderTextTooltip { get; set; }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 获得/设置 是否表头溢出时截断 默认 false 不截断 可配合 <see cref="HeaderTextTooltip"/> 使用 设置 <see cref="HeaderTextWrap"/> 为 true 时本参数不生效
     /// </summary>
     public bool HeaderTextEllipsis { get; set; }
 
     /// <summary>
-    /// <inheritdoc/>
+    /// 获得/设置 是否为 MarkupString 默认 false
     /// </summary>
     public bool IsMarkupString { get; set; }
 }
