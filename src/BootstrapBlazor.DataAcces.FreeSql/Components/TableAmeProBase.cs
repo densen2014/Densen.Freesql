@@ -1461,6 +1461,26 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
                 }
             }
         }
+
+        //自动渲染日期控件为对应格式
+        items = columns.Where(i => i.ComponentType == null && IsDateTimeWithCustomFormat(i));
+        foreach (var item in items)
+        {
+            item.ComponentParameters = new Dictionary<string, object>
+            {
+                [nameof(DateTimePicker<DateTime>.ViewMode)] = item.FormatString switch
+                {
+                    "yyyy" => DatePickerViewMode.Year,
+                    "yyyy-MM" => DatePickerViewMode.Month,
+                    "MM/yyyy" => DatePickerViewMode.Month,
+                    "yyyy-MM-dd HH:mm:ss" => DatePickerViewMode.DateTime,
+                    "dd/MMyyyy HH:mm:ss" => DatePickerViewMode.DateTime,
+                    "yyyy-MM-dd HH:mm" => DatePickerViewMode.DateTime,
+                    "dd/MMyyyy HH:mm" => DatePickerViewMode.DateTime,
+                    _ => DatePickerViewMode.Date
+                }
+            };
+        }
         return Task.CompletedTask;
     }
 
@@ -1473,5 +1493,16 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     {
         var targetType = Nullable.GetUnderlyingType(t) ?? t;
         return targetType == typeof(float) || targetType == typeof(double) || targetType == typeof(decimal);
+    }
+
+    /// <summary>
+    /// 检查是否为 DateTime 数据类型
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    private static bool IsDateTimeWithCustomFormat(ITableColumn t)
+    {
+        var targetType = Nullable.GetUnderlyingType(t.PropertyType) ?? t.PropertyType;
+        return targetType == typeof(DateTime) && t.FormatString?.Length > 0 && t.FormatString?.Length != 10;
     }
 }
