@@ -1,0 +1,68 @@
+﻿@namespace AmeBlazor.Components
+@inherits FilterBase
+
+<DateTimePicker ViewMode="@ViewMode" @bind-Value="@Value" OnValueChanged="_ => OnFilterValueChanged()" AutoClose DateTimeFormat="@DateTimeFormat"></DateTimePicker>
+
+@code {
+
+    /// <summary>
+    /// 获得/设置 日期时间格式字符串 默认为 null
+    /// </summary>
+    [Parameter]
+    public string? DateTimeFormat { get; set; }
+
+    /// <summary>
+    /// 组件显示模式 默认为显示年月日模式
+    /// </summary>
+    public DatePickerViewMode ViewMode => DateTimeFormat switch
+    {
+        "yyyy" => DatePickerViewMode.Year,
+        "yyyy-MM" => DatePickerViewMode.Month,
+        "MM/yyyy" => DatePickerViewMode.Month,
+        "yyyy-MM-dd HH:mm:ss" => DatePickerViewMode.DateTime,
+        "dd/MMyyyy HH:mm:ss" => DatePickerViewMode.DateTime,
+        "yyyy-MM-dd HH:mm" => DatePickerViewMode.DateTime,
+        "dd/MMyyyy HH:mm" => DatePickerViewMode.DateTime,
+        _ => DatePickerViewMode.Date
+    };
+
+    [Parameter]
+    public DateTime Value { get; set; } = DateTime.Now;
+
+    /// <summary>
+    /// OnInitialized 方法
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (TableFilter != null) TableFilter.ShowMoreButton = false;
+
+    }
+
+    /// <summary>
+    /// 重置过滤条件方法
+    /// </summary>
+    public override void Reset()
+    {
+        Value = DateTime.Now;
+
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// 生成过滤条件方法
+    /// </summary>
+    /// <returns></returns>
+    public override FilterKeyValueAction GetFilterConditions()
+    {
+        var filter = new FilterKeyValueAction() { Filters = new() };
+        filter.Filters.Add(new FilterKeyValueAction()
+        {
+            FieldKey = FieldKey,
+            FieldValue = Value.Date,
+            FilterAction = FilterAction.Equal
+        });
+        return filter;
+    }
+}

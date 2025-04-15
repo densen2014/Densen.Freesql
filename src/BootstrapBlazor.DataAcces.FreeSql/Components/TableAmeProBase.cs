@@ -299,6 +299,18 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     [Parameter]
     public RenderFragment<TItem>? TableColumnsTemplate { get; set; }
 
+    /// <summary>
+    /// 获得/设置 使用自定义日期控件, 默认 true
+    /// </summary>
+    [Parameter]
+    public bool EnableDateTimePickerAutoStyle { get; set; } = true;
+
+    /// <summary>
+    /// 获得/设置 使用自定义日期控件过滤器, 默认 false
+    /// </summary>
+    [Parameter]
+    public bool EnableDateTimeFilterAutoStyle { get; set; }
+
     #region 数据服务
 
     /// <summary>
@@ -1418,7 +1430,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// </summary>
     /// <param name="columns"></param>
     /// <returns></returns>
-    public static Task AutoRenderComponentLocaleFormat(List<ITableColumn> columns)
+    public Task AutoRenderComponentLocaleFormat(List<ITableColumn> columns)
     {
         //经浏览器语言设定验证不过关,最终版本采用全部渲染为文本框解决问题
         //if (NumberDecimalSeparator == ".")
@@ -1463,26 +1475,43 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         }
 
         //自动渲染日期控件为对应格式
-        items = columns.Where(i => i.ComponentType == null && IsDateTimeWithCustomFormat(i));
-        foreach (var item in items)
+        if (EnableDateTimeFilterAutoStyle || EnableDateTimePickerAutoStyle)
         {
-            item.ComponentParameters = new Dictionary<string, object>
+            items = columns.Where(i => i.ComponentType == null && IsDateTimeWithCustomFormat(i));
+            foreach (var item in items)
             {
-                [nameof(DateTimePicker<DateTime>.ViewMode)] = item.FormatString switch
+                if (EnableDateTimeFilterAutoStyle)
                 {
-                    "yyyy" => DatePickerViewMode.Year,
-                    "yyyy-MM" => DatePickerViewMode.Month,
-                    "MM/yyyy" => DatePickerViewMode.Month,
-                    "yyyy-MM-dd HH:mm:ss" => DatePickerViewMode.DateTime,
-                    "dd/MMyyyy HH:mm:ss" => DatePickerViewMode.DateTime,
-                    "yyyy-MM-dd HH:mm" => DatePickerViewMode.DateTime,
-                    "dd/MMyyyy HH:mm" => DatePickerViewMode.DateTime,
-                    _ => DatePickerViewMode.Date
+                    item.FilterTemplate = builder =>
+                    {
+                        builder.OpenComponent<CustomerFilter>(0);
+                        builder.AddAttribute(1, nameof(CustomerFilter.DateTimeFormat), item.FormatString);
+                        builder.CloseComponent();
+                    };
                 }
-            };
+                if (EnableDateTimePickerAutoStyle)
+                {
+
+                    item.ComponentParameters = new Dictionary<string, object>
+                    {
+                        [nameof(DateTimePicker<DateTime>.ViewMode)] = item.FormatString switch
+                        {
+                            "yyyy" => DatePickerViewMode.Year,
+                            "yyyy-MM" => DatePickerViewMode.Month,
+                            "MM/yyyy" => DatePickerViewMode.Month,
+                            "yyyy-MM-dd HH:mm:ss" => DatePickerViewMode.DateTime,
+                            "dd/MMyyyy HH:mm:ss" => DatePickerViewMode.DateTime,
+                            "yyyy-MM-dd HH:mm" => DatePickerViewMode.DateTime,
+                            "dd/MMyyyy HH:mm" => DatePickerViewMode.DateTime,
+                            _ => DatePickerViewMode.Date
+                        }
+                    };
+                }
+            }
         }
         return Task.CompletedTask;
     }
+
 
     /// <summary>
     /// 检查是否为 Number 数据类型
@@ -1505,4 +1534,5 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         var targetType = Nullable.GetUnderlyingType(t.PropertyType) ?? t.PropertyType;
         return targetType == typeof(DateTime) && t.FormatString?.Length > 0 && t.FormatString?.Length != 10;
     }
+
 }
