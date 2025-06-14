@@ -5,6 +5,8 @@
 #if NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER
 
 
+using System.ComponentModel;
+
 namespace BootstrapBlazor.Components;
 
 /// <summary>
@@ -35,11 +37,13 @@ public class SelectedItem
     /// <summary>
     /// 获得/设置 显示名称
     /// </summary>
+    [DisplayName("名称")]
     public virtual string Text { get; set; } = "";
 
     /// <summary>
     /// 获得/设置 选项值
     /// </summary>
+    [DisplayName("值")]
     public string Value { get; set; } = "";
 
     /// <summary>
@@ -55,6 +59,7 @@ public class SelectedItem
     /// <summary>
     /// 获得/设置 分组名称
     /// </summary>
+    [Description("组")]
     public string GroupName { get; set; } = "";
 
     //public int ID { get; set; }
