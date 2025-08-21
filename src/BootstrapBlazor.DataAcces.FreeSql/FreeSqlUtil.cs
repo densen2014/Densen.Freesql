@@ -268,8 +268,8 @@ public static partial class FreeSqlUtil
 
             var instance = Activator.CreateInstance(type);
 
-            var pros = type.GetProperties().Where(a =>
-                                                    (a.PropertyType == typeof(string) || a.PropertyType == typeof(DateTime) || a.PropertyType == typeof(DateTime?) || a.PropertyType.IsNumberType())
+            var properties = type.GetProperties().Where(a =>
+                                                    (a.PropertyType.IsClass || a.PropertyType == typeof(string) || a.PropertyType == typeof(DateTime) || a.PropertyType == typeof(DateTime?) || a.PropertyType.IsNumberType())
                                                     && a.GetCustomAttribute<ColumnAttribute>()?.IsIgnore != true
                                                     && a.GetCustomAttribute<ColumnAttribute>()?.MapType != typeof(int)
                                                     ).ToList();
@@ -277,56 +277,42 @@ public static partial class FreeSqlUtil
             //TODO : 支持更多类型, 目前只支持 string , Number , DateTime 类型
             //搜索所有 string 类型和 Number 类型的字段
             //过滤FreeSql特性 : 1. 忽略特性, 2.MapType = typeof(int)
-            foreach (var propertyinfo in pros)
+            foreach (var property in properties)
             {
-                if (string.IsNullOrEmpty(option.SearchText))
+                var propertyType = property.PropertyType;
+
+                // 检查是否为复杂类型（排除基础类型和字符串）
+                if (propertyType.IsClass && propertyType != typeof(string))
                 {
-                    var searchValue = propertyinfo.GetValue(searchModel)?.ToString();
-
-                    // 处理高级搜索
-                    if (searchValue != null && (option.AdvanceSearches.Any() || option.CustomerSearches.Any()))
+                    // 递归处理嵌套对象, 目前只处理第二层
+                    var nestedValue = property.GetValue(searchModel);
+                    if (nestedValue != null)
                     {
-                        var propertyValue = propertyinfo.GetValue(searchModel);
-                        var instanceValue = propertyinfo.GetValue(instance);
-
-                        //跟默认值比较,如果不一致,则加入搜索条件
-                        if (!propertyValue!.Equals(instanceValue))
+                        var nestedType = nestedValue.GetType();
+                        var nestedProperties = nestedType.GetProperties().Where(a =>
+                                        (a.PropertyType == typeof(string) || a.PropertyType == typeof(DateTime) || a.PropertyType == typeof(DateTime?) || a.PropertyType.IsNumberType())
+                                        && a.GetCustomAttribute<AutoGenerateColumnAttribute>()?.Searchable == true
+                                        && a.GetCustomAttribute<ColumnAttribute>()?.IsIgnore != true
+                                        && a.GetCustomAttribute<ColumnAttribute>()?.MapType != typeof(int)
+                                        ).ToList();
+                        foreach (var nestedProperty in nestedProperties)
                         {
-                            //临时处理日期类型,默认值只比较日期部分,因为实例化时间部分不一致
-                            var isDateTime = propertyinfo.PropertyType.IsDateTimeType();
-                            if (isDateTime)
+                            var flowControl = GeneratePropertyFilters(nestedValue, nestedValue, nestedProperty);
+                            if (!flowControl)
                             {
-                                var propertyValueDatetime = Convert.ToDateTime(propertyValue);
-                                var instanceValueDatetime = Convert.ToDateTime(instanceValue);
-                                var span = instanceValueDatetime.Subtract(propertyValueDatetime);
-                                //如果值为dateTimeMinValue,不加入搜索条件.
-                                //如果时间差小于5秒,则不加入搜索条件并重置为dateTimeMinValue,因为可能是第一次渲染的
-                                if (propertyValueDatetime == dateTimeMinValue)
-                                {
-                                    continue;
-                                }
-                                else if (span.TotalSeconds < 5)
-                                {
-                                    propertyinfo.SetValue(searchModel, dateTimeMinValue);
-                                    Console.WriteLine($"时间差:{span.TotalSeconds},重置{propertyinfo.Name}为{DateTime.MinValue}");
-                                    continue;
-                                }
-                            }
-                            var fiter = propertyinfo.GenFilter(searchValue);
-                            if (fiter != null)
-                            {
-                                filters.Add(fiter);
+                                continue;
                             }
                         }
                     }
+
+
                 }
                 else
                 {
-                    // 处理模糊搜索
-                    var fiter = propertyinfo.GenFilter(option.SearchText);
-                    if (fiter != null)
+                    var flowControl = GeneratePropertyFilters(searchModel, instance, property);
+                    if (!flowControl)
                     {
-                        filters.Add(fiter);
+                        continue;
                     }
                 }
             }
@@ -338,6 +324,7 @@ public static partial class FreeSqlUtil
             }
             #endregion
         }
+
         DynamicFilterInfo dyfilter = new DynamicFilterInfo();
 
         if (filters.Any(a => a.Field != null || a.Filters != null))
@@ -396,6 +383,64 @@ public static partial class FreeSqlUtil
         }
 
         return null;
+
+
+        bool GeneratePropertyFilters(object searchModel, object? instance, PropertyInfo property)
+        {
+            // 处理基础类型
+            if (string.IsNullOrEmpty(option.SearchText))
+            {
+                var searchValue = property.GetValue(searchModel)?.ToString();
+
+                // 处理高级搜索
+                if (searchValue != null && (option.AdvanceSearches.Any() || option.CustomerSearches.Any()))
+                {
+                    var propertyValue = property.GetValue(searchModel);
+                    var instanceValue = property.GetValue(instance);
+
+                    //跟默认值比较,如果不一致,则加入搜索条件
+                    if (!propertyValue!.Equals(instanceValue))
+                    {
+                        //临时处理日期类型,默认值只比较日期部分,因为实例化时间部分不一致
+                        var isDateTime = property.PropertyType.IsDateTimeType();
+                        if (isDateTime)
+                        {
+                            var propertyValueDatetime = Convert.ToDateTime(propertyValue);
+                            var instanceValueDatetime = Convert.ToDateTime(instanceValue);
+                            var span = instanceValueDatetime.Subtract(propertyValueDatetime);
+                            //如果值为dateTimeMinValue,不加入搜索条件.
+                            //如果时间差小于5秒,则不加入搜索条件并重置为dateTimeMinValue,因为可能是第一次渲染的
+                            if (propertyValueDatetime == dateTimeMinValue)
+                            {
+                                return false;
+                            }
+                            else if (span.TotalSeconds < 5)
+                            {
+                                property.SetValue(searchModel, dateTimeMinValue);
+                                Console.WriteLine($"时间差:{span.TotalSeconds},重置{property.Name}为{DateTime.MinValue}");
+                                return false;
+                            }
+                        }
+                        var fiter = property.GenFilter(searchValue);
+                        if (fiter != null)
+                        {
+                            filters.Add(fiter);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // 处理模糊搜索
+                var fiter = property.GenFilter(option.SearchText);
+                if (fiter != null)
+                {
+                    filters.Add(fiter);
+                }
+            }
+
+            return true;
+        }
     }
 
 
