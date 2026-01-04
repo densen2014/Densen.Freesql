@@ -9,7 +9,7 @@
         <AssemblyName>Densen.BootstrapBlazor.Abtracts</AssemblyName>
         <PackageTags>Densen BootstrapBlazor.Abtracts</PackageTags>
         <OutputPath>..\..\..\Bin</OutputPath>
-        <Version>0.0.6</Version>
+        <Version>10.0.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
