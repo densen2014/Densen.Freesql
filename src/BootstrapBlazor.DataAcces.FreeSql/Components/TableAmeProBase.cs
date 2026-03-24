@@ -571,6 +571,9 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         {
             PageItemsSource = PageItemsSource.Append(PageItems).OrderBy(a => a).ToList();
         }
+        if (PageItems == 0) {
+            PageItems = PageItemsSource.FirstOrDefault();
+        }
         AddModalTitle ??= Localizer[nameof(AddModalTitle)];
         EditModalTitle ??= Localizer[nameof(EditModalTitle)];
         BatchAddButtonText ??= Localizer[nameof(BatchAddButtonText)];
