@@ -20,6 +20,7 @@ using System.Reflection;
 using static AME.EnumsExtensions;
 
 namespace AmeBlazor.Components;
+
 public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, new()
 {
 
@@ -31,12 +32,22 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
 
     [Parameter] public Func<IEnumerable<TItem>, Task>? 升级 { get; set; }
 
+    /// <summary>
+    /// 升级后提示
+    /// </summary>
+    [Parameter] public bool UpdatedToastEnabled { get; set; }
+
     [Parameter] public Func<IEnumerable<TItem>, Task>? 升级II { get; set; }
 
     /// <summary>
     /// 查询条件，Where(a => a.Id > 10)，支持导航对象查询，Where(a => a.Author.Email == "2881099@qq.com")
     /// </summary>
     [Parameter] public Expression<Func<TItem, bool>>? WhereLamda { get; set; }
+
+    /// <summary>
+    /// 动态查询条件回调
+    /// </summary>
+    [Parameter] public Func<Expression<Func<TItem, bool>>?>? GetWhereLamda { get; set; }
 
     /// <summary>
     /// 获得/设置 明细表弹窗关闭按钮异步回调方法
@@ -182,6 +193,12 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// </summary>
     [Parameter]
     public Action<ISelect<TItem>>? AfterQueryAsync { get; set; }
+
+    /// <summary>
+    /// 获得/设置 查询回调回显 FloatPanel 文本
+    /// </summary>
+    [Parameter]
+    public Func<ISelect<TItem>, Task<string>>? AfterQuerySetFooterAsync { get; set; }
 
     /// <summary>
     /// 获得/设置 查询回调方法,用于附加获取地理位置之类
@@ -480,6 +497,11 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
             }
         }
 
+        if (GetWhereLamda != null)
+        {
+            WhereLamda = GetWhereLamda();
+        }
+
         var itemsOrm = await GetDataService().QueryAsyncWithWhereCascade(
                 options,
                 dynamicFilterInfo,
@@ -502,14 +524,25 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         }
 
 
-        if (AfterQueryAsync != null)
+        if (AfterQueryAsync != null || AfterQuerySetFooterAsync != null)
         {
             //查询回调方法,用于计算合计之类,传递orm查询子句到外部
             var select = ISelectCache();
             if (SelectCache != select)
             {
                 SelectCache = select;
-                AfterQueryAsync(ISelectCache());
+                if (AfterQueryAsync != null)
+                {
+                    AfterQueryAsync(ISelectCache());
+                }
+                if (AfterQuerySetFooterAsync != null)
+                {
+                    cacheFooterValue = await AfterQuerySetFooterAsync(ISelectCache());
+                    if (ShowFloatPanel || ShowFloatPanelToolbar)
+                    {
+                        SetFooter(cacheFooterValue);
+                    }
+                }
             }
         }
         ItemsCache = itemsOrm.Items;
@@ -571,7 +604,8 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         {
             PageItemsSource = PageItemsSource.Append(PageItems).OrderBy(a => a).ToList();
         }
-        if (PageItems == 0) {
+        if (PageItems == 0)
+        {
             PageItems = PageItemsSource.FirstOrDefault();
         }
         AddModalTitle ??= Localizer[nameof(AddModalTitle)];
@@ -1328,7 +1362,10 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         {
             await 升级(items);
             await TableMain.QueryAsync();
-            ToastService?.Success($"{升级按钮文字}成功", $"{升级按钮文字}成功,请检查数据");
+            if (UpdatedToastEnabled)
+            {
+                ToastService?.Success($"{升级按钮文字}成功", $"{升级按钮文字}成功,请检查数据");
+            }
         }
     }
 
@@ -1337,7 +1374,10 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         if (升级II != null)
         {
             await 升级II(items);
-            ToastService?.Success($"{升级按钮II文字}成功", $"{升级按钮II文字}成功,请检查数据");
+            if (UpdatedToastEnabled)
+            {
+                ToastService?.Success($"{升级按钮II文字}成功", $"{升级按钮II文字}成功,请检查数据");
+            }
         }
     }
 
@@ -1358,12 +1398,9 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         }
     }
 
-    public Task PrintPreview(IEnumerable<TItem> item)
+    public async Task PrintPreview(IEnumerable<TItem> item)
     {
-        JsRuntime.InvokeAsync<object>(
-        "toolsFunctions.printpreview", 100
-        );
-        return Task.CompletedTask;
+        await JsRuntime.InvokeAsync<object>("toolsFunctions.printpreview", 100);
     }
 
     public Task 新窗口打开()
