@@ -1598,7 +1598,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         return targetType == typeof(DateTime) && t.FormatString?.Length > 0 && t.FormatString?.Length != 10;
     }
 
-    // 缓存：属性名 -> 是否满足 Searchable & Filterable & Sortable
+    // 缓存：属性名 -> 是否满足 IsIgnoreColumn
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, bool> _searchableCache = new();
 
     // 缓存：TItem 类级别 AutoGenerateClassAttribute 结果（null=未设置/false=不满足/true=满足）
