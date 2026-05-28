@@ -9,6 +9,7 @@ using BootstrapBlazor.Components;
 using Densen.DataAcces.FreeSql;
 using Densen.Service;
 using FreeSql;
+using FreeSql.DataAnnotations;
 using FreeSql.Internal.Model;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -328,6 +329,12 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     [Parameter]
     public bool EnableDateTimeFilterAutoStyle { get; set; }
 
+    /// <summary>
+    /// 获得/设置 检查 FreeSql 列是否被忽略, 忽略则不生成 Searchable/Filterable/Sortable, 默认 true
+    /// </summary>
+    [Parameter]
+    public bool AutoCheckIsIgnoreColumn { get; set; } = true;
+
     #region 数据服务
 
     /// <summary>
@@ -613,7 +620,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         BatchAddButtonText ??= Localizer[nameof(BatchAddButtonText)];
         AddButtonIcon ??= IconTheme.GetIconByKey(ComponentIcons.TableAddButtonIcon);
 
-        if (AutoRenderComponentWithLocaleFormat && OnColumnCreating == null)
+        if (AutoRenderComponentWithLocaleFormat || AutoCheckIsIgnoreColumn)
         {
             OnColumnCreating += AutoRenderComponentLocaleFormat;
         }
@@ -1472,83 +1479,99 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     /// <returns></returns>
     public Task AutoRenderComponentLocaleFormat(List<ITableColumn> columns)
     {
-        //经浏览器语言设定验证不过关,最终版本采用全部渲染为文本框解决问题
-        //if (NumberDecimalSeparator == ".")
-        //{
-        //    return Task.CompletedTask;
-        //}
-
-        var items = columns.Where(i => i.ComponentType == null && IsNumberWithDecimalSeparator(i.PropertyType));
-        foreach (var item in items)
+        if (AutoRenderComponentWithLocaleFormat)
         {
-            var type = Nullable.GetUnderlyingType(item.PropertyType) ?? item.PropertyType;
-            if (Nullable.GetUnderlyingType(item.PropertyType) != null)
-            {
-                if (type == typeof(float))
-                {
-                    item.ComponentType = typeof(BootstrapInput<float?>);
-                }
-                else if (type == typeof(double))
-                {
-                    item.ComponentType = typeof(BootstrapInput<double?>);
-                }
-                else if (type == typeof(decimal))
-                {
-                    item.ComponentType = typeof(BootstrapInput<decimal?>);
-                }
-            }
-            else
-            {
-                if (type == typeof(float))
-                {
-                    item.ComponentType = typeof(BootstrapInput<float>);
-                }
-                else if (type == typeof(double))
-                {
-                    item.ComponentType = typeof(BootstrapInput<double>);
-                }
-                else if (type == typeof(decimal))
-                {
-                    item.ComponentType = typeof(BootstrapInput<decimal>);
-                }
-            }
-        }
+            //经浏览器语言设定验证不过关,最终版本采用全部渲染为文本框解决问题
+            //if (NumberDecimalSeparator == ".")
+            //{
+            //    return Task.CompletedTask;
+            //}
 
-        //自动渲染日期控件为对应格式
-        if (EnableDateTimeFilterAutoStyle || EnableDateTimePickerAutoStyle)
-        {
-            items = columns.Where(i => i.ComponentType == null && IsDateTimeWithCustomFormat(i));
+            var items = columns.Where(i => i.ComponentType == null && IsNumberWithDecimalSeparator(i.PropertyType));
             foreach (var item in items)
             {
-                if (EnableDateTimeFilterAutoStyle)
+                var type = Nullable.GetUnderlyingType(item.PropertyType) ?? item.PropertyType;
+                if (Nullable.GetUnderlyingType(item.PropertyType) != null)
                 {
-                    item.FilterTemplate = builder =>
+                    if (type == typeof(float))
                     {
-                        builder.OpenComponent<CustomerFilter>(0);
-                        builder.AddAttribute(1, nameof(CustomerFilter.DateTimeFormat), item.FormatString);
-                        builder.CloseComponent();
-                    };
+                        item.ComponentType = typeof(BootstrapInput<float?>);
+                    }
+                    else if (type == typeof(double))
+                    {
+                        item.ComponentType = typeof(BootstrapInput<double?>);
+                    }
+                    else if (type == typeof(decimal))
+                    {
+                        item.ComponentType = typeof(BootstrapInput<decimal?>);
+                    }
                 }
-                if (EnableDateTimePickerAutoStyle)
+                else
                 {
-
-                    item.ComponentParameters = new Dictionary<string, object>
+                    if (type == typeof(float))
                     {
-                        [nameof(DateTimePicker<DateTime>.ViewMode)] = item.FormatString switch
+                        item.ComponentType = typeof(BootstrapInput<float>);
+                    }
+                    else if (type == typeof(double))
+                    {
+                        item.ComponentType = typeof(BootstrapInput<double>);
+                    }
+                    else if (type == typeof(decimal))
+                    {
+                        item.ComponentType = typeof(BootstrapInput<decimal>);
+                    }
+                }
+            }
+
+            //自动渲染日期控件为对应格式
+            if (EnableDateTimeFilterAutoStyle || EnableDateTimePickerAutoStyle)
+            {
+                items = columns.Where(i => i.ComponentType == null && IsDateTimeWithCustomFormat(i));
+                foreach (var item in items)
+                {
+                    if (EnableDateTimeFilterAutoStyle)
+                    {
+                        item.FilterTemplate = builder =>
                         {
-                            "yyyy" => DatePickerViewMode.Year,
-                            "yyyy-MM" => DatePickerViewMode.Month,
-                            "MM/yyyy" => DatePickerViewMode.Month,
-                            "yyyy-MM-dd HH:mm:ss" => DatePickerViewMode.DateTime,
-                            "dd/MMyyyy HH:mm:ss" => DatePickerViewMode.DateTime,
-                            "yyyy-MM-dd HH:mm" => DatePickerViewMode.DateTime,
-                            "dd/MMyyyy HH:mm" => DatePickerViewMode.DateTime,
-                            _ => DatePickerViewMode.Date
-                        }
-                    };
+                            builder.OpenComponent<CustomerFilter>(0);
+                            builder.AddAttribute(1, nameof(CustomerFilter.DateTimeFormat), item.FormatString);
+                            builder.CloseComponent();
+                        };
+                    }
+                    if (EnableDateTimePickerAutoStyle)
+                    {
+
+                        item.ComponentParameters = new Dictionary<string, object>
+                        {
+                            [nameof(DateTimePicker<DateTime>.ViewMode)] = item.FormatString switch
+                            {
+                                "yyyy" => DatePickerViewMode.Year,
+                                "yyyy-MM" => DatePickerViewMode.Month,
+                                "MM/yyyy" => DatePickerViewMode.Month,
+                                "yyyy-MM-dd HH:mm:ss" => DatePickerViewMode.DateTime,
+                                "dd/MMyyyy HH:mm:ss" => DatePickerViewMode.DateTime,
+                                "yyyy-MM-dd HH:mm" => DatePickerViewMode.DateTime,
+                                "dd/MMyyyy HH:mm" => DatePickerViewMode.DateTime,
+                                _ => DatePickerViewMode.Date
+                            }
+                        };
+                    }
                 }
             }
         }
+
+        //按列特性禁用 可过滤/可搜索/可排序 , 用于类已启用 [AutoGenerateClass(Searchable = true, Filterable = true, Sortable = true)]特殊场景, 优先级高于全局设置
+        if (AutoCheckIsIgnoreColumn)
+        {
+            var items = columns.Where(i => i.ComponentType == null && IsIgnoreColumn(i));
+            foreach (var item in items)
+            {
+                item.Filterable = false;
+                item.Searchable = false;
+                item.Sortable = false;
+            }
+        }
+
         return Task.CompletedTask;
     }
 
@@ -1573,6 +1596,43 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     {
         var targetType = Nullable.GetUnderlyingType(t.PropertyType) ?? t.PropertyType;
         return targetType == typeof(DateTime) && t.FormatString?.Length > 0 && t.FormatString?.Length != 10;
+    }
+
+    // 缓存：属性名 -> 是否满足 Searchable & Filterable & Sortable
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, bool> _searchableCache = new();
+
+    // 缓存：TItem 类级别 AutoGenerateClassAttribute 结果（null=未设置/false=不满足/true=满足）
+    private static readonly System.Lazy<bool?> _classAttrCache = new(() =>
+    {
+        var classAttr = typeof(TItem).GetCustomAttribute<AutoGenerateClassAttribute>();
+        return classAttr == null ? null : classAttr.Searchable && classAttr.Filterable && classAttr.Sortable;
+    });
+
+    /// <summary>
+    /// 检查 FreeSql 列是否被忽略, 忽略则不生成 Searchable/Filterable/Sortable
+    /// </summary>
+    private static bool IsIgnoreColumn(ITableColumn column)
+    {
+        if (column.GetFieldName() is not { } fieldName)
+        {
+            return false;
+        }
+        return _searchableCache.GetOrAdd(fieldName, static name =>
+        {
+            var prop = typeof(TItem).GetProperty(name);
+            if (prop == null)
+            {
+                return false;
+            }
+            // 优先检查属性自身的 ColumnAttribute
+            var colAttr = prop.GetCustomAttribute<ColumnAttribute>();
+            if (colAttr != null)
+            {
+                return colAttr.IsIgnore;
+            }
+            // 回退到类级别的 AutoGenerateClassAttribute（已缓存）
+            return _classAttrCache.Value ?? false;
+        });
     }
 
 }
