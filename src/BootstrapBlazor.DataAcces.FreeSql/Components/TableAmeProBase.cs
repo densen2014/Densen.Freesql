@@ -1563,7 +1563,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         //按列特性禁用 可过滤/可搜索/可排序 , 用于类已启用 [AutoGenerateClass(Searchable = true, Filterable = true, Sortable = true)]特殊场景, 优先级高于全局设置
         if (AutoCheckIsIgnoreColumn)
         {
-            var items = columns.Where(i => i.ComponentType == null && IsIgnoreColumn(i));
+            var items = columns.Where(i => IsIgnoreColumn(i));
             foreach (var item in items)
             {
                 item.Filterable = false;
@@ -1601,12 +1601,6 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     // 缓存：属性名 -> 是否满足 IsIgnoreColumn
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, bool> _searchableCache = new();
 
-    // 缓存：TItem 类级别 AutoGenerateClassAttribute 结果（null=未设置/false=不满足/true=满足）
-    private static readonly System.Lazy<bool?> _classAttrCache = new(() =>
-    {
-        var classAttr = typeof(TItem).GetCustomAttribute<AutoGenerateClassAttribute>();
-        return classAttr == null ? null : classAttr.Searchable && classAttr.Filterable && classAttr.Sortable;
-    });
 
     /// <summary>
     /// 检查 FreeSql 列是否被忽略, 忽略则不生成 Searchable/Filterable/Sortable
@@ -1626,12 +1620,12 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
             }
             // 优先检查属性自身的 ColumnAttribute
             var colAttr = prop.GetCustomAttribute<ColumnAttribute>();
-            if (colAttr != null)
+            if (colAttr != null && colAttr.IsIgnore)
             {
-                return colAttr.IsIgnore;
+                return true;
             }
-            // 回退到类级别的 AutoGenerateClassAttribute（已缓存）
-            return _classAttrCache.Value ?? false;
+
+            return false;
         });
     }
 
