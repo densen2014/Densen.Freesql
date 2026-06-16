@@ -338,6 +338,13 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
     #region 数据服务
 
     /// <summary>
+    /// 自定义数据连接
+    /// </summary>
+    /// <returns></returns>
+    [Parameter]
+    public bool UseFsqlCloud { get; set; } = false;
+
+    /// <summary>
     /// 获得/设置 注入数据服务
     /// </summary>
     [Inject]
@@ -350,7 +357,7 @@ public partial class TableAmeProBase<TItem> : TableAmeBase where TItem : class, 
         {
             DataServices.Last().SaveManyChildsPropertyName = SaveManyChildsPropertyName;
             DataServices.Last().ConnectionString = ConnectionString;
-            if (!GetFsql())
+            if (UseFsqlCloud ||!GetFsql())
             {
                 if (ConnectionString != null)
                 {
