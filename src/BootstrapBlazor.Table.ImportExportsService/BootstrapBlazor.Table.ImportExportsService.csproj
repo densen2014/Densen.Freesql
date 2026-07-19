@@ -20,6 +20,7 @@
         <!--<PackageReference Include="HtmlToOpenXml.dll" Version="2.3.0" />-->
         <!--<PackageReference Include="Haukcode.WkHtmlToPdfDotNet" Version="1.5.86" />-->
         <PackageReference Include="SixLabors.ImageSharp" Version="2.*" />
+        <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.3" />
     </ItemGroup>
 
 	<ItemGroup>
