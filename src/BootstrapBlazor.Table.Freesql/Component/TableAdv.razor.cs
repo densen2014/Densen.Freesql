@@ -255,7 +255,7 @@ public partial class TableAdv<TItem> : BootstrapComponentBase
     }
 
     private async Task<bool> ExportExcelAsync(IEnumerable<TItem> items) => await ExportAutoAsync(items, ExportType.Excel);
-    private async Task<bool> ExportPDFAsync(IEnumerable<TItem> items) => await ExportAutoAsync(items, ExportType.Pdf);
+    private async Task<bool> ExportPDFAsync(IEnumerable<TItem> items) => await ExportAutoAsync(items, ExportType.Excel);
     private async Task<bool> ExportWordAsync(IEnumerable<TItem> items) => await ExportAutoAsync(items, ExportType.Word);
     private async Task<bool> ExportHtmlAsync(IEnumerable<TItem> items) => await ExportAutoAsync(items, ExportType.Html);
 
